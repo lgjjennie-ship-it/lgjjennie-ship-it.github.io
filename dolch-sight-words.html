@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>完整版 Dolch Sight Words 高频词表</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; line-height: 1.6; color: #333; padding: 20px; max-width: 1200px; margin: 0 auto; background: #f5f7fa; }
+@media print { body { padding: 10mm; background: white; } .no-print { display: none; } }
+h1 { text-align: center; color: #2c3e50; margin-bottom: 10px; font-size: 24px; }
+.subtitle { text-align: center; color: #7f8c8d; margin-bottom: 20px; font-size: 14px; }
+h2 { color: #3498db; margin: 25px 0 15px; padding-bottom: 5px; border-bottom: 2px solid #3498db; font-size: 18px; }
+.word-section { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 30px; }
+.word-card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; cursor: pointer; transition: all 0.3s ease; min-height: 100px; display: flex; flex-direction: column; justify-content: center; border: 1px solid #e1e8ed; }
+.word-card:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); border-color: #3498db; }
+.word { font-size: 20px; font-weight: bold; color: #e74c3c; margin-bottom: 5px; }
+.phonetic { color: #27ae60; font-size: 13px; margin-bottom: 5px; }
+.meaning { color: #7f8c8d; font-size: 13px; }
+.tip-box { background: #fff9e6; border: 1px solid #f1c40f; border-radius: 8px; padding: 20px; margin: 25px 0; }
+.tip-box h3 { color: #f39c12; margin-bottom: 10px; }
+.print-btn { display: block; width: 220px; margin: 25px auto; padding: 14px 28px; background: #3498db; color: #fff; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; }
+.print-btn:hover { background: #2980b9; }
+.stats { text-align: center; background: #2c3e50; color: white; padding: 12px; border-radius: 5px; margin: 15px 0; font-size: 14px; }
+.footer { text-align: center; color: #95a5a6; font-size: 12px; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ecf0f1; }
+@media (max-width: 768px) { body { padding: 15px; } .word-section { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); } }
+</style>
+</head>
+<body>
+<button class="print-btn no-print" onclick="window.print()">🖨️ 打印完整词表</button>
+<div class="stats">📊 完整版 Dolch Sight Words | 总计 315 个词汇（220高频词 + 95名词）</div>
+<h1>📚 完整版 Dolch Sight Words 高频词表</h1>
+<p class="subtitle">基于权威Dolch单词表 · 适合3-8岁儿童英语启蒙</p>
+<div class="tip-box">
+<h3>💡 为什么要学习Sight Words？</h3>
+<p>这些词汇在初级英语读物中占比高达<strong>50%-75%</strong>，掌握后能显著提升孩子的阅读流畅度。点击任意单词可听发音！</p>
+</div>
+<div id="content"></div>
+<div class="footer"><p>© 2026 Dolch Sight Words 学习材料 | 点击单词可发音</p></div>
+<script>
+const data = {
+  "Pre-Primer（学前预备级 40词）": [
+    {w:"a",p:"/ə/",m:"一个"},{w:"and",p:"/ænd/",m:"和"},{w:"away",p:"/əˈweɪ/",m:"离开"},{w:"big",p:"/bɪɡ/",m:"大的"},
+    {w:"blue",p:"/bluː/",m:"蓝色"},{w:"can",p:"/kæn/",m:"能"},{w:"come",p:"/kʌm/",m:"来"},{w:"down",p:"/daʊn/",m:"向下"},
+    {w:"find",p:"/faɪnd/",m:"找到"},{w:"for",p:"/fɔː/",m:"为了"},{w:"funny",p:"/ˈfʌni/",m:"有趣的"},{w:"go",p:"/ɡəʊ/",m:"去"},
+    {w:"help",p:"/help/",m:"帮助"},{w:"here",p:"/hɪə/",m:"这里"},{w:"I",p:"/aɪ/",m:"我"},{w:"in",p:"/ɪn/",m:"在...里"},
+    {w:"is",p:"/ɪz/",m:"是"},{w:"it",p:"/ɪt/",m:"它"},{w:"jump",p:"/dʒʌmp/",m:"跳"},{w:"little",p:"/ˈlɪtl/",m:"小的"},
+    {w:"look",p:"/lʊk/",m:"看"},{w:"make",p:"/meɪk/",m:"制作"},{w:"me",p:"/miː/",m:"我"},{w:"my",p:"/maɪ/",m:"我的"},
+    {w:"not",p:"/nɒt/",m:"不"},{w:"one",p:"/wʌn/",m:"一"},{w:"play",p:"/pleɪ/",m:"玩"},{w:"red",p:"/red/",m:"红色"},
+    {w:"run",p:"/rʌn/",m:"跑"},{w:"said",p:"/sed/",m:"说"},{w:"see",p:"/siː/",m:"看见"},{w:"the",p:"/ðə/",m:"这个"},
+    {w:"three",p:"/θriː/",m:"三"},{w:"to",p:"/tuː/",m:"到"},{w:"two",p:"/tuː/",m:"二"},{w:"up",p:"/ʌp/",m:"向上"},
+    {w:"we",p:"/wiː/",m:"我们"},{w:"where",p:"/weə/",m:"哪里"},{w:"yellow",p:"/ˈjeləʊ/",m:"黄色"},{w:"you",p:"/juː/",m:"你"}
+  ],
+  "Primer（初级 52词）": [
+    {w:"all",p:"/ɔːl/",m:"全部"},{w:"am",p:"/æm/",m:"是"},{w:"are",p:"/ɑː/",m:"是"},{w:"at",p:"/æt/",m:"在"},
+    {w:"ate",p:"/et/",m:"吃了"},{w:"be",p:"/biː/",m:"是"},{w:"black",p:"/blæk/",m:"黑色"},{w:"brown",p:"/braʊn/",m:"棕色"},
+    {w:"but",p:"/bʌt/",m:"但是"},{w:"came",p:"/keɪm/",m:"来了"},{w:"did",p:"/dɪd/",m:"做了"},{w:"do",p:"/duː/",m:"做"},
+    {w:"eat",p:"/iːt/",m:"吃"},{w:"four",p:"/fɔː/",m:"四"},{w:"get",p:"/ɡet/",m:"得到"},{w:"good",p:"/ɡʊd/",m:"好"},
+    {w:"have",p:"/hæv/",m:"有"},{w:"he",p:"/hiː/",m:"他"},{w:"into",p:"/ˈɪntuː/",m:"进入"},{w:"like",p:"/laɪk/",m:"喜欢"},
+    {w:"must",p:"/mʌst/",m:"必须"},{w:"new",p:"/njuː/",m:"新的"},{w:"no",p:"/nəʊ/",m:"不"},{w:"now",p:"/naʊ/",m:"现在"},
+    {w:"on",p:"/ɒn/",m:"在...上"},{w:"our",p:"/ˈaʊə/",m:"我们的"},{w:"out",p:"/aʊt/",m:"出"},{w:"please",p:"/pliːz/",m:"请"},
+    {w:"pretty",p:"/ˈprɪti/",m:"漂亮"},{w:"ran",p:"/ræn/",m:"跑了"},{w:"ride",p:"/raɪd/",m:"骑"},{w:"saw",p:"/sɔː/",m:"看见了"},
+    {w:"say",p:"/seɪ/",m:"说"},{w:"she",p:"/ʃiː/",m:"她"},{w:"so",p:"/səʊ/",m:"所以"},{w:"soon",p:"/suːn/",m:"很快"},
+    {w:"that",p:"/ðæt/",m:"那个"},{w:"there",p:"/ðeə/",m:"那里"},{w:"they",p:"/ðeɪ/",m:"他们"},{w:"this",p:"/ðɪs/",m:"这个"},
+    {w:"too",p:"/tuː/",m:"也"},{w:"under",p:"/ˈʌndə/",m:"在...下"},{w:"want",p:"/wɒnt/",m:"想要"},{w:"was",p:"/wɒz/",m:"是"},
+    {w:"well",p:"/wel/",m:"好"},{w:"went",p:"/went/",m:"去了"},{w:"what",p:"/wɒt/",m:"什么"},{w:"white",p:"/waɪt/",m:"白色"},
+    {w:"who",p:"/huː/",m:"谁"},{w:"will",p:"/wɪl/",m:"将"},{w:"with",p:"/wɪð/",m:"和"},{w:"yes",p:"/jes/",m:"是"}
+  ],
+  "First Grade（一年级 41词）": [
+    {w:"after",p:"/ˈɑːftə/",m:"之后"},{w:"again",p:"/əˈɡen/",m:"再次"},{w:"an",p:"/æn/",m:"一个"},{w:"any",p:"/ˈeni/",m:"任何"},
+    {w:"as",p:"/æz/",m:"作为"},{w:"ask",p:"/ɑːsk/",m:"问"},{w:"by",p:"/baɪ/",m:"通过"},{w:"could",p:"/kʊd/",m:"能够"},
+    {w:"every",p:"/ˈevri/",m:"每个"},{w:"fly",p:"/flaɪ/",m:"飞"},{w:"from",p:"/frɒm/",m:"从"},{w:"give",p:"/ɡɪv/",m:"给"},
+    {w:"going",p:"/ˈɡəʊɪŋ/",m:"去"},{w:"had",p:"/hæd/",m:"有了"},{w:"has",p:"/hæz/",m:"有"},{w:"her",p:"/hɜː/",m:"她的"},
+    {w:"him",p:"/hɪm/",m:"他"},{w:"his",p:"/hɪz/",m:"他的"},{w:"how",p:"/haʊ/",m:"如何"},{w:"just",p:"/dʒʌst/",m:"只是"},
+    {w:"know",p:"/nəʊ/",m:"知道"},{w:"let",p:"/let/",m:"让"},{w:"live",p:"/lɪv/",m:"居住"},{w:"may",p:"/meɪ/",m:"可以"},
+    {w:"of",p:"/ɒv/",m:"的"},{w:"old",p:"/əʊld/",m:"老的"},{w:"once",p:"/wʌns/",m:"一次"},{w:"open",p:"/ˈəʊpən/",m:"打开"},
+    {w:"over",p:"/ˈəʊvə/",m:"结束"},{w:"put",p:"/pʊt/",m:"放"},{w:"round",p:"/raʊnd/",m:"圆的"},{w:"some",p:"/sʌm/",m:"一些"},
+    {w:"stop",p:"/stɒp/",m:"停止"},{w:"take",p:"/teɪk/",m:"拿"},{w:"thank",p:"/θæŋk/",m:"谢谢"},{w:"them",p:"/ðem/",m:"他们"},
+    {w:"then",p:"/ðen/",m:"然后"},{w:"think",p:"/θɪŋk/",m:"想"},{w:"walk",p:"/wɔːk/",m:"走"},{w:"were",p:"/wɜː/",m:"是"},
+    {w:"when",p:"/wen/",m:"当"}
+  ],
+  "Second Grade（二年级 46词）": [
+    {w:"always",p:"/ˈɔːlweɪz/",m:"总是"},{w:"around",p:"/əˈraʊnd/",m:"周围"},{w:"because",p:"/bɪˈkɒz/",m:"因为"},{w:"been",p:"/biːn/",m:"已经"},
+    {w:"before",p:"/bɪˈfɔː/",m:"之前"},{w:"best",p:"/best/",m:"最好"},{w:"both",p:"/bəʊθ/",m:"两者"},{w:"buy",p:"/baɪ/",m:"买"},
+    {w:"call",p:"/kɔːl/",m:"呼叫"},{w:"cold",p:"/kəʊld/",m:"冷的"},{w:"does",p:"/dʌz/",m:"做"},{w:"don't",p:"/dəʊnt/",m:"不要"},
+    {w:"fast",p:"/fɑːst/",m:"快的"},{w:"first",p:"/fɜːst/",m:"第一"},{w:"five",p:"/faɪv/",m:"五"},{w:"found",p:"/faʊnd/",m:"发现"},
+    {w:"gave",p:"/ɡeɪv/",m:"给了"},{w:"goes",p:"/ɡəʊz/",m:"去"},{w:"green",p:"/ɡriːn/",m:"绿色"},{w:"its",p:"/ɪts/",m:"它的"},
+    {w:"made",p:"/meɪd/",m:"制作了"},{w:"many",p:"/ˈmeni/",m:"许多"},{w:"off",p:"/ɒf/",m:"离开"},{w:"or",p:"/ɔː/",m:"或者"},
+    {w:"pull",p:"/pʊl/",m:"拉"},{w:"read",p:"/riːd/",m:"读"},{w:"right",p:"/raɪt/",m:"正确"},{w:"sing",p:"/sɪŋ/",m:"唱"},
+    {w:"sit",p:"/sɪt/",m:"坐"},{w:"sleep",p:"/sliːp/",m:"睡觉"},{w:"tell",p:"/tel/",m:"告诉"},{w:"their",p:"/ðeə/",m:"他们的"},
+    {w:"these",p:"/ðiːz/",m:"这些"},{w:"those",p:"/ðəʊz/",m:"那些"},{w:"upon",p:"/əˈpɒn/",m:"在上面"},{w:"us",p:"/ʌs/",m:"我们"},
+    {w:"use",p:"/juːz/",m:"使用"},{w:"very",p:"/ˈveri/",m:"非常"},{w:"wash",p:"/wɒʃ/",m:"洗"},{w:"which",p:"/wɪtʃ/",m:"哪个"},
+    {w:"why",p:"/waɪ/",m:"为什么"},{w:"wish",p:"/wɪʃ/",m:"希望"},{w:"work",p:"/wɜːk/",m:"工作"},{w:"would",p:"/wʊd/",m:"将"},
+    {w:"write",p:"/raɪt/",m:"写"},{w:"your",p:"/jɔː/",m:"你的"}
+  ],
+  "Third Grade（三年级 41词）": [
+    {w:"about",p:"/əˈbaʊt/",m:"关于"},{w:"better",p:"/ˈbetə/",m:"更好"},{w:"bring",p:"/brɪŋ/",m:"带来"},{w:"carry",p:"/ˈkæri/",m:"携带"},
+    {w:"clean",p:"/kliːn/",m:"清洁"},{w:"cut",p:"/kʌt/",m:"切"},{w:"done",p:"/dʌn/",m:"完成"},{w:"draw",p:"/drɔː/",m:"画"},
+    {w:"drink",p:"/drɪŋk/",m:"喝"},{w:"eight",p:"/eɪt/",m:"八"},{w:"fall",p:"/fɔːl/",m:"落下"},{w:"far",p:"/fɑː/",m:"远"},
+    {w:"full",p:"/fʊl/",m:"满的"},{w:"got",p:"/ɡɒt/",m:"得到了"},{w:"grow",p:"/ɡrəʊ/",m:"生长"},{w:"hold",p:"/həʊld/",m:"持有"},
+    {w:"hot",p:"/hɒt/",m:"热的"},{w:"hurt",p:"/hɜːt/",m:"伤害"},{w:"if",p:"/ɪf/",m:"如果"},{w:"keep",p:"/kiːp/",m:"保持"},
+    {w:"kind",p:"/kaɪnd/",m:"善良"},{w:"laugh",p:"/lɑːf/",m:"笑"},{w:"light",p:"/laɪt/",m:"光"},{w:"long",p:"/lɒŋ/",m:"长的"},
+    {w:"much",p:"/mʌtʃ/",m:"很多"},{w:"myself",p:"/maɪˈself/",m:"我自己"},{w:"never",p:"/ˈnevə/",m:"从不"},{w:"only",p:"/ˈəʊnli/",m:"只有"},
+    {w:"own",p:"/əʊn/",m:"自己的"},{w:"pick",p:"/pɪk/",m:"挑选"},{w:"seven",p:"/ˈsevn/",m:"七"},{w:"shall",p:"/ʃæl/",m:"将"},
+    {w:"show",p:"/ʃəʊ/",m:"展示"},{w:"six",p:"/sɪks/",m:"六"},{w:"small",p:"/smɔːl/",m:"小的"},{w:"start",p:"/stɑːt/",m:"开始"},
+    {w:"ten",p:"/ten/",m:"十"},{w:"today",p:"/təˈdeɪ/",m:"今天"},{w:"together",p:"/təˈɡeðə/",m:"一起"},{w:"try",p:"/traɪ/",m:"尝试"},
+    {w:"warm",p:"/wɔːm/",m:"温暖"}
+  ],
+  "Nouns（名词 95词）": [
+    {w:"apple",p:"/ˈæpl/",m:"苹果"},{w:"baby",p:"/ˈbeɪbi/",m:"婴儿"},{w:"back",p:"/bæk/",m:"背部"},{w:"ball",p:"/bɔːl/",m:"球"},
+    {w:"bear",p:"/beə/",m:"熊"},{w:"bed",p:"/bed/",m:"床"},{w:"bell",p:"/bel/",m:"铃铛"},{w:"bird",p:"/bɜːd/",m:"鸟"},
+    {w:"birthday",p:"/ˈbɜːθdeɪ/",m:"生日"},{w:"boat",p:"/bəʊt/",m:"船"},{w:"box",p:"/bɒks/",m:"盒子"},{w:"boy",p:"/bɔɪ/",m:"男孩"},
+    {w:"bread",p:"/bred/",m:"面包"},{w:"brother",p:"/ˈbrʌðə/",m:"兄弟"},{w:"cake",p:"/keɪk/",m:"蛋糕"},{w:"car",p:"/kɑː/",m:"汽车"},
+    {w:"cat",p:"/kæt/",m:"猫"},{w:"chair",p:"/tʃeə/",m:"椅子"},{w:"chicken",p:"/ˈtʃɪkɪn/",m:"鸡"},{w:"children",p:"/ˈtʃɪldrən/",m:"孩子们"},
+    {w:"Christmas",p:"/ˈkrɪsməs/",m:"圣诞节"},{w:"coat",p:"/kəʊt/",m:"外套"},{w:"corn",p:"/kɔːn/",m:"玉米"},{w:"cow",p:"/kaʊ/",m:"牛"},
+    {w:"day",p:"/deɪ/",m:"天"},{w:"dog",p:"/dɒɡ/",m:"狗"},{w:"doll",p:"/dɒl/",m:"娃娃"},{w:"door",p:"/dɔː/",m:"门"},
+    {w:"duck",p:"/dʌk/",m:"鸭子"},{w:"egg",p:"/eɡ/",m:"蛋"},{w:"eye",p:"/aɪ/",m:"眼睛"},{w:"farm",p:"/fɑːm/",m:"农场"},
+    {w:"farmer",p:"/ˈfɑːmə/",m:"农民"},{w:"father",p:"/ˈfɑːðə/",m:"父亲"},{w:"feet",p:"/fiːt/",m:"脚"},{w:"fire",p:"/faɪə/",m:"火"},
+    {w:"fish",p:"/fɪʃ/",m:"鱼"},{w:"floor",p:"/flɔː/",m:"地板"},{w:"flower",p:"/flaʊə/",m:"花"},{w:"game",p:"/ɡeɪm/",m:"游戏"},
+    {w:"garden",p:"/ˈɡɑːdn/",m:"花园"},{w:"girl",p:"/ɡɜːl/",m:"女孩"},{w:"goodbye",p:"/ɡʊdˈbaɪ/",m:"再见"},{w:"grass",p:"/ɡrɑːs/",m:"草"},
+    {w:"ground",p:"/ɡraʊnd/",m:"地面"},{w:"hand",p:"/hænd/",m:"手"},{w:"head",p:"/hed/",m:"头"},{w:"hill",p:"/hɪl/",m:"山"},
+    {w:"home",p:"/həʊm/",m:"家"},{w:"horse",p:"/hɔːs/",m:"马"},{w:"house",p:"/haʊs/",m:"房子"},{w:"kitty",p:"/ˈkɪti/",m:"小猫"},
+    {w:"leg",p:"/leɡ/",m:"腿"},{w:"letter",p:"/ˈletə/",m:"信"},{w:"man",p:"/mæn/",m:"男人"},{w:"men",p:"/men/",m:"男人们"},
+    {w:"milk",p:"/mɪlk/",m:"牛奶"},{w:"money",p:"/ˈmʌni/",m:"钱"},{w:"morning",p:"/ˈmɔːnɪŋ/",m:"早上"},{w:"mother",p:"/ˈmʌðə/",m:"母亲"},
+    {w:"name",p:"/neɪm/",m:"名字"},{w:"nest",p:"/nest/",m:"巢"},{w:"night",p:"/naɪt/",m:"夜晚"},{w:"paper",p:"/ˈpeɪpə/",m:"纸"},
+    {w:"party",p:"/ˈpɑːti/",m:"派对"},{w:"picture",p:"/ˈpɪktʃə/",m:"图片"},{w:"pig",p:"/pɪɡ/",m:"猪"},{w:"rabbit",p:"/ˈræbɪt/",m:"兔子"},
+    {w:"rain",p:"/reɪn/",m:"雨"},{w:"ring",p:"/rɪŋ/",m:"戒指"},{w:"robin",p:"/ˈrɒbɪn/",m:"知更鸟"},{w:"Santa",p:"/ˈsæntə/",m:"圣诞老人"},
+    {w:"school",p:"/skuːl/",m:"学校"},{w:"seed",p:"/siːd/",m:"种子"},{w:"sheep",p:"/ʃiːp/",m:"羊"},{w:"shoe",p:"/ʃuː/",m:"鞋"},
+    {w:"sister",p:"/ˈsɪstə/",m:"姐妹"},{w:"snow",p:"/snəʊ/",m:"雪"},{w:"song",p:"/sɒŋ/",m:"歌曲"},{w:"squirrel",p:"/ˈskwɪrəl/",m:"松鼠"},
+    {w:"stick",p:"/stɪk/",m:"棍子"},{w:"street",p:"/striːt/",m:"街道"},{w:"sun",p:"/sʌn/",m:"太阳"},{w:"table",p:"/ˈteɪbl/",m:"桌子"},
+    {w:"thing",p:"/θɪŋ/",m:"东西"},{w:"time",p:"/taɪm/",m:"时间"},{w:"top",p:"/tɒp/",m:"顶部"},{w:"toy",p:"/tɔɪ/",m:"玩具"},
+    {w:"tree",p:"/triː/",m:"树"},{w:"watch",p:"/wɒtʃ/",m:"手表"},{w:"water",p:"/ˈwɔːtə/",m:"水"},{w:"way",p:"/weɪ/",m:"方式"},
+    {w:"wind",p:"/wɪnd/",m:"风"},{w:"window",p:"/ˈwɪndəʊ/",m:"窗户"},{w:"wood",p:"/wʊd/",m:"木头"}
+  ]
+};
+function speak(w){if('speechSynthesis' in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(w);u.lang='en-US';u.rate=0.8;speechSynthesis.speak(u);}}
+let html='';
+for(let title in data){
+  html+='<h2>'+title+'</h2><div class="word-section">';
+  data[title].forEach(item=>{
+    html+='<div class="word-card" onclick="speak(\''+item.w+'\')"><div class="word">'+item.w+'</div><div class="phonetic">'+item.p+'</div><div class="meaning">'+item.m+'</div></div>';
+  });
+  html+='</div>';
+}
+document.getElementById('content').innerHTML=html;
+</script>
+</body>
+</html>
