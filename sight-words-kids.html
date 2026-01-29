@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌈 Sight Words 魔法单词屋 - 给小朋友的英语启蒙</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --candy-pink: #FF6B9D;
+  --sunny-yellow: #FFD93D;
+  --sky-blue: #6ECFF6;
+  --mint-green: #7ED99A;
+  --lavender: #B8A9E8;
+  --peach: #FFB07C;
+  --cream: #FFF8E7;
+  --cloud-white: #FFFFFF;
+  --text-dark: #4A4A6A;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Baloo 2', 'Noto Sans SC', sans-serif;
+  background: linear-gradient(180deg, #E8F4FF 0%, #FFF0F5 50%, #E8FFF0 100%);
+  min-height: 100vh;
+  color: var(--text-dark);
+  overflow-x: hidden;
+}
+
+/* 漂浮的云朵装饰 */
+.clouds {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.cloud {
+  position: absolute;
+  background: rgba(255,255,255,0.8);
+  border-radius: 100px;
+  animation: float 20s ease-in-out infinite;
+}
+
+.cloud::before, .cloud::after {
+  content: '';
+  position: absolute;
+  background: inherit;
+  border-radius: 50%;
+}
+
+.cloud:nth-child(1) { width: 120px; height: 40px; top: 8%; left: -150px; animation-delay: 0s; }
+.cloud:nth-child(1)::before { width: 50px; height: 50px; top: -25px; left: 20px; }
+.cloud:nth-child(1)::after { width: 35px; height: 35px; top: -18px; left: 60px; }
+
+.cloud:nth-child(2) { width: 100px; height: 35px; top: 20%; left: -120px; animation-delay: -5s; animation-duration: 25s; }
+.cloud:nth-child(2)::before { width: 45px; height: 45px; top: -22px; left: 15px; }
+.cloud:nth-child(2)::after { width: 30px; height: 30px; top: -15px; left: 50px; }
+
+.cloud:nth-child(3) { width: 80px; height: 28px; top: 35%; left: -100px; animation-delay: -10s; animation-duration: 22s; }
+.cloud:nth-child(3)::before { width: 35px; height: 35px; top: -18px; left: 12px; }
+.cloud:nth-child(3)::after { width: 25px; height: 25px; top: -12px; left: 40px; }
+
+@keyframes float {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(calc(100vw + 200px)); }
+}
+
+/* 主容器 */
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* 头部标题 */
+.header {
+  text-align: center;
+  padding: 30px 20px 40px;
+  position: relative;
+}
+
+.header h1 {
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--candy-pink), var(--lavender), var(--sky-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 3px 3px 0 rgba(255,255,255,0.5);
+  animation: titleBounce 2s ease-in-out infinite;
+}
+
+@keyframes titleBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.header .subtitle {
+  font-size: 1.2rem;
+  color: var(--text-dark);
+  margin-top: 10px;
+  opacity: 0.8;
+}
+
+.header .emoji-row {
+  font-size: 2rem;
+  margin-top: 15px;
+  animation: wiggle 3s ease-in-out infinite;
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+
+/* 提示框 */
+.tip-bubble {
+  background: var(--cloud-white);
+  border-radius: 30px;
+  padding: 25px 35px;
+  margin: 20px auto 40px;
+  max-width: 800px;
+  box-shadow: 0 10px 40px rgba(184, 169, 232, 0.3);
+  position: relative;
+  border: 4px solid var(--lavender);
+}
+
+.tip-bubble::before {
+  content: '💡';
+  position: absolute;
+  top: -20px;
+  left: 30px;
+  font-size: 2.5rem;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+.tip-bubble h3 {
+  color: var(--candy-pink);
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+}
+
+.tip-bubble p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+
+/* 分类标题 */
+.category-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin: 50px 0 30px;
+  position: relative;
+}
+
+.category-title h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  padding: 15px 40px;
+  border-radius: 50px;
+  color: white;
+  text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.category-title.pink h2 { background: linear-gradient(135deg, var(--candy-pink), #FF8FB1); }
+.category-title.yellow h2 { background: linear-gradient(135deg, var(--sunny-yellow), #FFE566); color: var(--text-dark); }
+.category-title.blue h2 { background: linear-gradient(135deg, var(--sky-blue), #8ED8F8); }
+.category-title.green h2 { background: linear-gradient(135deg, var(--mint-green), #A8E6B8); }
+.category-title.purple h2 { background: linear-gradient(135deg, var(--lavender), #CDB8F0); }
+.category-title.orange h2 { background: linear-gradient(135deg, var(--peach), #FFCC99); }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 单词卡片网格 */
+.words-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
+  padding: 10px;
+}
+
+/* 单词卡片 */
+.word-card {
+  background: var(--cloud-white);
+  border-radius: 30px;
+  padding: 25px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+  border: 4px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.word-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  border-radius: 30px 30px 0 0;
+}
+
+.word-card.pink::before { background: var(--candy-pink); }
+.word-card.yellow::before { background: var(--sunny-yellow); }
+.word-card.blue::before { background: var(--sky-blue); }
+.word-card.green::before { background: var(--mint-green); }
+.word-card.purple::before { background: var(--lavender); }
+.word-card.orange::before { background: var(--peach); }
+
+.word-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+}
+
+.word-card.pink:hover { border-color: var(--candy-pink); }
+.word-card.yellow:hover { border-color: var(--sunny-yellow); }
+.word-card.blue:hover { border-color: var(--sky-blue); }
+.word-card.green:hover { border-color: var(--mint-green); }
+.word-card.purple:hover { border-color: var(--lavender); }
+.word-card.orange:hover { border-color: var(--peach); }
+
+.word-card:active {
+  transform: scale(0.98);
+}
+
+/* 卡片内图标 */
+.card-emoji {
+  font-size: 4rem;
+  text-align: center;
+  margin-bottom: 15px;
+  animation: bounce 2s ease-in-out infinite;
+  animation-play-state: paused;
+}
+
+.word-card:hover .card-emoji {
+  animation-play-state: running;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+/* 单词文字 */
+.card-word {
+  font-size: 2.8rem;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 8px;
+  letter-spacing: 2px;
+}
+
+.word-card.pink .card-word { color: var(--candy-pink); }
+.word-card.yellow .card-word { color: #E6A800; }
+.word-card.blue .card-word { color: var(--sky-blue); }
+.word-card.green .card-word { color: var(--mint-green); }
+.word-card.purple .card-word { color: var(--lavender); }
+.word-card.orange .card-word { color: var(--peach); }
+
+/* 音标 */
+.card-phonetic {
+  font-size: 1.1rem;
+  text-align: center;
+  color: #888;
+  margin-bottom: 12px;
+  font-family: Arial, sans-serif;
+}
+
+/* 中文释义 */
+.card-meaning {
+  font-size: 1.3rem;
+  text-align: center;
+  color: var(--text-dark);
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+/* 例句气泡 */
+.card-example {
+  background: linear-gradient(135deg, #F8F9FF, #FFF8F8);
+  border-radius: 20px;
+  padding: 15px 20px;
+  margin-top: 15px;
+  border-left: 5px solid;
+  position: relative;
+}
+
+.word-card.pink .card-example { border-left-color: var(--candy-pink); }
+.word-card.yellow .card-example { border-left-color: var(--sunny-yellow); }
+.word-card.blue .card-example { border-left-color: var(--sky-blue); }
+.word-card.green .card-example { border-left-color: var(--mint-green); }
+.word-card.purple .card-example { border-left-color: var(--lavender); }
+.word-card.orange .card-example { border-left-color: var(--peach); }
+
+.card-example::before {
+  content: '📝';
+  position: absolute;
+  top: -12px;
+  left: 10px;
+  font-size: 1.3rem;
+}
+
+.example-en {
+  font-size: 1.1rem;
+  color: var(--text-dark);
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.example-cn {
+  font-size: 0.95rem;
+  color: #666;
+}
+
+/* 发音按钮 */
+.speak-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 15px;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.word-card.pink .speak-btn { background: var(--candy-pink); color: white; }
+.word-card.yellow .speak-btn { background: var(--sunny-yellow); color: var(--text-dark); }
+.word-card.blue .speak-btn { background: var(--sky-blue); color: white; }
+.word-card.green .speak-btn { background: var(--mint-green); color: white; }
+.word-card.purple .speak-btn { background: var(--lavender); color: white; }
+.word-card.orange .speak-btn { background: var(--peach); color: white; }
+
+.speak-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+.speak-btn:active {
+  transform: scale(0.95);
+}
+
+/* 页脚 */
+.footer {
+  text-align: center;
+  padding: 50px 20px 30px;
+  color: var(--text-dark);
+  opacity: 0.7;
+  font-size: 1rem;
+}
+
+.footer .hearts {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+/* 打印样式 */
+@media print {
+  .clouds, .speak-btn { display: none; }
+  body { background: white; }
+  .word-card { break-inside: avoid; box-shadow: none; border: 2px solid #ddd; }
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .header h1 { font-size: 2rem; }
+  .words-grid { grid-template-columns: 1fr; }
+  .card-word { font-size: 2.2rem; }
+  .card-emoji { font-size: 3rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- 漂浮云朵 -->
+<div class="clouds">
+  <div class="cloud"></div>
+  <div class="cloud"></div>
+  <div class="cloud"></div>
+</div>
+
+<div class="container">
+  <!-- 头部 -->
+  <header class="header">
+    <h1>🌈 Sight Words 魔法单词屋 🏠</h1>
+    <p class="subtitle">专为小朋友设计的英语启蒙乐园</p>
+    <div class="emoji-row">🦋 🌸 🐰 ⭐ 🌻 🐻 🎈 🍎</div>
+  </header>
+
+  <!-- 提示框 -->
+  <div class="tip-bubble">
+    <h3>👋 小朋友，欢迎来到魔法单词屋！</h3>
+    <p>点击任意卡片，就能听到单词的发音哦！每个单词都有<strong>可爱的图片</strong>和<strong>简单的例句</strong>帮助你记忆。跟爸爸妈妈一起大声读出来吧！🎉</p>
+  </div>
+
+  <!-- 单词内容区 -->
+  <div id="content"></div>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="hearts">💖 💛 💚 💙 💜</div>
+    <p>每天学几个单词，英语越来越棒！加油宝贝！</p>
+  </footer>
+</div>
+
+<script>
+// 适合5岁小朋友的核心Sight Words（精选50个最常用词 + 图片 + 例句）
+const wordsData = [
+  {
+    title: "🌟 最常用的小词",
+    color: "pink",
+    words: [
+      {w:"I", p:"/aɪ/", m:"我", emoji:"🧒", ex:"I am happy!", exc:"我很开心！"},
+      {w:"you", p:"/juː/", m:"你", emoji:"👉", ex:"I love you!", exc:"我爱你！"},
+      {w:"we", p:"/wiː/", m:"我们", emoji:"👨‍👩‍👧", ex:"We are friends.", exc:"我们是朋友。"},
+      {w:"he", p:"/hiː/", m:"他", emoji:"👦", ex:"He is my brother.", exc:"他是我哥哥。"},
+      {w:"she", p:"/ʃiː/", m:"她", emoji:"👧", ex:"She is pretty.", exc:"她很漂亮。"},
+      {w:"it", p:"/ɪt/", m:"它", emoji:"🐱", ex:"It is a cat.", exc:"它是一只猫。"},
+      {w:"the", p:"/ðə/", m:"这个", emoji:"👆", ex:"The sun is big.", exc:"太阳很大。"},
+      {w:"a", p:"/ə/", m:"一个", emoji:"🍎", ex:"I have a apple.", exc:"我有一个苹果。"}
+    ]
+  },
+  {
+    title: "🎬 动作词",
+    color: "blue",
+    words: [
+      {w:"go", p:"/ɡəʊ/", m:"去", emoji:"🏃", ex:"Let's go home!", exc:"我们回家吧！"},
+      {w:"come", p:"/kʌm/", m:"来", emoji:"🙋", ex:"Come here, please!", exc:"请过来！"},
+      {w:"see", p:"/siː/", m:"看见", emoji:"👀", ex:"I see a bird.", exc:"我看见一只鸟。"},
+      {w:"look", p:"/lʊk/", m:"看", emoji:"🔍", ex:"Look at me!", exc:"看着我！"},
+      {w:"run", p:"/rʌn/", m:"跑", emoji:"🏃‍♂️", ex:"I can run fast!", exc:"我跑得很快！"},
+      {w:"jump", p:"/dʒʌmp/", m:"跳", emoji:"🦘", ex:"Jump up high!", exc:"跳得高高的！"},
+      {w:"play", p:"/pleɪ/", m:"玩", emoji:"🎮", ex:"Let's play together!", exc:"我们一起玩吧！"},
+      {w:"eat", p:"/iːt/", m:"吃", emoji:"🍽️", ex:"I eat breakfast.", exc:"我吃早餐。"}
+    ]
+  },
+  {
+    title: "🎨 颜色词",
+    color: "yellow",
+    words: [
+      {w:"red", p:"/red/", m:"红色", emoji:"🔴", ex:"The apple is red.", exc:"苹果是红色的。"},
+      {w:"blue", p:"/bluː/", m:"蓝色", emoji:"🔵", ex:"The sky is blue.", exc:"天空是蓝色的。"},
+      {w:"yellow", p:"/ˈjeləʊ/", m:"黄色", emoji:"🟡", ex:"The sun is yellow.", exc:"太阳是黄色的。"},
+      {w:"green", p:"/ɡriːn/", m:"绿色", emoji:"🟢", ex:"Grass is green.", exc:"草是绿色的。"},
+      {w:"black", p:"/blæk/", m:"黑色", emoji:"⚫", ex:"My hair is black.", exc:"我的头发是黑色的。"},
+      {w:"white", p:"/waɪt/", m:"白色", emoji:"⚪", ex:"Snow is white.", exc:"雪是白色的。"}
+    ]
+  },
+  {
+    title: "📏 大小词",
+    color: "green",
+    words: [
+      {w:"big", p:"/bɪɡ/", m:"大的", emoji:"🐘", ex:"Elephant is big.", exc:"大象很大。"},
+      {w:"little", p:"/ˈlɪtl/", m:"小的", emoji:"🐁", ex:"Mouse is little.", exc:"老鼠很小。"},
+      {w:"up", p:"/ʌp/", m:"向上", emoji:"⬆️", ex:"Look up at the sky!", exc:"抬头看天空！"},
+      {w:"down", p:"/daʊn/", m:"向下", emoji:"⬇️", ex:"Sit down, please.", exc:"请坐下。"},
+      {w:"in", p:"/ɪn/", m:"在里面", emoji:"📦", ex:"The toy is in the box.", exc:"玩具在盒子里。"},
+      {w:"out", p:"/aʊt/", m:"在外面", emoji:"🚪", ex:"Let's go out!", exc:"我们出去吧！"}
+    ]
+  },
+  {
+    title: "❤️ 感觉词",
+    color: "purple",
+    words: [
+      {w:"yes", p:"/jes/", m:"是的", emoji:"✅", ex:"Yes, I can!", exc:"是的，我能！"},
+      {w:"no", p:"/nəʊ/", m:"不", emoji:"❌", ex:"No, thank you.", exc:"不，谢谢。"},
+      {w:"good", p:"/ɡʊd/", m:"好的", emoji:"👍", ex:"Good job!", exc:"做得好！"},
+      {w:"like", p:"/laɪk/", m:"喜欢", emoji:"💕", ex:"I like ice cream.", exc:"我喜欢冰淇淋。"},
+      {w:"want", p:"/wɒnt/", m:"想要", emoji:"🙏", ex:"I want a hug.", exc:"我想要一个拥抱。"},
+      {w:"help", p:"/help/", m:"帮助", emoji:"🤝", ex:"Can you help me?", exc:"你能帮帮我吗？"}
+    ]
+  },
+  {
+    title: "🐾 动物和物品",
+    color: "orange",
+    words: [
+      {w:"cat", p:"/kæt/", m:"猫", emoji:"🐱", ex:"The cat says meow.", exc:"猫咪喵喵叫。"},
+      {w:"dog", p:"/dɒɡ/", m:"狗", emoji:"🐕", ex:"I love my dog.", exc:"我爱我的狗狗。"},
+      {w:"bird", p:"/bɜːd/", m:"鸟", emoji:"🐦", ex:"The bird can fly.", exc:"小鸟会飞。"},
+      {w:"fish", p:"/fɪʃ/", m:"鱼", emoji:"🐟", ex:"Fish live in water.", exc:"鱼住在水里。"},
+      {w:"ball", p:"/bɔːl/", m:"球", emoji:"⚽", ex:"Throw the ball!", exc:"扔球！"},
+      {w:"book", p:"/bʊk/", m:"书", emoji:"📚", ex:"I read a book.", exc:"我读一本书。"},
+      {w:"home", p:"/həʊm/", m:"家", emoji:"🏠", ex:"I love my home.", exc:"我爱我的家。"},
+      {w:"sun", p:"/sʌn/", m:"太阳", emoji:"☀️", ex:"The sun is warm.", exc:"太阳暖暖的。"}
+    ]
+  }
+];
+
+// 发音功能
+function speak(word) {
+  if ('speechSynthesis' in window) {
+    speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(word);
+    utterance.lang = 'en-US';
+    utterance.rate = 0.7; // 慢速，方便小朋友听清
+    utterance.pitch = 1.1; // 稍高音调，更亲切
+    speechSynthesis.speak(utterance);
+  }
+}
+
+// 渲染页面
+function render() {
+  let html = '';
+  wordsData.forEach((category, idx) => {
+    html += `
+      <div class="category-title ${category.color}">
+        <h2>${category.title}</h2>
+      </div>
+      <div class="words-grid">
+    `;
+    category.words.forEach((item, i) => {
+      html += `
+        <div class="word-card ${category.color}" onclick="speak('${item.w}')" style="animation-delay: ${i * 0.1}s">
+          <div class="card-emoji">${item.emoji}</div>
+          <div class="card-word">${item.w}</div>
+          <div class="card-phonetic">${item.p}</div>
+          <div class="card-meaning">${item.m}</div>
+          <div class="card-example">
+            <div class="example-en">${item.ex}</div>
+            <div class="example-cn">${item.exc}</div>
+          </div>
+          <button class="speak-btn" onclick="event.stopPropagation(); speak('${item.w}')">
+            🔊 点击听发音
+          </button>
+        </div>
+      `;
+    });
+    html += '</div>';
+  });
+  document.getElementById('content').innerHTML = html;
+}
+
+render();
+</script>
+</body>
+</html>
