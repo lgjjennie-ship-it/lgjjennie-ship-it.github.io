@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌈 完整版315词 Sight Words 魔法单词屋</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--pink:#FF6B9D;--yellow:#FFD93D;--blue:#6ECFF6;--green:#7ED99A;--purple:#B8A9E8;--orange:#FFB07C;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Baloo 2','Noto Sans SC',sans-serif;background:linear-gradient(180deg,#E8F4FF 0%,#FFF0F5 50%,#E8FFF0 100%);min-height:100vh;padding:20px;}
+.container{max-width:1400px;margin:0 auto;}
+h1{text-align:center;font-size:2.5rem;background:linear-gradient(135deg,var(--pink),var(--purple),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px;}
+.subtitle{text-align:center;color:#666;margin-bottom:30px;}
+.stats{text-align:center;background:#2c3e50;color:#fff;padding:15px;border-radius:10px;margin:20px auto;max-width:600px;}
+.tip{background:#fff;border-radius:20px;padding:20px;margin:20px auto;max-width:800px;border-left:5px solid var(--yellow);box-shadow:0 5px 20px rgba(0,0,0,0.1);}
+.category{margin:40px 0 20px;text-align:center;}
+.category h2{display:inline-block;padding:12px 30px;border-radius:30px;color:#fff;font-size:1.4rem;}
+.category.pp h2{background:linear-gradient(135deg,var(--pink),#FF8FB1);}
+.category.pr h2{background:linear-gradient(135deg,var(--blue),#8ED8F8);}
+.category.g1 h2{background:linear-gradient(135deg,var(--green),#A8E6B8);}
+.category.g2 h2{background:linear-gradient(135deg,var(--purple),#CDB8F0);}
+.category.g3 h2{background:linear-gradient(135deg,var(--orange),#FFCC99);}
+.category.nn h2{background:linear-gradient(135deg,var(--yellow),#FFE566);color:#333;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;padding:10px;}
+.card{background:#fff;border-radius:25px;padding:20px;cursor:pointer;transition:all 0.3s;box-shadow:0 5px 20px rgba(0,0,0,0.08);border-top:6px solid var(--pink);position:relative;}
+.card:hover{transform:translateY(-8px);box-shadow:0 15px 40px rgba(0,0,0,0.15);}
+.card.pp{border-top-color:var(--pink);}
+.card.pr{border-top-color:var(--blue);}
+.card.g1{border-top-color:var(--green);}
+.card.g2{border-top-color:var(--purple);}
+.card.g3{border-top-color:var(--orange);}
+.card.nn{border-top-color:var(--yellow);}
+.emoji{font-size:3rem;text-align:center;margin-bottom:10px;}
+.word{font-size:2.2rem;font-weight:800;text-align:center;color:var(--pink);margin-bottom:5px;}
+.card.pr .word{color:var(--blue);}
+.card.g1 .word{color:var(--green);}
+.card.g2 .word{color:var(--purple);}
+.card.g3 .word{color:var(--orange);}
+.card.nn .word{color:#E6A800;}
+.phonetic{text-align:center;color:#888;font-size:1rem;margin-bottom:5px;}
+.meaning{text-align:center;font-size:1.2rem;color:#333;font-weight:600;margin-bottom:12px;}
+.example{background:#f8f9ff;border-radius:15px;padding:12px;border-left:4px solid var(--pink);}
+.card.pr .example{border-left-color:var(--blue);}
+.card.g1 .example{border-left-color:var(--green);}
+.card.g2 .example{border-left-color:var(--purple);}
+.card.g3 .example{border-left-color:var(--orange);}
+.card.nn .example{border-left-color:var(--yellow);}
+.ex-en{font-size:1rem;color:#333;font-weight:600;}
+.ex-cn{font-size:0.9rem;color:#666;}
+.speak{display:block;width:100%;margin-top:12px;padding:10px;border:none;border-radius:20px;font-size:1rem;font-weight:600;cursor:pointer;color:#fff;background:var(--pink);}
+.card.pr .speak{background:var(--blue);}
+.card.g1 .speak{background:var(--green);}
+.card.g2 .speak{background:var(--purple);}
+.card.g3 .speak{background:var(--orange);}
+.card.nn .speak{background:var(--yellow);color:#333;}
+.speak:hover{opacity:0.9;transform:scale(1.02);}
+.footer{text-align:center;padding:40px;color:#666;}
+@media(max-width:768px){h1{font-size:1.8rem;}.grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🌈 完整版 Sight Words 魔法单词屋 🏠</h1>
+<p class="subtitle">专为5岁小朋友设计 · 315个必学高频词</p>
+<div class="stats">📊 总计 315 词 = 220 高频词 + 95 名词 | 点击卡片听发音！</div>
+<div class="tip">💡 <strong>小朋友，点击任何一张卡片，就能听到单词发音哦！</strong> 每个单词都有可爱的图片和简单的例句帮你记忆～</div>
+<div id="content"></div>
+<div class="footer">💖 每天学几个单词，英语越来越棒！加油宝贝！💖</div>
+</div>
+<script>
+function speak(w){if('speechSynthesis'in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(w);u.lang='en-US';u.rate=0.7;speechSynthesis.speak(u);}}
+const data={
+"Pre-Primer（学前预备 40词）":{c:"pp",words:[
+{w:"a",e:"🍎",p:"/ə/",m:"一个",ex:"I have a apple.",exc:"我有一个苹果。"},
+{w:"and",e:"🤝",p:"/ænd/",m:"和",ex:"Mom and Dad.",exc:"妈妈和爸爸。"},
+{w:"away",e:"👋",p:"/əˈweɪ/",m:"离开",ex:"Go away, bird!",exc:"走开，小鸟！"},
+{w:"big",e:"🐘",p:"/bɪɡ/",m:"大的",ex:"A big elephant.",exc:"一只大象。"},
+{w:"blue",e:"🔵",p:"/bluː/",m:"蓝色",ex:"The sky is blue.",exc:"天空是蓝色的。"},
+{w:"can",e:"💪",p:"/kæn/",m:"能",ex:"I can do it!",exc:"我能做到！"},
+{w:"come",e:"🙋",p:"/kʌm/",m:"来",ex:"Come here!",exc:"过来！"},
+{w:"down",e:"⬇️",p:"/daʊn/",m:"向下",ex:"Sit down please.",exc:"请坐下。"},
+{w:"find",e:"🔍",p:"/faɪnd/",m:"找到",ex:"I find a star!",exc:"我找到一颗星星！"},
+{w:"for",e:"🎁",p:"/fɔː/",m:"为了",ex:"A gift for you.",exc:"给你的礼物。"},
+{w:"funny",e:"🤡",p:"/ˈfʌni/",m:"有趣的",ex:"You are funny!",exc:"你真有趣！"},
+{w:"go",e:"🏃",p:"/ɡəʊ/",m:"去",ex:"Let's go!",exc:"我们走吧！"},
+{w:"help",e:"🆘",p:"/help/",m:"帮助",ex:"Can you help me?",exc:"你能帮我吗？"},
+{w:"here",e:"📍",p:"/hɪə/",m:"这里",ex:"I am here!",exc:"我在这里！"},
+{w:"I",e:"🧒",p:"/aɪ/",m:"我",ex:"I love you.",exc:"我爱你。"},
+{w:"in",e:"📦",p:"/ɪn/",m:"在里面",ex:"The cat is in the box.",exc:"猫在盒子里。"},
+{w:"is",e:"✅",p:"/ɪz/",m:"是",ex:"This is a ball.",exc:"这是一个球。"},
+{w:"it",e:"👉",p:"/ɪt/",m:"它",ex:"It is red.",exc:"它是红色的。"},
+{w:"jump",e:"🦘",p:"/dʒʌmp/",m:"跳",ex:"Jump high!",exc:"跳高高！"},
+{w:"little",e:"🐁",p:"/ˈlɪtl/",m:"小的",ex:"A little mouse.",exc:"一只小老鼠。"},
+{w:"look",e:"👀",p:"/lʊk/",m:"看",ex:"Look at me!",exc:"看着我！"},
+{w:"make",e:"🎨",p:"/meɪk/",m:"制作",ex:"I make a cake.",exc:"我做蛋糕。"},
+{w:"me",e:"😊",p:"/miː/",m:"我",ex:"Give me a hug.",exc:"给我一个拥抱。"},
+{w:"my",e:"💖",p:"/maɪ/",m:"我的",ex:"My teddy bear.",exc:"我的泰迪熊。"},
+{w:"not",e:"🚫",p:"/nɒt/",m:"不",ex:"I am not sad.",exc:"我不难过。"},
+{w:"one",e:"1️⃣",p:"/wʌn/",m:"一",ex:"I have one apple.",exc:"我有一个苹果。"},
+{w:"play",e:"🎮",p:"/pleɪ/",m:"玩",ex:"Let's play!",exc:"我们玩吧！"},
+{w:"red",e:"🔴",p:"/red/",m:"红色",ex:"A red flower.",exc:"一朵红花。"},
+{w:"run",e:"🏃‍♂️",p:"/rʌn/",m:"跑",ex:"I can run fast!",exc:"我跑得快！"},
+{w:"said",e:"💬",p:"/sed/",m:"说",ex:"Mom said yes.",exc:"妈妈说好。"},
+{w:"see",e:"👁️",p:"/siː/",m:"看见",ex:"I see a bird.",exc:"我看见一只鸟。"},
+{w:"the",e:"👆",p:"/ðə/",m:"这个",ex:"The sun is warm.",exc:"太阳暖暖的。"},
+{w:"three",e:"3️⃣",p:"/θriː/",m:"三",ex:"Three little pigs.",exc:"三只小猪。"},
+{w:"to",e:"➡️",p:"/tuː/",m:"到",ex:"Go to bed.",exc:"去睡觉。"},
+{w:"two",e:"2️⃣",p:"/tuː/",m:"二",ex:"Two eyes.",exc:"两只眼睛。"},
+{w:"up",e:"⬆️",p:"/ʌp/",m:"向上",ex:"Look up!",exc:"往上看！"},
+{w:"we",e:"👨‍👩‍👧",p:"/wiː/",m:"我们",ex:"We are happy.",exc:"我们很开心。"},
+{w:"where",e:"❓",p:"/weə/",m:"哪里",ex:"Where is it?",exc:"它在哪里？"},
+{w:"yellow",e:"🟡",p:"/ˈjeləʊ/",m:"黄色",ex:"Yellow banana.",exc:"黄色的香蕉。"},
+{w:"you",e:"👉",p:"/juː/",m:"你",ex:"I love you!",exc:"我爱你！"}
+]},
+"Primer（初级 52词）":{c:"pr",words:[
+{w:"all",e:"🌍",p:"/ɔːl/",m:"全部",ex:"All my toys.",exc:"我所有的玩具。"},
+{w:"am",e:"🙋‍♀️",p:"/æm/",m:"是",ex:"I am happy.",exc:"我很开心。"},
+{w:"are",e:"👫",p:"/ɑː/",m:"是",ex:"You are nice.",exc:"你真好。"},
+{w:"at",e:"📍",p:"/æt/",m:"在",ex:"Look at the cat.",exc:"看那只猫。"},
+{w:"ate",e:"🍽️",p:"/et/",m:"吃了",ex:"I ate an apple.",exc:"我吃了苹果。"},
+{w:"be",e:"🌟",p:"/biː/",m:"是",ex:"Be good!",exc:"要乖哦！"},
+{w:"black",e:"⚫",p:"/blæk/",m:"黑色",ex:"A black cat.",exc:"一只黑猫。"},
+{w:"brown",e:"🟤",p:"/braʊn/",m:"棕色",ex:"Brown bear.",exc:"棕色的熊。"},
+{w:"but",e:"🤔",p:"/bʌt/",m:"但是",ex:"Small but strong.",exc:"小但很强壮。"},
+{w:"came",e:"🚶",p:"/keɪm/",m:"来了",ex:"He came home.",exc:"他回家了。"},
+{w:"did",e:"✓",p:"/dɪd/",m:"做了",ex:"I did it!",exc:"我做到了！"},
+{w:"do",e:"💪",p:"/duː/",m:"做",ex:"I can do it.",exc:"我能做到。"},
+{w:"eat",e:"🍔",p:"/iːt/",m:"吃",ex:"Time to eat!",exc:"吃饭时间！"},
+{w:"four",e:"4️⃣",p:"/fɔː/",m:"四",ex:"Four legs.",exc:"四条腿。"},
+{w:"get",e:"🎯",p:"/ɡet/",m:"得到",ex:"I get a star!",exc:"我得到一颗星！"},
+{w:"good",e:"👍",p:"/ɡʊd/",m:"好",ex:"Good job!",exc:"做得好！"},
+{w:"have",e:"🤲",p:"/hæv/",m:"有",ex:"I have a dog.",exc:"我有一只狗。"},
+{w:"he",e:"👦",p:"/hiː/",m:"他",ex:"He is my friend.",exc:"他是我朋友。"},
+{w:"into",e:"🚪",p:"/ˈɪntuː/",m:"进入",ex:"Go into the house.",exc:"进入房子。"},
+{w:"like",e:"❤️",p:"/laɪk/",m:"喜欢",ex:"I like candy.",exc:"我喜欢糖果。"},
+{w:"must",e:"❗",p:"/mʌst/",m:"必须",ex:"I must sleep.",exc:"我必须睡觉。"},
+{w:"new",e:"✨",p:"/njuː/",m:"新的",ex:"A new toy!",exc:"一个新玩具！"},
+{w:"no",e:"🙅",p:"/nəʊ/",m:"不",ex:"No, thank you.",exc:"不，谢谢。"},
+{w:"now",e:"⏰",p:"/naʊ/",m:"现在",ex:"Do it now!",exc:"现在做！"},
+{w:"on",e:"📱",p:"/ɒn/",m:"在上面",ex:"The book is on the desk.",exc:"书在桌上。"},
+{w:"our",e:"👨‍👩‍👧‍👦",p:"/ˈaʊə/",m:"我们的",ex:"Our family.",exc:"我们的家庭。"},
+{w:"out",e:"🚪",p:"/aʊt/",m:"出去",ex:"Go out to play!",exc:"出去玩！"},
+{w:"please",e:"🙏",p:"/pliːz/",m:"请",ex:"Please help me.",exc:"请帮帮我。"},
+{w:"pretty",e:"🌸",p:"/ˈprɪti/",m:"漂亮",ex:"A pretty flower.",exc:"一朵漂亮的花。"},
+{w:"ran",e:"🏃‍♀️",p:"/ræn/",m:"跑了",ex:"She ran fast.",exc:"她跑得快。"},
+{w:"ride",e:"🚲",p:"/raɪd/",m:"骑",ex:"I ride a bike.",exc:"我骑自行车。"},
+{w:"saw",e:"👁️",p:"/sɔː/",m:"看见了",ex:"I saw a rainbow!",exc:"我看见彩虹了！"},
+{w:"say",e:"🗣️",p:"/seɪ/",m:"说",ex:"What did you say?",exc:"你说什么？"},
+{w:"she",e:"👧",p:"/ʃiː/",m:"她",ex:"She is kind.",exc:"她很善良。"},
+{w:"so",e:"➡️",p:"/səʊ/",m:"所以",ex:"I am so happy!",exc:"我好开心！"},
+{w:"soon",e:"🔜",p:"/suːn/",m:"很快",ex:"See you soon!",exc:"很快见！"},
+{w:"that",e:"👉",p:"/ðæt/",m:"那个",ex:"I want that.",exc:"我想要那个。"},
+{w:"there",e:"📍",p:"/ðeə/",m:"那里",ex:"Look over there!",exc:"看那边！"},
+{w:"they",e:"👥",p:"/ðeɪ/",m:"他们",ex:"They are friends.",exc:"他们是朋友。"},
+{w:"this",e:"👈",p:"/ðɪs/",m:"这个",ex:"I like this.",exc:"我喜欢这个。"},
+{w:"too",e:"➕",p:"/tuː/",m:"也",ex:"Me too!",exc:"我也是！"},
+{w:"under",e:"⬇️",p:"/ˈʌndə/",m:"在下面",ex:"Under the bed.",exc:"在床下面。"},
+{w:"want",e:"🙏",p:"/wɒnt/",m:"想要",ex:"I want a cookie.",exc:"我想要饼干。"},
+{w:"was",e:"📅",p:"/wɒz/",m:"是(过去)",ex:"It was fun!",exc:"很好玩！"},
+{w:"well",e:"👌",p:"/wel/",m:"好",ex:"I feel well.",exc:"我感觉很好。"},
+{w:"went",e:"🚶‍♂️",p:"/went/",m:"去了",ex:"We went to the park.",exc:"我们去了公园。"},
+{w:"what",e:"❓",p:"/wɒt/",m:"什么",ex:"What is this?",exc:"这是什么？"},
+{w:"white",e:"⚪",p:"/waɪt/",m:"白色",ex:"White snow.",exc:"白色的雪。"},
+{w:"who",e:"🤷",p:"/huː/",m:"谁",ex:"Who is there?",exc:"谁在那里？"},
+{w:"will",e:"🔮",p:"/wɪl/",m:"将",ex:"I will try!",exc:"我会试试！"},
+{w:"with",e:"🤝",p:"/wɪð/",m:"和...一起",ex:"Play with me!",exc:"和我玩！"},
+{w:"yes",e:"✅",p:"/jes/",m:"是的",ex:"Yes, I can!",exc:"是的，我能！"}
+]},
+"First Grade（一年级 41词）":{c:"g1",words:[
+{w:"after",e:"⏭️",p:"/ˈɑːftə/",m:"之后",ex:"After lunch.",exc:"午饭之后。"},
+{w:"again",e:"🔄",p:"/əˈɡen/",m:"再次",ex:"Do it again!",exc:"再做一次！"},
+{w:"an",e:"🍊",p:"/æn/",m:"一个",ex:"I have an orange.",exc:"我有一个橙子。"},
+{w:"any",e:"❓",p:"/ˈeni/",m:"任何",ex:"Any questions?",exc:"有问题吗？"},
+{w:"as",e:"🟰",p:"/æz/",m:"像",ex:"Sweet as candy.",exc:"像糖果一样甜。"},
+{w:"ask",e:"🙋",p:"/ɑːsk/",m:"问",ex:"May I ask?",exc:"我可以问吗？"},
+{w:"by",e:"🚶",p:"/baɪ/",m:"通过",ex:"Walk by the river.",exc:"沿河走。"},
+{w:"could",e:"💭",p:"/kʊd/",m:"能够",ex:"I could do it!",exc:"我能做到！"},
+{w:"every",e:"📅",p:"/ˈevri/",m:"每个",ex:"Every day.",exc:"每一天。"},
+{w:"fly",e:"🦋",p:"/flaɪ/",m:"飞",ex:"Birds can fly.",exc:"鸟会飞。"},
+{w:"from",e:"📤",p:"/frɒm/",m:"从",ex:"A gift from mom.",exc:"妈妈的礼物。"},
+{w:"give",e:"🎁",p:"/ɡɪv/",m:"给",ex:"Give me five!",exc:"击个掌！"},
+{w:"going",e:"🚗",p:"/ˈɡəʊɪŋ/",m:"去",ex:"I am going home.",exc:"我要回家了。"},
+{w:"had",e:"📦",p:"/hæd/",m:"有(过去)",ex:"I had fun!",exc:"我玩得开心！"},
+{w:"has",e:"✋",p:"/hæz/",m:"有",ex:"She has a doll.",exc:"她有个娃娃。"},
+{w:"her",e:"👩",p:"/hɜː/",m:"她的",ex:"Her dress is pink.",exc:"她的裙子是粉色的。"},
+{w:"him",e:"👨",p:"/hɪm/",m:"他",ex:"Give him a hug.",exc:"给他一个拥抱。"},
+{w:"his",e:"👦",p:"/hɪz/",m:"他的",ex:"His ball is blue.",exc:"他的球是蓝色的。"},
+{w:"how",e:"🤔",p:"/haʊ/",m:"如何",ex:"How are you?",exc:"你好吗？"},
+{w:"just",e:"👌",p:"/dʒʌst/",m:"只是",ex:"Just one more!",exc:"再来一个！"},
+{w:"know",e:"🧠",p:"/nəʊ/",m:"知道",ex:"I know the answer!",exc:"我知道答案！"},
+{w:"let",e:"👍",p:"/let/",m:"让",ex:"Let me try!",exc:"让我试试！"},
+{w:"live",e:"🏠",p:"/lɪv/",m:"住",ex:"I live here.",exc:"我住在这里。"},
+{w:"may",e:"🙏",p:"/meɪ/",m:"可以",ex:"May I go?",exc:"我可以走吗？"},
+{w:"of",e:"📎",p:"/ɒv/",m:"的",ex:"A cup of milk.",exc:"一杯牛奶。"},
+{w:"old",e:"👴",p:"/əʊld/",m:"老的",ex:"An old tree.",exc:"一棵老树。"},
+{w:"once",e:"1️⃣",p:"/wʌns/",m:"一次",ex:"Once upon a time.",exc:"从前。"},
+{w:"open",e:"📂",p:"/ˈəʊpən/",m:"打开",ex:"Open the door.",exc:"开门。"},
+{w:"over",e:"🌈",p:"/ˈəʊvə/",m:"越过",ex:"Jump over it!",exc:"跳过去！"},
+{w:"put",e:"📥",p:"/pʊt/",m:"放",ex:"Put it here.",exc:"放在这里。"},
+{w:"round",e:"⭕",p:"/raʊnd/",m:"圆的",ex:"A round ball.",exc:"一个圆球。"},
+{w:"some",e:"🍪",p:"/sʌm/",m:"一些",ex:"Some cookies.",exc:"一些饼干。"},
+{w:"stop",e:"🛑",p:"/stɒp/",m:"停",ex:"Stop, please!",exc:"请停下！"},
+{w:"take",e:"🤲",p:"/teɪk/",m:"拿",ex:"Take my hand.",exc:"牵我的手。"},
+{w:"thank",e:"🙏",p:"/θæŋk/",m:"谢谢",ex:"Thank you!",exc:"谢谢你！"},
+{w:"them",e:"👥",p:"/ðem/",m:"他们",ex:"I like them.",exc:"我喜欢他们。"},
+{w:"then",e:"➡️",p:"/ðen/",m:"然后",ex:"Eat, then play.",exc:"吃完再玩。"},
+{w:"think",e:"💭",p:"/θɪŋk/",m:"想",ex:"I think so.",exc:"我也这么想。"},
+{w:"walk",e:"🚶",p:"/wɔːk/",m:"走",ex:"Let's walk!",exc:"我们走路吧！"},
+{w:"were",e:"👨‍👩‍👧‍👦",p:"/wɜː/",m:"是(过去)",ex:"They were happy.",exc:"他们很开心。"},
+{w:"when",e:"⏰",p:"/wen/",m:"当",ex:"When is lunch?",exc:"什么时候吃午饭？"}
+]},
+"Second Grade（二年级 46词）":{c:"g2",words:[
+{w:"always",e:"♾️",p:"/ˈɔːlweɪz/",m:"总是",ex:"Always be kind.",exc:"永远善良。"},
+{w:"around",e:"🔄",p:"/əˈraʊnd/",m:"周围",ex:"Look around!",exc:"看看周围！"},
+{w:"because",e:"💡",p:"/bɪˈkɒz/",m:"因为",ex:"Because I love you.",exc:"因为我爱你。"},
+{w:"been",e:"✅",p:"/biːn/",m:"已经",ex:"I have been good.",exc:"我一直很乖。"},
+{w:"before",e:"⏪",p:"/bɪˈfɔː/",m:"之前",ex:"Wash before eating.",exc:"吃前要洗手。"},
+{w:"best",e:"🏆",p:"/best/",m:"最好的",ex:"You are the best!",exc:"你是最棒的！"},
+{w:"both",e:"✌️",p:"/bəʊθ/",m:"两个都",ex:"I love both.",exc:"两个都喜欢。"},
+{w:"buy",e:"🛒",p:"/baɪ/",m:"买",ex:"Let's buy ice cream!",exc:"我们买冰淇淋！"},
+{w:"call",e:"📞",p:"/kɔːl/",m:"叫",ex:"Call my name.",exc:"叫我的名字。"},
+{w:"cold",e:"🥶",p:"/kəʊld/",m:"冷的",ex:"It is cold today.",exc:"今天很冷。"},
+{w:"does",e:"❓",p:"/dʌz/",m:"做",ex:"What does it mean?",exc:"这是什么意思？"},
+{w:"don't",e:"🚫",p:"/dəʊnt/",m:"不要",ex:"Don't cry!",exc:"不要哭！"},
+{w:"fast",e:"⚡",p:"/fɑːst/",m:"快",ex:"Run fast!",exc:"跑快点！"},
+{w:"first",e:"🥇",p:"/fɜːst/",m:"第一",ex:"I am first!",exc:"我是第一名！"},
+{w:"five",e:"5️⃣",p:"/faɪv/",m:"五",ex:"Five fingers.",exc:"五个手指。"},
+{w:"found",e:"🔍",p:"/faʊnd/",m:"找到了",ex:"I found it!",exc:"我找到了！"},
+{w:"gave",e:"🎁",p:"/ɡeɪv/",m:"给了",ex:"She gave me a hug.",exc:"她抱了我。"},
+{w:"goes",e:"🚶",p:"/ɡəʊz/",m:"去",ex:"He goes to school.",exc:"他去上学。"},
+{w:"green",e:"🟢",p:"/ɡriːn/",m:"绿色",ex:"Green grass.",exc:"绿草。"},
+{w:"its",e:"👆",p:"/ɪts/",m:"它的",ex:"The dog wags its tail.",exc:"狗摇尾巴。"},
+{w:"made",e:"🎨",p:"/meɪd/",m:"做了",ex:"I made a card.",exc:"我做了张卡片。"},
+{w:"many",e:"🔢",p:"/ˈmeni/",m:"许多",ex:"So many stars!",exc:"好多星星！"},
+{w:"off",e:"📴",p:"/ɒf/",m:"关",ex:"Turn off the light.",exc:"关灯。"},
+{w:"or",e:"🤷",p:"/ɔː/",m:"或者",ex:"Yes or no?",exc:"是还是不是？"},
+{w:"pull",e:"🧲",p:"/pʊl/",m:"拉",ex:"Pull the door.",exc:"拉门。"},
+{w:"read",e:"📖",p:"/riːd/",m:"读",ex:"I love to read.",exc:"我喜欢阅读。"},
+{w:"right",e:"✅",p:"/raɪt/",m:"正确",ex:"That's right!",exc:"对了！"},
+{w:"sing",e:"🎤",p:"/sɪŋ/",m:"唱",ex:"Let's sing!",exc:"我们唱歌吧！"},
+{w:"sit",e:"🪑",p:"/sɪt/",m:"坐",ex:"Sit down please.",exc:"请坐下。"},
+{w:"sleep",e:"😴",p:"/sliːp/",m:"睡觉",ex:"Time to sleep.",exc:"睡觉时间到。"},
+{w:"tell",e:"🗣️",p:"/tel/",m:"告诉",ex:"Tell me a story.",exc:"给我讲故事。"},
+{w:"their",e:"👥",p:"/ðeə/",m:"他们的",ex:"Their house is big.",exc:"他们的房子很大。"},
+{w:"these",e:"👇",p:"/ðiːz/",m:"这些",ex:"I like these.",exc:"我喜欢这些。"},
+{w:"those",e:"👉",p:"/ðəʊz/",m:"那些",ex:"Look at those!",exc:"看那些！"},
+{w:"upon",e:"⬆️",p:"/əˈpɒn/",m:"在...上",ex:"Once upon a time.",exc:"从前。"},
+{w:"us",e:"👨‍👩‍👧",p:"/ʌs/",m:"我们",ex:"Help us please!",exc:"请帮帮我们！"},
+{w:"use",e:"🔧",p:"/juːz/",m:"使用",ex:"Use your hands.",exc:"用你的手。"},
+{w:"very",e:"💯",p:"/ˈveri/",m:"非常",ex:"Very good!",exc:"非常好！"},
+{w:"wash",e:"🧼",p:"/wɒʃ/",m:"洗",ex:"Wash your hands.",exc:"洗手。"},
+{w:"which",e:"❓",p:"/wɪtʃ/",m:"哪个",ex:"Which one?",exc:"哪一个？"},
+{w:"why",e:"🤔",p:"/waɪ/",m:"为什么",ex:"Why not?",exc:"为什么不呢？"},
+{w:"wish",e:"🌠",p:"/wɪʃ/",m:"希望",ex:"I wish upon a star.",exc:"我对星星许愿。"},
+{w:"work",e:"💼",p:"/wɜːk/",m:"工作",ex:"Good work!",exc:"做得好！"},
+{w:"would",e:"💭",p:"/wʊd/",m:"会",ex:"I would like a cookie.",exc:"我想要饼干。"},
+{w:"write",e:"✍️",p:"/raɪt/",m:"写",ex:"Write your name.",exc:"写你的名字。"},
+{w:"your",e:"👉",p:"/jɔː/",m:"你的",ex:"Your turn!",exc:"轮到你了！"}
+]},
+"Third Grade（三年级 41词）":{c:"g3",words:[
+{w:"about",e:"💬",p:"/əˈbaʊt/",m:"关于",ex:"Tell me about it.",exc:"告诉我。"},
+{w:"better",e:"📈",p:"/ˈbetə/",m:"更好",ex:"I feel better!",exc:"我感觉好多了！"},
+{w:"bring",e:"🎒",p:"/brɪŋ/",m:"带来",ex:"Bring your book.",exc:"带上你的书。"},
+{w:"carry",e:"🧳",p:"/ˈkæri/",m:"搬",ex:"I can carry it.",exc:"我能搬动它。"},
+{w:"clean",e:"✨",p:"/kliːn/",m:"干净",ex:"Clean your room.",exc:"打扫房间。"},
+{w:"cut",e:"✂️",p:"/kʌt/",m:"剪",ex:"Cut the paper.",exc:"剪纸。"},
+{w:"done",e:"✅",p:"/dʌn/",m:"完成",ex:"I am done!",exc:"我做完了！"},
+{w:"draw",e:"🖍️",p:"/drɔː/",m:"画",ex:"I can draw a cat.",exc:"我会画猫。"},
+{w:"drink",e:"🥤",p:"/drɪŋk/",m:"喝",ex:"Drink some water.",exc:"喝点水。"},
+{w:"eight",e:"8️⃣",p:"/eɪt/",m:"八",ex:"Eight legs.",exc:"八条腿。"},
+{w:"fall",e:"🍂",p:"/fɔːl/",m:"落下",ex:"Leaves fall down.",exc:"树叶落下。"},
+{w:"far",e:"🏔️",p:"/fɑː/",m:"远",ex:"It is so far!",exc:"好远啊！"},
+{w:"full",e:"🈵",p:"/fʊl/",m:"满的",ex:"My tummy is full.",exc:"我肚子饱了。"},
+{w:"got",e:"🎯",p:"/ɡɒt/",m:"得到了",ex:"I got a star!",exc:"我得到一颗星！"},
+{w:"grow",e:"🌱",p:"/ɡrəʊ/",m:"生长",ex:"Plants grow tall.",exc:"植物长高。"},
+{w:"hold",e:"🤝",p:"/həʊld/",m:"握住",ex:"Hold my hand.",exc:"握住我的手。"},
+{w:"hot",e:"🔥",p:"/hɒt/",m:"热的",ex:"It is hot today.",exc:"今天很热。"},
+{w:"hurt",e:"🩹",p:"/hɜːt/",m:"疼",ex:"Does it hurt?",exc:"疼吗？"},
+{w:"if",e:"❓",p:"/ɪf/",m:"如果",ex:"If you are happy.",exc:"如果你开心。"},
+{w:"keep",e:"💎",p:"/kiːp/",m:"保持",ex:"Keep smiling!",exc:"保持微笑！"},
+{w:"kind",e:"💖",p:"/kaɪnd/",m:"善良",ex:"Be kind to others.",exc:"对别人好。"},
+{w:"laugh",e:"😂",p:"/lɑːf/",m:"笑",ex:"I love to laugh!",exc:"我爱笑！"},
+{w:"light",e:"💡",p:"/laɪt/",m:"光",ex:"Turn on the light.",exc:"开灯。"},
+{w:"long",e:"📏",p:"/lɒŋ/",m:"长的",ex:"A long snake.",exc:"一条长蛇。"},
+{w:"much",e:"🔢",p:"/mʌtʃ/",m:"很多",ex:"Thank you so much!",exc:"非常感谢！"},
+{w:"myself",e:"🙋",p:"/maɪˈself/",m:"我自己",ex:"I did it myself!",exc:"我自己做的！"},
+{w:"never",e:"🚫",p:"/ˈnevə/",m:"从不",ex:"Never give up!",exc:"永不放弃！"},
+{w:"only",e:"1️⃣",p:"/ˈəʊnli/",m:"只有",ex:"Only one left.",exc:"只剩一个了。"},
+{w:"own",e:"🏠",p:"/əʊn/",m:"自己的",ex:"My own room.",exc:"我自己的房间。"},
+{w:"pick",e:"🤏",p:"/pɪk/",m:"挑选",ex:"Pick a color.",exc:"选一个颜色。"},
+{w:"seven",e:"7️⃣",p:"/ˈsevn/",m:"七",ex:"Seven days.",exc:"七天。"},
+{w:"shall",e:"🤝",p:"/ʃæl/",m:"将",ex:"Shall we go?",exc:"我们走吧？"},
+{w:"show",e:"🎬",p:"/ʃəʊ/",m:"展示",ex:"Show me!",exc:"给我看看！"},
+{w:"six",e:"6️⃣",p:"/sɪks/",m:"六",ex:"Six apples.",exc:"六个苹果。"},
+{w:"small",e:"🐜",p:"/smɔːl/",m:"小的",ex:"A small ant.",exc:"一只小蚂蚁。"},
+{w:"start",e:"🚀",p:"/stɑːt/",m:"开始",ex:"Let's start!",exc:"开始吧！"},
+{w:"ten",e:"🔟",p:"/ten/",m:"十",ex:"Count to ten.",exc:"数到十。"},
+{w:"today",e:"📅",p:"/təˈdeɪ/",m:"今天",ex:"Today is fun!",exc:"今天很有趣！"},
+{w:"together",e:"👫",p:"/təˈɡeðə/",m:"一起",ex:"Let's play together!",exc:"一起玩吧！"},
+{w:"try",e:"💪",p:"/traɪ/",m:"尝试",ex:"Try again!",exc:"再试一次！"},
+{w:"warm",e:"☀️",p:"/wɔːm/",m:"温暖",ex:"A warm hug.",exc:"一个温暖的拥抱。"}
+]},
+"Nouns（名词 95词）":{c:"nn",words:[
+{w:"apple",e:"🍎",p:"/ˈæpl/",m:"苹果",ex:"I eat an apple.",exc:"我吃苹果。"},
+{w:"baby",e:"👶",p:"/ˈbeɪbi/",m:"宝宝",ex:"A cute baby.",exc:"一个可爱的宝宝。"},
+{w:"back",e:"🔙",p:"/bæk/",m:"背部",ex:"My back hurts.",exc:"我背疼。"},
+{w:"ball",e:"⚽",p:"/bɔːl/",m:"球",ex:"Throw the ball!",exc:"扔球！"},
+{w:"bear",e:"🧸",p:"/beə/",m:"熊",ex:"A teddy bear.",exc:"一只泰迪熊。"},
+{w:"bed",e:"🛏️",p:"/bed/",m:"床",ex:"Go to bed.",exc:"上床睡觉。"},
+{w:"bell",e:"🔔",p:"/bel/",m:"铃铛",ex:"Ring the bell.",exc:"摇铃铛。"},
+{w:"bird",e:"🐦",p:"/bɜːd/",m:"鸟",ex:"A pretty bird.",exc:"一只漂亮的鸟。"},
+{w:"birthday",e:"🎂",p:"/ˈbɜːθdeɪ/",m:"生日",ex:"Happy birthday!",exc:"生日快乐！"},
+{w:"boat",e:"⛵",p:"/bəʊt/",m:"船",ex:"A toy boat.",exc:"一只玩具船。"},
+{w:"box",e:"📦",p:"/bɒks/",m:"盒子",ex:"Open the box.",exc:"打开盒子。"},
+{w:"boy",e:"👦",p:"/bɔɪ/",m:"男孩",ex:"A good boy.",exc:"一个好男孩。"},
+{w:"bread",e:"🍞",p:"/bred/",m:"面包",ex:"I like bread.",exc:"我喜欢面包。"},
+{w:"brother",e:"👦",p:"/ˈbrʌðə/",m:"兄弟",ex:"My little brother.",exc:"我的小弟弟。"},
+{w:"cake",e:"🎂",p:"/keɪk/",m:"蛋糕",ex:"Yummy cake!",exc:"好吃的蛋糕！"},
+{w:"car",e:"🚗",p:"/kɑː/",m:"汽车",ex:"A red car.",exc:"一辆红色汽车。"},
+{w:"cat",e:"🐱",p:"/kæt/",m:"猫",ex:"My cat is fluffy.",exc:"我的猫毛茸茸的。"},
+{w:"chair",e:"🪑",p:"/tʃeə/",m:"椅子",ex:"Sit on the chair.",exc:"坐在椅子上。"},
+{w:"chicken",e:"🐔",p:"/ˈtʃɪkɪn/",m:"鸡",ex:"A baby chicken.",exc:"一只小鸡。"},
+{w:"children",e:"👧👦",p:"/ˈtʃɪldrən/",m:"孩子们",ex:"Happy children.",exc:"快乐的孩子们。"},
+{w:"Christmas",e:"🎄",p:"/ˈkrɪsməs/",m:"圣诞节",ex:"Merry Christmas!",exc:"圣诞快乐！"},
+{w:"coat",e:"🧥",p:"/kəʊt/",m:"外套",ex:"Put on your coat.",exc:"穿上外套。"},
+{w:"corn",e:"🌽",p:"/kɔːn/",m:"玉米",ex:"Yummy corn!",exc:"好吃的玉米！"},
+{w:"cow",e:"🐄",p:"/kaʊ/",m:"牛",ex:"The cow says moo.",exc:"牛说哞。"},
+{w:"day",e:"☀️",p:"/deɪ/",m:"天",ex:"A sunny day.",exc:"晴朗的一天。"},
+{w:"dog",e:"🐕",p:"/dɒɡ/",m:"狗",ex:"I love my dog.",exc:"我爱我的狗。"},
+{w:"doll",e:"🧸",p:"/dɒl/",m:"娃娃",ex:"A pretty doll.",exc:"一个漂亮的娃娃。"},
+{w:"door",e:"🚪",p:"/dɔː/",m:"门",ex:"Open the door.",exc:"开门。"},
+{w:"duck",e:"🦆",p:"/dʌk/",m:"鸭子",ex:"A yellow duck.",exc:"一只黄鸭子。"},
+{w:"egg",e:"🥚",p:"/eɡ/",m:"蛋",ex:"I eat an egg.",exc:"我吃鸡蛋。"},
+{w:"eye",e:"👁️",p:"/aɪ/",m:"眼睛",ex:"Close your eyes.",exc:"闭上眼睛。"},
+{w:"farm",e:"🚜",p:"/fɑːm/",m:"农场",ex:"A big farm.",exc:"一个大农场。"},
+{w:"farmer",e:"👨‍🌾",p:"/ˈfɑːmə/",m:"农民",ex:"The farmer works.",exc:"农民工作。"},
+{w:"father",e:"👨",p:"/ˈfɑːðə/",m:"爸爸",ex:"I love my father.",exc:"我爱爸爸。"},
+{w:"feet",e:"🦶",p:"/fiːt/",m:"脚",ex:"Wash your feet.",exc:"洗脚。"},
+{w:"fire",e:"🔥",p:"/faɪə/",m:"火",ex:"Fire is hot.",exc:"火是热的。"},
+{w:"fish",e:"🐟",p:"/fɪʃ/",m:"鱼",ex:"A goldfish.",exc:"一条金鱼。"},
+{w:"floor",e:"🏠",p:"/flɔː/",m:"地板",ex:"Sit on the floor.",exc:"坐在地板上。"},
+{w:"flower",e:"🌸",p:"/flaʊə/",m:"花",ex:"A pretty flower.",exc:"一朵漂亮的花。"},
+{w:"game",e:"🎮",p:"/ɡeɪm/",m:"游戏",ex:"Play a game.",exc:"玩游戏。"},
+{w:"garden",e:"🌷",p:"/ˈɡɑːdn/",m:"花园",ex:"A beautiful garden.",exc:"美丽的花园。"},
+{w:"girl",e:"👧",p:"/ɡɜːl/",m:"女孩",ex:"A nice girl.",exc:"一个好女孩。"},
+{w:"goodbye",e:"👋",p:"/ɡʊdˈbaɪ/",m:"再见",ex:"Say goodbye!",exc:"说再见！"},
+{w:"grass",e:"🌿",p:"/ɡrɑːs/",m:"草",ex:"Green grass.",exc:"绿草。"},
+{w:"ground",e:"🏞️",p:"/ɡraʊnd/",m:"地面",ex:"Sit on the ground.",exc:"坐在地上。"},
+{w:"hand",e:"✋",p:"/hænd/",m:"手",ex:"Wash your hands.",exc:"洗手。"},
+{w:"head",e:"👤",p:"/hed/",m:"头",ex:"Touch your head.",exc:"摸摸头。"},
+{w:"hill",e:"⛰️",p:"/hɪl/",m:"山",ex:"A small hill.",exc:"一座小山。"},
+{w:"home",e:"🏠",p:"/həʊm/",m:"家",ex:"I love my home.",exc:"我爱我的家。"},
+{w:"horse",e:"🐴",p:"/hɔːs/",m:"马",ex:"A big horse.",exc:"一匹大马。"},
+{w:"house",e:"🏡",p:"/haʊs/",m:"房子",ex:"A new house.",exc:"一栋新房子。"},
+{w:"kitty",e:"🐱",p:"/ˈkɪti/",m:"小猫",ex:"A cute kitty.",exc:"一只可爱的小猫。"},
+{w:"leg",e:"🦵",p:"/leɡ/",m:"腿",ex:"Two legs.",exc:"两条腿。"},
+{w:"letter",e:"✉️",p:"/ˈletə/",m:"信",ex:"Write a letter.",exc:"写一封信。"},
+{w:"man",e:"👨",p:"/mæn/",m:"男人",ex:"A tall man.",exc:"一个高个子男人。"},
+{w:"men",e:"👬",p:"/men/",m:"男人们",ex:"Two men.",exc:"两个男人。"},
+{w:"milk",e:"🥛",p:"/mɪlk/",m:"牛奶",ex:"I drink milk.",exc:"我喝牛奶。"},
+{w:"money",e:"💰",p:"/ˈmʌni/",m:"钱",ex:"Save your money.",exc:"存钱。"},
+{w:"morning",e:"🌅",p:"/ˈmɔːnɪŋ/",m:"早上",ex:"Good morning!",exc:"早上好！"},
+{w:"mother",e:"👩",p:"/ˈmʌðə/",m:"妈妈",ex:"I love my mother.",exc:"我爱妈妈。"},
+{w:"name",e:"📛",p:"/neɪm/",m:"名字",ex:"What's your name?",exc:"你叫什么名字？"},
+{w:"nest",e:"🪺",p:"/nest/",m:"鸟巢",ex:"A bird's nest.",exc:"鸟窝。"},
+{w:"night",e:"🌙",p:"/naɪt/",m:"夜晚",ex:"Good night!",exc:"晚安！"},
+{w:"paper",e:"📄",p:"/ˈpeɪpə/",m:"纸",ex:"A piece of paper.",exc:"一张纸。"},
+{w:"party",e:"🎉",p:"/ˈpɑːti/",m:"派对",ex:"A birthday party!",exc:"生日派对！"},
+{w:"picture",e:"🖼️",p:"/ˈpɪktʃə/",m:"图片",ex:"Draw a picture.",exc:"画一幅画。"},
+{w:"pig",e:"🐷",p:"/pɪɡ/",m:"猪",ex:"A pink pig.",exc:"一只粉色的猪。"},
+{w:"rabbit",e:"🐰",p:"/ˈræbɪt/",m:"兔子",ex:"A white rabbit.",exc:"一只白兔子。"},
+{w:"rain",e:"🌧️",p:"/reɪn/",m:"雨",ex:"I love the rain.",exc:"我喜欢雨。"},
+{w:"ring",e:"💍",p:"/rɪŋ/",m:"戒指",ex:"A pretty ring.",exc:"一枚漂亮的戒指。"},
+{w:"robin",e:"🐦",p:"/ˈrɒbɪn/",m:"知更鸟",ex:"A red robin.",exc:"一只红知更鸟。"},
+{w:"Santa",e:"🎅",p:"/ˈsæntə/",m:"圣诞老人",ex:"Santa is coming!",exc:"圣诞老人来了！"},
+{w:"school",e:"🏫",p:"/skuːl/",m:"学校",ex:"I go to school.",exc:"我去上学。"},
+{w:"seed",e:"🌱",p:"/siːd/",m:"种子",ex:"Plant a seed.",exc:"种下种子。"},
+{w:"sheep",e:"🐑",p:"/ʃiːp/",m:"羊",ex:"A fluffy sheep.",exc:"一只毛茸茸的羊。"},
+{w:"shoe",e:"👟",p:"/ʃuː/",m:"鞋子",ex:"Put on your shoes.",exc:"穿上鞋子。"},
+{w:"sister",e:"👧",p:"/ˈsɪstə/",m:"姐妹",ex:"My big sister.",exc:"我的姐姐。"},
+{w:"snow",e:"❄️",p:"/snəʊ/",m:"雪",ex:"White snow.",exc:"白雪。"},
+{w:"song",e:"🎵",p:"/sɒŋ/",m:"歌",ex:"Sing a song.",exc:"唱首歌。"},
+{w:"squirrel",e:"🐿️",p:"/ˈskwɪrəl/",m:"松鼠",ex:"A cute squirrel.",exc:"一只可爱的松鼠。"},
+{w:"stick",e:"🪵",p:"/stɪk/",m:"棍子",ex:"A long stick.",exc:"一根长棍子。"},
+{w:"street",e:"🛣️",p:"/striːt/",m:"街道",ex:"Cross the street.",exc:"过马路。"},
+{w:"sun",e:"☀️",p:"/sʌn/",m:"太阳",ex:"The sun is warm.",exc:"太阳暖暖的。"},
+{w:"table",e:"🪑",p:"/ˈteɪbl/",m:"桌子",ex:"Sit at the table.",exc:"坐在桌边。"},
+{w:"thing",e:"📦",p:"/θɪŋ/",m:"东西",ex:"What's this thing?",exc:"这是什么东西？"},
+{w:"time",e:"⏰",p:"/taɪm/",m:"时间",ex:"What time is it?",exc:"几点了？"},
+{w:"top",e:"🔝",p:"/tɒp/",m:"顶部",ex:"On top of the hill.",exc:"在山顶。"},
+{w:"toy",e:"🧸",p:"/tɔɪ/",m:"玩具",ex:"My favorite toy.",exc:"我最喜欢的玩具。"},
+{w:"tree",e:"🌳",p:"/triː/",m:"树",ex:"A big tree.",exc:"一棵大树。"},
+{w:"watch",e:"⌚",p:"/wɒtʃ/",m:"手表",ex:"Look at my watch.",exc:"看我的手表。"},
+{w:"water",e:"💧",p:"/ˈwɔːtə/",m:"水",ex:"Drink some water.",exc:"喝点水。"},
+{w:"way",e:"🛤️",p:"/weɪ/",m:"路",ex:"Which way?",exc:"哪条路？"},
+{w:"wind",e:"💨",p:"/wɪnd/",m:"风",ex:"The wind blows.",exc:"风吹。"},
+{w:"window",e:"🪟",p:"/ˈwɪndəʊ/",m:"窗户",ex:"Open the window.",exc:"开窗。"},
+{w:"wood",e:"🪵",p:"/wʊd/",m:"木头",ex:"Made of wood.",exc:"木头做的。"}
+]}
+};
+let html='';
+for(let cat in data){
+  const d=data[cat];
+  html+='<div class="category '+d.c+'"><h2>'+cat+'</h2></div><div class="grid">';
+  d.words.forEach(item=>{
+    html+='<div class="card '+d.c+'" onclick="speak(\''+item.w+'\')"><div class="emoji">'+item.e+'</div><div class="word">'+item.w+'</div><div class="phonetic">'+item.p+'</div><div class="meaning">'+item.m+'</div><div class="example"><div class="ex-en">📝 '+item.ex+'</div><div class="ex-cn">'+item.exc+'</div></div><button class="speak" onclick="event.stopPropagation();speak(\''+item.w+'\')">🔊 点击听发音</button></div>';
+  });
+  html+='</div>';
+}
+document.getElementById('content').innerHTML=html;
+</script>
+</body>
+</html>
