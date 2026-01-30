@@ -69,37 +69,20 @@ h1{text-align:center;font-size:2.5rem;background:linear-gradient(135deg,var(--pi
 <div class="footer">💖 每天学几个单词，英语越来越棒！加油宝贝！💖</div>
 </div>
 <script>
-// 专业词典真人发音 - 播放2遍
-let isSpeaking = false;
-
-function playAudio(url) {
-  return new Promise((resolve) => {
-    const audio = new Audio(url);
-    audio.onended = resolve;
-    audio.onerror = resolve;
-    audio.play().catch(resolve);
-  });
-}
-
-async function speak(w) {
-  if (isSpeaking) return;
-  isSpeaking = true;
+// 使用有道词典真人发音（与参考页面一致）
+function speak(word) {
+  // 使用有道词典的真人发音 - type=1 英式发音
+  const audio = new Audio(`https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(word.toLowerCase())}&type=1`);
   
-  const word = encodeURIComponent(w.toLowerCase().trim());
+  audio.onerror = () => {
+    // 备用：使用浏览器语音
+    const utterance = new SpeechSynthesisUtterance(word);
+    utterance.lang = 'en-US';
+    utterance.rate = 0.8;
+    speechSynthesis.speak(utterance);
+  };
   
-  // 爱词霸/金山词典 - 专业美式发音（国内教育标准）
-  const url = `https://dict.iciba.com/dictionary/word/tts?word=${word}&type=1`;
-  
-  // 播放第一遍
-  await playAudio(url);
-  
-  // 间隔1秒
-  await new Promise(r => setTimeout(r, 1000));
-  
-  // 播放第二遍
-  await playAudio(url);
-  
-  isSpeaking = false;
+  audio.play();
 }
 const data={
 "Pre-Primer（学前预备 40词）":{c:"pp",words:[
