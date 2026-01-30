@@ -69,32 +69,53 @@ h1{text-align:center;font-size:2.5rem;background:linear-gradient(135deg,var(--pi
 <div class="footer">💖 每天学几个单词，英语越来越棒！加油宝贝！💖</div>
 </div>
 <script>
-// 使用有道词典真人发音 - 清晰自然的美式发音
+// 使用剑桥词典专业发音 - 考试听力标准级别
 let audioPlayer = null;
-function speak(w) {
+async function speak(w) {
   // 停止上一个正在播放的音频
   if (audioPlayer) {
     audioPlayer.pause();
     audioPlayer = null;
   }
-  // 有道词典美式真人发音API
-  const url = 'https://dict.youdao.com/dictvoice?type=0&audio=' + encodeURIComponent(w);
-  audioPlayer = new Audio(url);
-  audioPlayer.play().catch(err => {
-    // 如果有道失败，尝试备用源（Google TTS）
-    const backupUrl = 'https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q=' + encodeURIComponent(w);
-    audioPlayer = new Audio(backupUrl);
-    audioPlayer.play().catch(e => {
-      // 最后使用浏览器合成语音作为后备
-      if ('speechSynthesis' in window) {
-        speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(w);
-        u.lang = 'en-US';
-        u.rate = 0.8;
-        speechSynthesis.speak(u);
-      }
-    });
-  });
+  
+  const word = w.toLowerCase().trim();
+  
+  // 音频源优先级（按考试听力标准排序）
+  const sources = [
+    // 1. 剑桥词典 - 英式发音（考试听力标准）
+    `https://dictionary.cambridge.org/media/english/us_pron/${word.charAt(0)}/${word.substring(0,3)}/${word.substring(0,5)}/${word}.mp3`,
+    // 2. Merriam-Webster 韦氏词典 - 美式标准
+    `https://media.merriam-webster.com/audio/prons/en/us/mp3/${word.charAt(0)}/${word}.mp3`,
+    // 3. 有道词典备用
+    `https://dict.youdao.com/dictvoice?type=0&audio=${encodeURIComponent(word)}`,
+    // 4. Forvo 真人发音
+    `https://audio.forvo.com/audios/mp3/${word}.mp3`
+  ];
+  
+  // 尝试播放音频源
+  for (let url of sources) {
+    try {
+      audioPlayer = new Audio(url);
+      await audioPlayer.play();
+      return; // 成功播放则退出
+    } catch (e) {
+      continue; // 失败则尝试下一个
+    }
+  }
+  
+  // 所有在线源失败，使用浏览器合成语音（最后备用）
+  if ('speechSynthesis' in window) {
+    speechSynthesis.cancel();
+    const voices = speechSynthesis.getVoices();
+    const u = new SpeechSynthesisUtterance(word);
+    // 优先选择高质量美式英语声音
+    const preferredVoice = voices.find(v => v.name.includes('Samantha') || v.name.includes('Alex') || (v.lang === 'en-US' && v.localService === false));
+    if (preferredVoice) u.voice = preferredVoice;
+    u.lang = 'en-US';
+    u.rate = 0.75;
+    u.pitch = 1.0;
+    speechSynthesis.speak(u);
+  }
 }
 const data={
 "Pre-Primer（学前预备 40词）":{c:"pp",words:[
