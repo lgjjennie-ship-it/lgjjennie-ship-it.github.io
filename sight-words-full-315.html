@@ -69,53 +69,94 @@ h1{text-align:center;font-size:2.5rem;background:linear-gradient(135deg,var(--pi
 <div class="footer">💖 每天学几个单词，英语越来越棒！加油宝贝！💖</div>
 </div>
 <script>
-// 使用剑桥词典专业发音 - 考试听力标准级别
-let audioPlayer = null;
+// 小朋友专用 - 慢速清晰重复3遍
+// 小朋友专用发音：慢速、清晰、重复播放
+let isSpeaking = false;
+
 async function speak(w) {
-  // 停止上一个正在播放的音频
-  if (audioPlayer) {
-    audioPlayer.pause();
-    audioPlayer = null;
-  }
+  if (isSpeaking) return;
+  isSpeaking = true;
   
   const word = w.toLowerCase().trim();
   
-  // 音频源优先级（按考试听力标准排序）
-  const sources = [
-    // 1. 剑桥词典 - 英式发音（考试听力标准）
-    `https://dictionary.cambridge.org/media/english/us_pron/${word.charAt(0)}/${word.substring(0,3)}/${word.substring(0,5)}/${word}.mp3`,
-    // 2. Merriam-Webster 韦氏词典 - 美式标准
-    `https://media.merriam-webster.com/audio/prons/en/us/mp3/${word.charAt(0)}/${word}.mp3`,
-    // 3. 有道词典备用
-    `https://dict.youdao.com/dictvoice?type=0&audio=${encodeURIComponent(word)}`,
-    // 4. Forvo 真人发音
-    `https://audio.forvo.com/audios/mp3/${word}.mp3`
-  ];
-  
-  // 尝试播放音频源
-  for (let url of sources) {
-    try {
-      audioPlayer = new Audio(url);
-      await audioPlayer.play();
-      return; // 成功播放则退出
-    } catch (e) {
-      continue; // 失败则尝试下一个
-    }
-  }
-  
-  // 所有在线源失败，使用浏览器合成语音（最后备用）
+  // 使用浏览器语音合成 - 可以控制语速，更适合小朋友
   if ('speechSynthesis' in window) {
     speechSynthesis.cancel();
-    const voices = speechSynthesis.getVoices();
-    const u = new SpeechSynthesisUtterance(word);
-    // 优先选择高质量美式英语声音
-    const preferredVoice = voices.find(v => v.name.includes('Samantha') || v.name.includes('Alex') || (v.lang === 'en-US' && v.localService === false));
-    if (preferredVoice) u.voice = preferredVoice;
-    u.lang = 'en-US';
-    u.rate = 0.75;
-    u.pitch = 1.0;
-    speechSynthesis.speak(u);
+    
+    // 等待语音列表加载
+    let voices = speechSynthesis.getVoices();
+    if (voices.length === 0) {
+      await new Promise(resolve => {
+        speechSynthesis.onvoiceschanged = () => {
+          voices = speechSynthesis.getVoices();
+          resolve();
+        };
+        setTimeout(resolve, 100);
+      });
+      voices = speechSynthesis.getVoices();
+    }
+    
+    // 选择高质量英语声音
+    const goodVoice = voices.find(v => 
+      v.name.includes('Google US English') ||
+      v.name.includes('Microsoft Zira') ||
+      v.name.includes('Microsoft David') ||
+      v.name.includes('Samantha') ||
+      v.name.includes('Karen') ||
+      (v.lang.startsWith('en') && !v.localService)
+    ) || voices.find(v => v.lang.startsWith('en'));
+    
+    // 第一遍：超慢速，让小朋友听清楚每个音
+    const u1 = new SpeechSynthesisUtterance(word);
+    if (goodVoice) u1.voice = goodVoice;
+    u1.lang = 'en-US';
+    u1.rate = 0.5;  // 超慢速
+    u1.pitch = 1.0;
+    u1.volume = 1.0;
+    
+    // 等待第一遍播放完成
+    await new Promise(resolve => {
+      u1.onend = resolve;
+      u1.onerror = resolve;
+      speechSynthesis.speak(u1);
+    });
+    
+    // 间隔800毫秒
+    await new Promise(r => setTimeout(r, 800));
+    
+    // 第二遍：正常语速，巩固记忆
+    const u2 = new SpeechSynthesisUtterance(word);
+    if (goodVoice) u2.voice = goodVoice;
+    u2.lang = 'en-US';
+    u2.rate = 0.7;  // 稍慢的正常速度
+    u2.pitch = 1.0;
+    u2.volume = 1.0;
+    
+    await new Promise(resolve => {
+      u2.onend = resolve;
+      u2.onerror = resolve;
+      speechSynthesis.speak(u2);
+    });
+    
+    // 间隔500毫秒
+    await new Promise(r => setTimeout(r, 500));
+    
+    // 第三遍：再来一次加深印象
+    const u3 = new SpeechSynthesisUtterance(word);
+    if (goodVoice) u3.voice = goodVoice;
+    u3.lang = 'en-US';
+    u3.rate = 0.6;
+    u3.pitch = 1.0;
+    u3.volume = 1.0;
+    
+    await new Promise(resolve => {
+      u3.onend = resolve;
+      u3.onerror = resolve;
+      speechSynthesis.speak(u3);
+    });
   }
+  
+  isSpeaking = false;
 }
 const data={
 "Pre-Primer（学前预备 40词）":{c:"pp",words:[
