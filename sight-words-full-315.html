@@ -69,7 +69,33 @@ h1{text-align:center;font-size:2.5rem;background:linear-gradient(135deg,var(--pi
 <div class="footer">💖 每天学几个单词，英语越来越棒！加油宝贝！💖</div>
 </div>
 <script>
-function speak(w){if('speechSynthesis'in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(w);u.lang='en-US';u.rate=0.7;speechSynthesis.speak(u);}}
+// 使用有道词典真人发音 - 清晰自然的美式发音
+let audioPlayer = null;
+function speak(w) {
+  // 停止上一个正在播放的音频
+  if (audioPlayer) {
+    audioPlayer.pause();
+    audioPlayer = null;
+  }
+  // 有道词典美式真人发音API
+  const url = 'https://dict.youdao.com/dictvoice?type=0&audio=' + encodeURIComponent(w);
+  audioPlayer = new Audio(url);
+  audioPlayer.play().catch(err => {
+    // 如果有道失败，尝试备用源（Google TTS）
+    const backupUrl = 'https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q=' + encodeURIComponent(w);
+    audioPlayer = new Audio(backupUrl);
+    audioPlayer.play().catch(e => {
+      // 最后使用浏览器合成语音作为后备
+      if ('speechSynthesis' in window) {
+        speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(w);
+        u.lang = 'en-US';
+        u.rate = 0.8;
+        speechSynthesis.speak(u);
+      }
+    });
+  });
+}
 const data={
 "Pre-Primer（学前预备 40词）":{c:"pp",words:[
 {w:"a",e:"🍎",p:"/ə/",m:"一个",ex:"I have a apple.",exc:"我有一个苹果。"},
