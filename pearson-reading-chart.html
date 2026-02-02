@@ -4,72 +4,94 @@
     <meta charset="UTF-8">
     <title>培生幼儿英语阅读打卡表</title>
     <style>
-        @page { size: A4 portrait; margin: 0; }
+        @page { 
+            size: A4 portrait; 
+            margin: 0; 
+        }
+        @media print {
+            html, body {
+                width: 210mm;
+                height: 297mm;
+                margin: 0;
+                padding: 0;
+            }
+            .poster {
+                width: 210mm !important;
+                height: 297mm !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body { 
-            width: 210mm;
-            height: 297mm;
-            font-family: 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 0;
         }
         .poster {
             width: 210mm;
             height: 297mm;
-            padding: 3mm;
+            padding: 5mm;
             background: linear-gradient(180deg, #87CEEB 0%, #E0F7FA 30%, #FFF8E1 70%, #FFECB3 100%);
             display: flex;
             flex-direction: column;
+            margin: 0 auto;
         }
         
         /* 装饰元素 */
-        .decor { position: fixed; font-size: 28px; opacity: 0.8; }
-        .d1 { top: 8mm; left: 8mm; }
-        .d2 { top: 8mm; right: 8mm; }
-        .d3 { bottom: 8mm; left: 8mm; }
-        .d4 { bottom: 8mm; right: 8mm; }
-        .d5 { top: 50%; left: 3mm; transform: translateY(-50%); }
-        .d6 { top: 50%; right: 3mm; transform: translateY(-50%); }
+        .decor { position: absolute; font-size: 32px; }
+        .d1 { top: 12mm; left: 12mm; }
+        .d2 { top: 12mm; right: 12mm; }
+        .d3 { bottom: 12mm; left: 12mm; }
+        .d4 { bottom: 12mm; right: 12mm; }
+        .d5 { top: 45%; left: 6mm; }
+        .d6 { top: 45%; right: 6mm; }
+        .d7 { top: 25%; left: 6mm; }
+        .d8 { top: 25%; right: 6mm; }
+        .d9 { top: 65%; left: 6mm; }
+        .d10 { top: 65%; right: 6mm; }
         
         .header {
             text-align: center;
-            padding: 4mm;
+            padding: 5mm;
             background: linear-gradient(90deg, #FF7043, #FF5722, #FF7043);
             border-radius: 5mm;
-            margin-bottom: 2mm;
+            margin-bottom: 3mm;
             border: 2mm solid #E64A19;
+            position: relative;
         }
         .title { 
-            font-size: 26px; 
+            font-size: 28px; 
             color: #fff; 
             font-weight: bold;
         }
         
         .name-row {
             text-align: center;
-            padding: 3mm;
+            padding: 4mm;
             background: linear-gradient(90deg, #FFECB3, #FFE082, #FFECB3);
             border-radius: 5mm;
             border: 2mm dashed #FFB300;
-            margin-bottom: 2mm;
-            font-size: 16px;
+            margin-bottom: 3mm;
+            font-size: 18px;
             font-weight: bold;
             color: #E65100;
         }
         .name-blank {
             display: inline-block;
-            width: 35mm;
+            width: 40mm;
             border-bottom: 2mm solid #FF6F00;
             margin: 0 3mm;
         }
         
         .slogan {
             text-align: center;
-            font-size: 12px;
+            font-size: 14px;
             color: #1565C0;
             font-weight: bold;
-            padding: 2mm;
+            padding: 3mm;
             background: linear-gradient(90deg, #E3F2FD, #BBDEFB, #E3F2FD);
-            border-radius: 3mm;
-            margin-bottom: 2mm;
+            border-radius: 4mm;
+            margin-bottom: 3mm;
         }
         
         .grid-container {
@@ -77,7 +99,6 @@
             display: flex;
             flex-direction: column;
             gap: 2mm;
-            padding: 0 5mm;
         }
         .row {
             display: flex;
@@ -88,14 +109,13 @@
         
         .book {
             flex: 1;
-            max-width: 26mm;
             background: linear-gradient(180deg, #FFFFFF 0%, #FFF8E1 100%);
             border: 2mm solid #FFB74D;
             border-radius: 4mm;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-size: 24px;
             font-weight: bold;
             color: #E65100;
             box-shadow: 0 1mm 3mm rgba(0,0,0,0.15);
@@ -105,54 +125,52 @@
             background: linear-gradient(135deg, #FFD54F, #FFB300);
             border: 2.5mm solid #FF6F00;
             color: #BF360C;
+            font-size: 20px;
         }
         
         .milestone-final { 
             background: linear-gradient(135deg, #FF8A65, #FF5722);
             border: 3mm solid #D84315;
             color: #fff;
+            font-size: 20px;
         }
         
         .reward-row {
             display: flex;
-            gap: 2mm;
-            padding: 3mm;
+            gap: 3mm;
+            padding: 4mm;
             background: linear-gradient(90deg, #F8BBD9, #E1BEE7, #D1C4E9, #C5CAE9, #BBDEFB);
             border-radius: 4mm;
-            margin-top: 2mm;
+            margin-top: 3mm;
             justify-content: space-around;
             border: 2mm solid #9C27B0;
         }
         .reward-item {
             background: #fff;
-            padding: 2mm 5mm;
-            border-radius: 3mm;
+            padding: 3mm 6mm;
+            border-radius: 4mm;
             text-align: center;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: bold;
         }
         .reward-blank {
             display: block;
-            width: 22mm;
-            height: 5mm;
+            width: 25mm;
+            height: 6mm;
             border-bottom: 1.5mm dashed #9C27B0;
-            margin-top: 1mm;
+            margin-top: 2mm;
         }
         
         .footer {
             text-align: center;
-            padding: 3mm;
+            padding: 4mm;
             background: linear-gradient(90deg, #A5D6A7, #81C784, #A5D6A7);
             border-radius: 4mm;
-            margin-top: 2mm;
-            font-size: 13px;
+            margin-top: 3mm;
+            font-size: 14px;
             color: #1B5E20;
             font-weight: bold;
             border: 2mm solid #4CAF50;
-        }
-        
-        @media print {
-            .poster { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
     </style>
 </head>
@@ -164,6 +182,10 @@
     <span class="decor d4">🐾</span>
     <span class="decor d5">🦴</span>
     <span class="decor d6">🦴</span>
+    <span class="decor d7">⭐</span>
+    <span class="decor d8">⭐</span>
+    <span class="decor d9">🌟</span>
+    <span class="decor d10">🌟</span>
     
     <div class="header">
         <div class="title">📚 培生英语阅读大冒险 🦴</div>
