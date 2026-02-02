@@ -15,23 +15,21 @@
             width: 210mm;
             height: 297mm;
             padding: 5mm;
-            background: linear-gradient(180deg, #87CEEB 0%, #E0F7FA 30%, #FFF8E1 70%, #FFECB3 100%);
+            background: linear-gradient(180deg, #E8F5E9 0%, #C8E6C9 20%, #FFF8E1 50%, #FFECB3 80%, #FFE082 100%);
             display: flex;
             flex-direction: column;
             margin: 0 auto;
         }
         
-        .decor { position: absolute; font-size: 32px; }
+        .decor { position: absolute; font-size: 28px; }
         .d1 { top: 12mm; left: 12mm; }
         .d2 { top: 12mm; right: 12mm; }
         .d3 { bottom: 12mm; left: 12mm; }
         .d4 { bottom: 12mm; right: 12mm; }
-        .d5 { top: 45%; left: 6mm; }
-        .d6 { top: 45%; right: 6mm; }
-        .d7 { top: 25%; left: 6mm; }
-        .d8 { top: 25%; right: 6mm; }
-        .d9 { top: 65%; left: 6mm; }
-        .d10 { top: 65%; right: 6mm; }
+        .d5 { top: 40%; left: 5mm; }
+        .d6 { top: 40%; right: 5mm; }
+        .d7 { top: 60%; left: 5mm; }
+        .d8 { top: 60%; right: 5mm; }
         
         .header {
             text-align: center;
@@ -87,57 +85,64 @@
         
         .book {
             flex: 1;
-            background: linear-gradient(180deg, #FFFFFF 0%, #FFF8E1 100%);
-            border: 2mm solid #FFB74D;
+            border: 2mm solid;
             border-radius: 4mm;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            color: #E65100;
             box-shadow: 0 1mm 3mm rgba(0,0,0,0.15);
-            position: relative;
         }
-        .book .num { font-size: 20px; }
-        .book .icon { font-size: 12px; opacity: 0.7; }
+        .book .num { font-size: 18px; }
+        .book .icon { font-size: 14px; }
+        
+        /* 阶段1: 1-20 种子发芽 - 浅绿色 */
+        .stage1 { background: linear-gradient(180deg, #E8F5E9, #C8E6C9); border-color: #81C784; color: #2E7D32; }
+        /* 阶段2: 21-40 小苗成长 - 绿色 */
+        .stage2 { background: linear-gradient(180deg, #C8E6C9, #A5D6A7); border-color: #66BB6A; color: #1B5E20; }
+        /* 阶段3: 41-60 开花 - 粉色 */
+        .stage3 { background: linear-gradient(180deg, #FCE4EC, #F8BBD9); border-color: #F06292; color: #AD1457; }
+        /* 阶段4: 61-80 结果 - 橙色 */
+        .stage4 { background: linear-gradient(180deg, #FFF3E0, #FFE0B2); border-color: #FFB74D; color: #E65100; }
+        /* 阶段5: 81-96 收获 - 金色 */
+        .stage5 { background: linear-gradient(180deg, #FFF8E1, #FFE082); border-color: #FFD54F; color: #F57F17; }
         
         .milestone { 
-            background: linear-gradient(135deg, #FFD54F, #FFB300);
-            border: 2.5mm solid #FF6F00;
-            color: #BF360C;
+            background: linear-gradient(135deg, #FFD54F, #FFB300) !important;
+            border: 2.5mm solid #FF6F00 !important;
+            color: #BF360C !important;
         }
-        .milestone .num { font-size: 18px; }
         
         .milestone-final { 
-            background: linear-gradient(135deg, #FF8A65, #FF5722);
-            border: 3mm solid #D84315;
-            color: #fff;
+            background: linear-gradient(135deg, #FF8A65, #FF5722) !important;
+            border: 3mm solid #D84315 !important;
+            color: #fff !important;
         }
         
         .reward-row {
             display: flex;
             gap: 3mm;
             padding: 4mm;
-            background: linear-gradient(90deg, #F8BBD9, #E1BEE7, #D1C4E9, #C5CAE9, #BBDEFB);
+            background: linear-gradient(90deg, #C8E6C9, #F8BBD9, #FFE0B2, #FFE082, #FFCC80);
             border-radius: 4mm;
             margin-top: 3mm;
             justify-content: space-around;
-            border: 2mm solid #9C27B0;
+            border: 2mm solid #8D6E63;
         }
         .reward-item {
             background: #fff;
-            padding: 3mm 6mm;
+            padding: 3mm 5mm;
             border-radius: 4mm;
             text-align: center;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
         }
         .reward-blank {
             display: block;
-            width: 25mm;
-            height: 6mm;
-            border-bottom: 1.5mm dashed #9C27B0;
+            width: 22mm;
+            height: 5mm;
+            border-bottom: 1.5mm dashed #8D6E63;
             margin-top: 2mm;
         }
         
@@ -152,6 +157,23 @@
             font-weight: bold;
             border: 2mm solid #4CAF50;
         }
+
+        .stage-label {
+            display: flex;
+            justify-content: space-around;
+            font-size: 10px;
+            margin-bottom: 2mm;
+            font-weight: bold;
+        }
+        .stage-label span {
+            padding: 1mm 3mm;
+            border-radius: 3mm;
+        }
+        .sl1 { background: #C8E6C9; color: #2E7D32; }
+        .sl2 { background: #A5D6A7; color: #1B5E20; }
+        .sl3 { background: #F8BBD9; color: #AD1457; }
+        .sl4 { background: #FFE0B2; color: #E65100; }
+        .sl5 { background: #FFE082; color: #F57F17; }
     </style>
 </head>
 <body>
@@ -160,157 +182,163 @@
     <span class="decor d2">🐶</span>
     <span class="decor d3">🐾</span>
     <span class="decor d4">🐾</span>
-    <span class="decor d5">🦴</span>
-    <span class="decor d6">🦴</span>
-    <span class="decor d7">⭐</span>
-    <span class="decor d8">⭐</span>
-    <span class="decor d9">🌟</span>
-    <span class="decor d10">🌟</span>
+    <span class="decor d5">🌱</span>
+    <span class="decor d6">🌸</span>
+    <span class="decor d7">🌻</span>
+    <span class="decor d8">🏆</span>
     
     <div class="header">
-        <div class="title">📚 培生英语阅读大冒险 🦴</div>
+        <div class="title">📚 培生英语阅读成长之路 🌟</div>
     </div>
     
     <div class="name-row">🌈 超级小读者：<span class="name-blank"></span>🌈</div>
     
-    <div class="slogan">🐾 No job is too big, no pup is too small! 汪汪队出动！🐾</div>
+    <div class="slogan">🐾 从种子到参天大树，每一步都是成长！🌳</div>
+
+    <div class="stage-label">
+        <span class="sl1">🌱 1-20 播种</span>
+        <span class="sl2">🌿 21-40 发芽</span>
+        <span class="sl3">🌸 41-60 开花</span>
+        <span class="sl4">🍊 61-80 结果</span>
+        <span class="sl5">🏆 81-96 丰收</span>
+    </div>
     
     <div class="grid-container">
         <div class="row">
-            <div class="book"><span class="num">1</span><span class="icon">📖</span></div>
-            <div class="book"><span class="num">2</span><span class="icon">🐾</span></div>
-            <div class="book"><span class="num">3</span><span class="icon">⭐</span></div>
-            <div class="book"><span class="num">4</span><span class="icon">📖</span></div>
-            <div class="book"><span class="num">5</span><span class="icon">🐾</span></div>
-            <div class="book"><span class="num">6</span><span class="icon">⭐</span></div>
-            <div class="book"><span class="num">7</span><span class="icon">📖</span></div>
+            <div class="book stage1"><span class="num">1</span><span class="icon">🌱</span></div>
+            <div class="book stage1"><span class="num">2</span><span class="icon">🌱</span></div>
+            <div class="book stage1"><span class="num">3</span><span class="icon">🌱</span></div>
+            <div class="book stage1"><span class="num">4</span><span class="icon">🌱</span></div>
+            <div class="book stage1"><span class="num">5</span><span class="icon">🌱</span></div>
+            <div class="book stage1"><span class="num">6</span><span class="icon">🌱</span></div>
+            <div class="book stage1"><span class="num">7</span><span class="icon">🌱</span></div>
         </div>
         <div class="row">
-            <div class="book"><span class="num">8</span><span class="icon">🐾</span></div>
-            <div class="book"><span class="num">9</span><span class="icon">⭐</span></div>
-            <div class="book"><span class="num">10</span><span class="icon">📖</span></div>
-            <div class="book"><span class="num">11</span><span class="icon">🐾</span></div>
-            <div class="book"><span class="num">12</span><span class="icon">⭐</span></div>
-            <div class="book"><span class="num">13</span><span class="icon">📖</span></div>
-            <div class="book"><span class="num">14</span><span class="icon">🐾</span></div>
+            <div class="book stage1"><span class="num">8</span><span class="icon">🌱</span></div>
+            <div class="book stage1"><span class="num">9</span><span class="icon">🌱</span></div>
+            <div class="book stage1"><span class="num">10</span><span class="icon">🌱</span></div>
+            <div class="book stage1"><span class="num">11</span><span class="icon">🌱</span></div>
+            <div class="book stage1"><span class="num">12</span><span class="icon">🌱</span></div>
+            <div class="book stage1"><span class="num">13</span><span class="icon">🌱</span></div>
+            <div class="book stage1"><span class="num">14</span><span class="icon">🌱</span></div>
         </div>
         <div class="row">
-            <div class="book"><span class="num">15</span><span class="icon">⭐</span></div>
-            <div class="book"><span class="num">16</span><span class="icon">📖</span></div>
-            <div class="book"><span class="num">17</span><span class="icon">🐾</span></div>
-            <div class="book"><span class="num">18</span><span class="icon">⭐</span></div>
-            <div class="book"><span class="num">19</span><span class="icon">📖</span></div>
+            <div class="book stage1"><span class="num">15</span><span class="icon">🌱</span></div>
+            <div class="book stage1"><span class="num">16</span><span class="icon">🌱</span></div>
+            <div class="book stage1"><span class="num">17</span><span class="icon">🌱</span></div>
+            <div class="book stage1"><span class="num">18</span><span class="icon">🌱</span></div>
+            <div class="book stage1"><span class="num">19</span><span class="icon">🌱</span></div>
             <div class="book milestone"><span class="num">20</span><span class="icon">🎁</span></div>
-            <div class="book"><span class="num">21</span><span class="icon">🐾</span></div>
+            <div class="book stage2"><span class="num">21</span><span class="icon">🌿</span></div>
         </div>
         <div class="row">
-            <div class="book"><span class="num">22</span><span class="icon">⭐</span></div>
-            <div class="book"><span class="num">23</span><span class="icon">📖</span></div>
-            <div class="book"><span class="num">24</span><span class="icon">🐾</span></div>
-            <div class="book"><span class="num">25</span><span class="icon">⭐</span></div>
-            <div class="book"><span class="num">26</span><span class="icon">📖</span></div>
-            <div class="book"><span class="num">27</span><span class="icon">🐾</span></div>
-            <div class="book"><span class="num">28</span><span class="icon">⭐</span></div>
+            <div class="book stage2"><span class="num">22</span><span class="icon">🌿</span></div>
+            <div class="book stage2"><span class="num">23</span><span class="icon">🌿</span></div>
+            <div class="book stage2"><span class="num">24</span><span class="icon">🌿</span></div>
+            <div class="book stage2"><span class="num">25</span><span class="icon">🌿</span></div>
+            <div class="book stage2"><span class="num">26</span><span class="icon">🌿</span></div>
+            <div class="book stage2"><span class="num">27</span><span class="icon">🌿</span></div>
+            <div class="book stage2"><span class="num">28</span><span class="icon">🌿</span></div>
         </div>
         <div class="row">
-            <div class="book"><span class="num">29</span><span class="icon">📖</span></div>
-            <div class="book"><span class="num">30</span><span class="icon">🐾</span></div>
-            <div class="book"><span class="num">31</span><span class="icon">⭐</span></div>
-            <div class="book"><span class="num">32</span><span class="icon">📖</span></div>
-            <div class="book"><span class="num">33</span><span class="icon">🐾</span></div>
-            <div class="book"><span class="num">34</span><span class="icon">⭐</span></div>
-            <div class="book"><span class="num">35</span><span class="icon">📖</span></div>
+            <div class="book stage2"><span class="num">29</span><span class="icon">🌿</span></div>
+            <div class="book stage2"><span class="num">30</span><span class="icon">🌿</span></div>
+            <div class="book stage2"><span class="num">31</span><span class="icon">🌿</span></div>
+            <div class="book stage2"><span class="num">32</span><span class="icon">🌿</span></div>
+            <div class="book stage2"><span class="num">33</span><span class="icon">🌿</span></div>
+            <div class="book stage2"><span class="num">34</span><span class="icon">🌿</span></div>
+            <div class="book stage2"><span class="num">35</span><span class="icon">🌿</span></div>
         </div>
         <div class="row">
-            <div class="book"><span class="num">36</span><span class="icon">🐾</span></div>
-            <div class="book"><span class="num">37</span><span class="icon">⭐</span></div>
-            <div class="book"><span class="num">38</span><span class="icon">📖</span></div>
-            <div class="book"><span class="num">39</span><span class="icon">🐾</span></div>
+            <div class="book stage2"><span class="num">36</span><span class="icon">🌿</span></div>
+            <div class="book stage2"><span class="num">37</span><span class="icon">🌿</span></div>
+            <div class="book stage2"><span class="num">38</span><span class="icon">🌿</span></div>
+            <div class="book stage2"><span class="num">39</span><span class="icon">🌿</span></div>
             <div class="book milestone"><span class="num">40</span><span class="icon">🎁</span></div>
-            <div class="book"><span class="num">41</span><span class="icon">⭐</span></div>
-            <div class="book"><span class="num">42</span><span class="icon">📖</span></div>
+            <div class="book stage3"><span class="num">41</span><span class="icon">🌸</span></div>
+            <div class="book stage3"><span class="num">42</span><span class="icon">🌸</span></div>
         </div>
         <div class="row">
-            <div class="book"><span class="num">43</span><span class="icon">🐾</span></div>
-            <div class="book"><span class="num">44</span><span class="icon">⭐</span></div>
-            <div class="book"><span class="num">45</span><span class="icon">📖</span></div>
-            <div class="book"><span class="num">46</span><span class="icon">🐾</span></div>
-            <div class="book"><span class="num">47</span><span class="icon">⭐</span></div>
-            <div class="book"><span class="num">48</span><span class="icon">📖</span></div>
-            <div class="book"><span class="num">49</span><span class="icon">🐾</span></div>
+            <div class="book stage3"><span class="num">43</span><span class="icon">🌸</span></div>
+            <div class="book stage3"><span class="num">44</span><span class="icon">🌸</span></div>
+            <div class="book stage3"><span class="num">45</span><span class="icon">🌸</span></div>
+            <div class="book stage3"><span class="num">46</span><span class="icon">🌸</span></div>
+            <div class="book stage3"><span class="num">47</span><span class="icon">🌸</span></div>
+            <div class="book stage3"><span class="num">48</span><span class="icon">🌸</span></div>
+            <div class="book stage3"><span class="num">49</span><span class="icon">🌸</span></div>
         </div>
         <div class="row">
-            <div class="book"><span class="num">50</span><span class="icon">⭐</span></div>
-            <div class="book"><span class="num">51</span><span class="icon">📖</span></div>
-            <div class="book"><span class="num">52</span><span class="icon">🐾</span></div>
-            <div class="book"><span class="num">53</span><span class="icon">⭐</span></div>
-            <div class="book"><span class="num">54</span><span class="icon">📖</span></div>
-            <div class="book"><span class="num">55</span><span class="icon">🐾</span></div>
-            <div class="book"><span class="num">56</span><span class="icon">⭐</span></div>
+            <div class="book stage3"><span class="num">50</span><span class="icon">🌸</span></div>
+            <div class="book stage3"><span class="num">51</span><span class="icon">🌸</span></div>
+            <div class="book stage3"><span class="num">52</span><span class="icon">🌸</span></div>
+            <div class="book stage3"><span class="num">53</span><span class="icon">🌸</span></div>
+            <div class="book stage3"><span class="num">54</span><span class="icon">🌸</span></div>
+            <div class="book stage3"><span class="num">55</span><span class="icon">🌸</span></div>
+            <div class="book stage3"><span class="num">56</span><span class="icon">🌸</span></div>
         </div>
         <div class="row">
-            <div class="book"><span class="num">57</span><span class="icon">📖</span></div>
-            <div class="book"><span class="num">58</span><span class="icon">🐾</span></div>
-            <div class="book"><span class="num">59</span><span class="icon">⭐</span></div>
+            <div class="book stage3"><span class="num">57</span><span class="icon">🌸</span></div>
+            <div class="book stage3"><span class="num">58</span><span class="icon">🌸</span></div>
+            <div class="book stage3"><span class="num">59</span><span class="icon">🌸</span></div>
             <div class="book milestone"><span class="num">60</span><span class="icon">🎁</span></div>
-            <div class="book"><span class="num">61</span><span class="icon">📖</span></div>
-            <div class="book"><span class="num">62</span><span class="icon">🐾</span></div>
-            <div class="book"><span class="num">63</span><span class="icon">⭐</span></div>
+            <div class="book stage4"><span class="num">61</span><span class="icon">🍊</span></div>
+            <div class="book stage4"><span class="num">62</span><span class="icon">🍊</span></div>
+            <div class="book stage4"><span class="num">63</span><span class="icon">🍊</span></div>
         </div>
         <div class="row">
-            <div class="book"><span class="num">64</span><span class="icon">📖</span></div>
-            <div class="book"><span class="num">65</span><span class="icon">🐾</span></div>
-            <div class="book"><span class="num">66</span><span class="icon">⭐</span></div>
-            <div class="book"><span class="num">67</span><span class="icon">📖</span></div>
-            <div class="book"><span class="num">68</span><span class="icon">🐾</span></div>
-            <div class="book"><span class="num">69</span><span class="icon">⭐</span></div>
-            <div class="book"><span class="num">70</span><span class="icon">📖</span></div>
+            <div class="book stage4"><span class="num">64</span><span class="icon">🍊</span></div>
+            <div class="book stage4"><span class="num">65</span><span class="icon">🍊</span></div>
+            <div class="book stage4"><span class="num">66</span><span class="icon">🍊</span></div>
+            <div class="book stage4"><span class="num">67</span><span class="icon">🍊</span></div>
+            <div class="book stage4"><span class="num">68</span><span class="icon">🍊</span></div>
+            <div class="book stage4"><span class="num">69</span><span class="icon">🍊</span></div>
+            <div class="book stage4"><span class="num">70</span><span class="icon">🍊</span></div>
         </div>
         <div class="row">
-            <div class="book"><span class="num">71</span><span class="icon">🐾</span></div>
-            <div class="book"><span class="num">72</span><span class="icon">⭐</span></div>
-            <div class="book"><span class="num">73</span><span class="icon">📖</span></div>
-            <div class="book"><span class="num">74</span><span class="icon">🐾</span></div>
-            <div class="book"><span class="num">75</span><span class="icon">⭐</span></div>
-            <div class="book"><span class="num">76</span><span class="icon">📖</span></div>
-            <div class="book"><span class="num">77</span><span class="icon">🐾</span></div>
+            <div class="book stage4"><span class="num">71</span><span class="icon">🍊</span></div>
+            <div class="book stage4"><span class="num">72</span><span class="icon">🍊</span></div>
+            <div class="book stage4"><span class="num">73</span><span class="icon">🍊</span></div>
+            <div class="book stage4"><span class="num">74</span><span class="icon">🍊</span></div>
+            <div class="book stage4"><span class="num">75</span><span class="icon">🍊</span></div>
+            <div class="book stage4"><span class="num">76</span><span class="icon">🍊</span></div>
+            <div class="book stage4"><span class="num">77</span><span class="icon">🍊</span></div>
         </div>
         <div class="row">
-            <div class="book"><span class="num">78</span><span class="icon">⭐</span></div>
-            <div class="book"><span class="num">79</span><span class="icon">📖</span></div>
+            <div class="book stage4"><span class="num">78</span><span class="icon">🍊</span></div>
+            <div class="book stage4"><span class="num">79</span><span class="icon">🍊</span></div>
             <div class="book milestone"><span class="num">80</span><span class="icon">🎁</span></div>
-            <div class="book"><span class="num">81</span><span class="icon">🐾</span></div>
-            <div class="book"><span class="num">82</span><span class="icon">⭐</span></div>
-            <div class="book"><span class="num">83</span><span class="icon">📖</span></div>
-            <div class="book"><span class="num">84</span><span class="icon">🐾</span></div>
+            <div class="book stage5"><span class="num">81</span><span class="icon">⭐</span></div>
+            <div class="book stage5"><span class="num">82</span><span class="icon">⭐</span></div>
+            <div class="book stage5"><span class="num">83</span><span class="icon">⭐</span></div>
+            <div class="book stage5"><span class="num">84</span><span class="icon">⭐</span></div>
         </div>
         <div class="row">
-            <div class="book"><span class="num">85</span><span class="icon">⭐</span></div>
-            <div class="book"><span class="num">86</span><span class="icon">📖</span></div>
-            <div class="book"><span class="num">87</span><span class="icon">🐾</span></div>
-            <div class="book"><span class="num">88</span><span class="icon">⭐</span></div>
-            <div class="book"><span class="num">89</span><span class="icon">📖</span></div>
-            <div class="book"><span class="num">90</span><span class="icon">🐾</span></div>
-            <div class="book"><span class="num">91</span><span class="icon">⭐</span></div>
+            <div class="book stage5"><span class="num">85</span><span class="icon">⭐</span></div>
+            <div class="book stage5"><span class="num">86</span><span class="icon">⭐</span></div>
+            <div class="book stage5"><span class="num">87</span><span class="icon">⭐</span></div>
+            <div class="book stage5"><span class="num">88</span><span class="icon">⭐</span></div>
+            <div class="book stage5"><span class="num">89</span><span class="icon">⭐</span></div>
+            <div class="book stage5"><span class="num">90</span><span class="icon">⭐</span></div>
+            <div class="book stage5"><span class="num">91</span><span class="icon">⭐</span></div>
         </div>
         <div class="row">
-            <div class="book"><span class="num">92</span><span class="icon">📖</span></div>
-            <div class="book"><span class="num">93</span><span class="icon">🐾</span></div>
-            <div class="book"><span class="num">94</span><span class="icon">⭐</span></div>
-            <div class="book"><span class="num">95</span><span class="icon">📖</span></div>
+            <div class="book stage5"><span class="num">92</span><span class="icon">⭐</span></div>
+            <div class="book stage5"><span class="num">93</span><span class="icon">⭐</span></div>
+            <div class="book stage5"><span class="num">94</span><span class="icon">⭐</span></div>
+            <div class="book stage5"><span class="num">95</span><span class="icon">⭐</span></div>
             <div class="book milestone-final"><span class="num">96</span><span class="icon">🏆</span></div>
         </div>
     </div>
     
     <div class="reward-row">
-        <div class="reward-item">🦴 20本<span class="reward-blank"></span></div>
-        <div class="reward-item">🦴 40本<span class="reward-blank"></span></div>
-        <div class="reward-item">🦴 60本<span class="reward-blank"></span></div>
-        <div class="reward-item">🦴 80本<span class="reward-blank"></span></div>
-        <div class="reward-item" style="background:#FFE082;">🏆 完成!<span class="reward-blank"></span></div>
+        <div class="reward-item">🌱 20本<span class="reward-blank"></span></div>
+        <div class="reward-item">🌿 40本<span class="reward-blank"></span></div>
+        <div class="reward-item">🌸 60本<span class="reward-blank"></span></div>
+        <div class="reward-item">🍊 80本<span class="reward-blank"></span></div>
+        <div class="reward-item" style="background:#FFE082;">🏆 丰收!<span class="reward-blank"></span></div>
     </div>
     
-    <div class="footer">🐕 每天读一本，贴上你最爱的贴纸！PAW Patrol is on a roll! 🐾</div>
+    <div class="footer">🌱 播种→🌿 发芽→🌸 开花→🍊 结果→🏆 丰收！你在不断成长！</div>
 </div>
 </body>
 </html>
