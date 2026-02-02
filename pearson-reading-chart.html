@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>培生幼儿英语阅读打卡表</title>
+    <style>
+        @page { size: A4 portrait; margin: 2mm; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Microsoft YaHei', sans-serif; 
+            background: linear-gradient(180deg, #87CEEB 0%, #E0F7FA 50%, #FFF8E1 100%);
+            min-height: 100vh;
+            padding: 2mm;
+        }
+        .poster {
+            background: linear-gradient(180deg, #FFFDE7 0%, #FFF9C4 100%);
+            border-radius: 20px;
+            padding: 8px;
+            border: 5px solid #FF6F00;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* 可爱云朵装饰 */
+        .cloud { position: absolute; font-size: 30px; opacity: 0.6; }
+        .cloud-1 { top: 3px; left: 50px; }
+        .cloud-2 { top: 3px; right: 50px; }
+        
+        /* 小狗装饰 */
+        .puppy { position: absolute; font-size: 22px; }
+        .puppy-1 { bottom: 85px; left: 8px; }
+        .puppy-2 { bottom: 85px; right: 8px; }
+        .puppy-3 { top: 45%; left: 3px; }
+        .puppy-4 { top: 45%; right: 3px; }
+        
+        /* 爪印装饰 */
+        .paw { position: absolute; font-size: 18px; opacity: 0.3; color: #8D6E63; }
+        .paw-1 { top: 80px; left: 5px; transform: rotate(-20deg); }
+        .paw-2 { top: 80px; right: 5px; transform: rotate(20deg); }
+        .paw-3 { top: 200px; left: 3px; transform: rotate(-10deg); }
+        .paw-4 { top: 200px; right: 3px; transform: rotate(10deg); }
+        .paw-5 { bottom: 150px; left: 5px; transform: rotate(-15deg); }
+        .paw-6 { bottom: 150px; right: 5px; transform: rotate(15deg); }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 5px;
+            padding: 8px 15px;
+            background: linear-gradient(90deg, #FF5722, #FF9800, #FFC107, #FF9800, #FF5722);
+            border-radius: 15px;
+            position: relative;
+            box-shadow: 0 3px 10px rgba(255,87,34,0.4);
+        }
+        .title { 
+            font-size: 22px; 
+            color: #fff; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-weight: bold;
+        }
+        .header-stars {
+            position: absolute;
+            font-size: 20px;
+        }
+        .star-left { left: 15px; top: 50%; transform: translateY(-50%); }
+        .star-right { right: 15px; top: 50%; transform: translateY(-50%); }
+        
+        .name-row {
+            text-align: center;
+            margin: 5px 0;
+            padding: 6px;
+            background: linear-gradient(90deg, #FFECB3, #FFE082, #FFECB3);
+            border-radius: 25px;
+            border: 3px dotted #FFB300;
+            font-size: 14px;
+            font-weight: bold;
+            color: #E65100;
+        }
+        .name-blank {
+            display: inline-block;
+            width: 90px;
+            border-bottom: 2px solid #FF6F00;
+            margin: 0 5px;
+        }
+        
+        .slogan {
+            text-align: center;
+            font-size: 11px;
+            color: #1565C0;
+            font-weight: bold;
+            margin-bottom: 5px;
+            padding: 3px;
+            background: linear-gradient(90deg, #E3F2FD, #BBDEFB, #E3F2FD);
+            border-radius: 10px;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 4px 0;
+            padding: 4px 8px;
+            background: #fff;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .legend-item { display: flex; align-items: center; gap: 3px; }
+        .dot-new { width: 14px; height: 14px; border: 3px solid #4CAF50; border-radius: 50%; background: #C8E6C9; }
+        .dot-review { width: 14px; height: 14px; border: 3px solid #2196F3; border-radius: 50%; background: #BBDEFB; }
+        
+        .grid {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            padding: 0 15px;
+        }
+        .row {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+        }
+        
+        /* 每本书的格子 - 更可爱的设计 */
+        .book {
+            width: 80px;
+            height: 48px;
+            border: 3px solid #FFB74D;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(180deg, #FFFFFF 0%, #FFF8E1 100%);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .book-num { 
+            font-size: 18px; 
+            font-weight: bold; 
+            color: #E65100;
+            text-shadow: 1px 1px 0 #fff;
+        }
+        .dots {
+            display: flex;
+            gap: 6px;
+            margin-top: 2px;
+        }
+        .dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 2px solid;
+            background: #fff;
+        }
+        .dot.new { border-color: #4CAF50; }
+        .dot.review { border-color: #2196F3; }
+        
+        /* 里程碑 - 超级可爱版 */
+        .milestone { 
+            background: linear-gradient(135deg, #FFEB3B 0%, #FFC107 50%, #FF9800 100%); 
+            border: 3px solid #E65100;
+            box-shadow: 0 3px 8px rgba(255,152,0,0.5);
+            animation: glow 2s ease-in-out infinite;
+        }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 3px 8px rgba(255,152,0,0.5); }
+            50% { box-shadow: 0 3px 15px rgba(255,152,0,0.8); }
+        }
+        .milestone .book-num { color: #BF360C; font-size: 16px; }
+        .milestone-icon { font-size: 16px; }
+        
+        .milestone-final { 
+            background: linear-gradient(135deg, #FFD54F 0%, #FF6F00 50%, #E65100 100%); 
+            border: 4px solid #BF360C;
+            box-shadow: 0 4px 12px rgba(230,81,0,0.6);
+        }
+        .milestone-final .book-num { color: #fff; font-size: 18px; text-shadow: 2px 2px 2px rgba(0,0,0,0.3); }
+        
+        /* 奖励区 - 彩虹风格 */
+        .reward-section {
+            margin-top: 5px;
+            padding: 6px 10px;
+            background: linear-gradient(90deg, #FFCDD2, #F8BBD9, #E1BEE7, #C5CAE9, #BBDEFB, #B2EBF2, #C8E6C9);
+            border-radius: 15px;
+            border: 3px solid #FF4081;
+        }
+        .reward-title { 
+            text-align: center; 
+            font-size: 13px; 
+            color: #AD1457; 
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        .rewards {
+            display: flex;
+            justify-content: space-around;
+        }
+        .reward-item {
+            text-align: center;
+            padding: 3px 6px;
+            background: #fff;
+            border-radius: 10px;
+            font-size: 9px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .reward-icon { font-size: 18px; display: block; }
+        .reward-blank { 
+            display: block;
+            width: 45px; 
+            height: 12px;
+            border-bottom: 2px dashed #FF4081; 
+            margin: 2px auto 0;
+        }
+        
+        .footer {
+            margin-top: 4px;
+            text-align: center;
+            padding: 5px;
+            background: linear-gradient(90deg, #A5D6A7, #81C784, #66BB6A, #81C784, #A5D6A7);
+            border-radius: 12px;
+            font-size: 11px;
+            color: #1B5E20;
+            font-weight: bold;
+        }
+        .footer-emoji { font-size: 16px; }
+        
+        @media print {
+            body { background: #fff; padding: 0; }
+        }
+    </style>
+</head>
+<body>
+<div class="poster">
+    <span class="cloud cloud-1">☁️</span>
+    <span class="cloud cloud-2">☁️</span>
+    <span class="puppy puppy-1">🐕</span>
+    <span class="puppy puppy-2">🐶</span>
+    <span class="puppy puppy-3">🦮</span>
+    <span class="puppy puppy-4">🐩</span>
+    <span class="paw paw-1">🐾</span>
+    <span class="paw paw-2">🐾</span>
+    <span class="paw paw-3">🐾</span>
+    <span class="paw paw-4">🐾</span>
+    <span class="paw paw-5">🐾</span>
+    <span class="paw paw-6">🐾</span>
+    
+    <div class="header">
+        <span class="header-stars star-left">⭐</span>
+        <div class="title">📚 培生英语阅读大冒险 🦴</div>
+        <span class="header-stars star-right">⭐</span>
+    </div>
+    
+    <div class="name-row">
+        🌈 超级小读者：<span class="name-blank"></span> 🌈
+    </div>
+    
+    <div class="slogan">🐾 No job is too big, no pup is too small! 汪汪队出动！🐾</div>
+    
+    <div class="legend">
+        <div class="legend-item"><div class="dot-new"></div><span>读完啦✓</span></div>
+        <div class="legend-item"><div class="dot-review"></div><span>复习啦✓</span></div>
+        <div class="legend-item">🎁小奖励</div>
+        <div class="legend-item">🏆大礼物</div>
+    </div>
+    
+    <div class="grid">
+        <div class="row">
+            <div class="book"><span class="book-num">1</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">2</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">3</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">4</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">5</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">6</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">7</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+        </div>
+        <div class="row">
+            <div class="book"><span class="book-num">8</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">9</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">10</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">11</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">12</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">13</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">14</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+        </div>
+        <div class="row">
+            <div class="book"><span class="book-num">15</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">16</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">17</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">18</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">19</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book milestone"><span class="book-num">20</span><span class="milestone-icon">🎁</span></div>
+            <div class="book"><span class="book-num">21</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+        </div>
+        <div class="row">
+            <div class="book"><span class="book-num">22</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">23</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">24</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">25</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">26</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">27</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">28</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+        </div>
+        <div class="row">
+            <div class="book"><span class="book-num">29</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">30</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">31</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">32</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">33</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">34</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">35</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+        </div>
+        <div class="row">
+            <div class="book"><span class="book-num">36</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">37</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">38</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">39</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book milestone"><span class="book-num">40</span><span class="milestone-icon">🎁</span></div>
+            <div class="book"><span class="book-num">41</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">42</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+        </div>
+        <div class="row">
+            <div class="book"><span class="book-num">43</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">44</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">45</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">46</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">47</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">48</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">49</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+        </div>
+        <div class="row">
+            <div class="book"><span class="book-num">50</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">51</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">52</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">53</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">54</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">55</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">56</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+        </div>
+        <div class="row">
+            <div class="book"><span class="book-num">57</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">58</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">59</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book milestone"><span class="book-num">60</span><span class="milestone-icon">🎁</span></div>
+            <div class="book"><span class="book-num">61</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">62</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">63</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+        </div>
+        <div class="row">
+            <div class="book"><span class="book-num">64</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">65</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">66</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">67</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">68</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">69</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">70</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+        </div>
+        <div class="row">
+            <div class="book"><span class="book-num">71</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">72</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">73</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">74</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">75</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">76</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">77</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+        </div>
+        <div class="row">
+            <div class="book"><span class="book-num">78</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">79</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book milestone"><span class="book-num">80</span><span class="milestone-icon">🎁</span></div>
+            <div class="book"><span class="book-num">81</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">82</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">83</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">84</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+        </div>
+        <div class="row">
+            <div class="book"><span class="book-num">85</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">86</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">87</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">88</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">89</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">90</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">91</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+        </div>
+        <div class="row">
+            <div class="book"><span class="book-num">92</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">93</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">94</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book"><span class="book-num">95</span><div class="dots"><div class="dot new"></div><div class="dot review"></div></div></div>
+            <div class="book milestone-final"><span class="book-num">96</span><span class="milestone-icon">🏆</span></div>
+        </div>
+    </div>
+    
+    <div class="reward-section">
+        <div class="reward-title">🌈 奖励时间 Treat Time! 🌈</div>
+        <div class="rewards">
+            <div class="reward-item"><span class="reward-icon">🦴</span>20本<span class="reward-blank"></span></div>
+            <div class="reward-item"><span class="reward-icon">🦴</span>40本<span class="reward-blank"></span></div>
+            <div class="reward-item"><span class="reward-icon">🦴</span>60本<span class="reward-blank"></span></div>
+            <div class="reward-item"><span class="reward-icon">🦴</span>80本<span class="reward-blank"></span></div>
+            <div class="reward-item" style="background:#FFE082;"><span class="reward-icon">🏆</span>完成!<span class="reward-blank"></span></div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <span class="footer-emoji">🐕🐶🐾</span>
+        PAW Patrol is on a roll! 每天读一点，你最棒！
+        <span class="footer-emoji">🐾🐶🐕</span>
+    </div>
+</div>
+</body>
+</html>
