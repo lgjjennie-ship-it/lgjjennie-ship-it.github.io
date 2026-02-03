@@ -14,166 +14,148 @@
         .poster {
             width: 210mm;
             height: 297mm;
-            padding: 5mm;
+            padding: 3mm;
             background: linear-gradient(180deg, #E8F5E9 0%, #C8E6C9 20%, #FFF8E1 50%, #FFECB3 80%, #FFE082 100%);
             display: flex;
             flex-direction: column;
             margin: 0 auto;
+            overflow: hidden;
         }
         
-        .decor { position: absolute; font-size: 28px; }
-        .d1 { top: 12mm; left: 12mm; }
-        .d2 { top: 12mm; right: 12mm; }
-        .d3 { bottom: 12mm; left: 12mm; }
-        .d4 { bottom: 12mm; right: 12mm; }
-        .d5 { top: 40%; left: 5mm; }
-        .d6 { top: 40%; right: 5mm; }
-        .d7 { top: 60%; left: 5mm; }
-        .d8 { top: 60%; right: 5mm; }
+        .decor { position: absolute; font-size: 24px; }
+        .d1 { top: 8mm; left: 8mm; }
+        .d2 { top: 8mm; right: 8mm; }
+        .d3 { bottom: 8mm; left: 8mm; }
+        .d4 { bottom: 8mm; right: 8mm; }
         
         .header {
             text-align: center;
-            padding: 5mm;
+            padding: 2mm 3mm;
             background: linear-gradient(90deg, #FF7043, #FF5722, #FF7043);
-            border-radius: 5mm;
-            margin-bottom: 3mm;
-            border: 2mm solid #E64A19;
+            border-radius: 4mm;
+            margin-bottom: 2mm;
+            border: 1.5mm solid #E64A19;
         }
-        .title { font-size: 28px; color: #fff; font-weight: bold; }
+        .title { font-size: 20px; color: #fff; font-weight: bold; }
         
         .name-row {
             text-align: center;
-            padding: 4mm;
+            padding: 2mm;
             background: linear-gradient(90deg, #FFECB3, #FFE082, #FFECB3);
-            border-radius: 5mm;
-            border: 2mm dashed #FFB300;
-            margin-bottom: 3mm;
-            font-size: 18px;
+            border-radius: 4mm;
+            border: 1.5mm dashed #FFB300;
+            margin-bottom: 2mm;
+            font-size: 14px;
             font-weight: bold;
             color: #E65100;
         }
         .name-blank {
             display: inline-block;
-            width: 40mm;
-            border-bottom: 2mm solid #FF6F00;
-            margin: 0 3mm;
-        }
-        
-        .slogan {
-            text-align: center;
-            font-size: 14px;
-            color: #1565C0;
-            font-weight: bold;
-            padding: 3mm;
-            background: linear-gradient(90deg, #E3F2FD, #BBDEFB, #E3F2FD);
-            border-radius: 4mm;
-            margin-bottom: 3mm;
-        }
-        
-        .grid-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 2mm;
-        }
-        .row {
-            display: flex;
-            gap: 2mm;
-            justify-content: center;
-            flex: 1;
-        }
-        
-        .book {
-            flex: 1;
-            border: 2mm solid;
-            border-radius: 4mm;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            box-shadow: 0 1mm 3mm rgba(0,0,0,0.15);
-        }
-        .book .num { font-size: 18px; }
-        .book .icon { font-size: 14px; }
-        
-        /* 阶段1: 1-20 种子发芽 - 浅绿色 */
-        .stage1 { background: linear-gradient(180deg, #E8F5E9, #C8E6C9); border-color: #81C784; color: #2E7D32; }
-        /* 阶段2: 21-40 小苗成长 - 绿色 */
-        .stage2 { background: linear-gradient(180deg, #C8E6C9, #A5D6A7); border-color: #66BB6A; color: #1B5E20; }
-        /* 阶段3: 41-60 开花 - 粉色 */
-        .stage3 { background: linear-gradient(180deg, #FCE4EC, #F8BBD9); border-color: #F06292; color: #AD1457; }
-        /* 阶段4: 61-80 结果 - 橙色 */
-        .stage4 { background: linear-gradient(180deg, #FFF3E0, #FFE0B2); border-color: #FFB74D; color: #E65100; }
-        /* 阶段5: 81-96 收获 - 金色 */
-        .stage5 { background: linear-gradient(180deg, #FFF8E1, #FFE082); border-color: #FFD54F; color: #F57F17; }
-        
-        .milestone { 
-            background: linear-gradient(135deg, #FFD54F, #FFB300) !important;
-            border: 2.5mm solid #FF6F00 !important;
-            color: #BF360C !important;
-        }
-        
-        .milestone-final { 
-            background: linear-gradient(135deg, #FF8A65, #FF5722) !important;
-            border: 3mm solid #D84315 !important;
-            color: #fff !important;
-        }
-        
-        .reward-row {
-            display: flex;
-            gap: 3mm;
-            padding: 4mm;
-            background: linear-gradient(90deg, #C8E6C9, #F8BBD9, #FFE0B2, #FFE082, #FFCC80);
-            border-radius: 4mm;
-            margin-top: 3mm;
-            justify-content: space-around;
-            border: 2mm solid #8D6E63;
-        }
-        .reward-item {
-            background: #fff;
-            padding: 3mm 5mm;
-            border-radius: 4mm;
-            text-align: center;
-            font-size: 11px;
-            font-weight: bold;
-        }
-        .reward-blank {
-            display: block;
-            width: 22mm;
-            height: 5mm;
-            border-bottom: 1.5mm dashed #8D6E63;
-            margin-top: 2mm;
-        }
-        
-        .footer {
-            text-align: center;
-            padding: 4mm;
-            background: linear-gradient(90deg, #A5D6A7, #81C784, #A5D6A7);
-            border-radius: 4mm;
-            margin-top: 3mm;
-            font-size: 14px;
-            color: #1B5E20;
-            font-weight: bold;
-            border: 2mm solid #4CAF50;
+            width: 35mm;
+            border-bottom: 1.5mm solid #FF6F00;
+            margin: 0 2mm;
         }
 
         .stage-label {
             display: flex;
-            justify-content: space-around;
-            font-size: 10px;
+            justify-content: center;
+            gap: 3mm;
+            font-size: 9px;
             margin-bottom: 2mm;
             font-weight: bold;
         }
         .stage-label span {
-            padding: 1mm 3mm;
-            border-radius: 3mm;
+            padding: 1mm 2mm;
+            border-radius: 2mm;
         }
         .sl1 { background: #C8E6C9; color: #2E7D32; }
         .sl2 { background: #A5D6A7; color: #1B5E20; }
         .sl3 { background: #F8BBD9; color: #AD1457; }
         .sl4 { background: #FFE0B2; color: #E65100; }
         .sl5 { background: #FFE082; color: #F57F17; }
+        
+        .grid-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5mm;
+        }
+        .row {
+            display: flex;
+            gap: 1.5mm;
+            justify-content: center;
+            flex: 1;
+        }
+        
+        .book {
+            flex: 1;
+            border: 1.5mm solid;
+            border-radius: 3mm;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 0.5mm 2mm rgba(0,0,0,0.1);
+        }
+        .book .num { font-size: 16px; }
+        .book .icon { font-size: 11px; }
+        
+        .stage1 { background: linear-gradient(180deg, #E8F5E9, #C8E6C9); border-color: #81C784; color: #2E7D32; }
+        .stage2 { background: linear-gradient(180deg, #C8E6C9, #A5D6A7); border-color: #66BB6A; color: #1B5E20; }
+        .stage3 { background: linear-gradient(180deg, #FCE4EC, #F8BBD9); border-color: #F06292; color: #AD1457; }
+        .stage4 { background: linear-gradient(180deg, #FFF3E0, #FFE0B2); border-color: #FFB74D; color: #E65100; }
+        .stage5 { background: linear-gradient(180deg, #FFF8E1, #FFE082); border-color: #FFD54F; color: #F57F17; }
+        
+        .milestone { 
+            background: linear-gradient(135deg, #FFD54F, #FFB300) !important;
+            border: 2mm solid #FF6F00 !important;
+            color: #BF360C !important;
+        }
+        
+        .milestone-final { 
+            background: linear-gradient(135deg, #FF8A65, #FF5722) !important;
+            border: 2mm solid #D84315 !important;
+            color: #fff !important;
+        }
+        
+        .reward-row {
+            display: flex;
+            gap: 2mm;
+            padding: 2mm;
+            background: linear-gradient(90deg, #C8E6C9, #F8BBD9, #FFE0B2, #FFE082, #FFCC80);
+            border-radius: 3mm;
+            margin-top: 2mm;
+            justify-content: space-around;
+            border: 1.5mm solid #8D6E63;
+        }
+        .reward-item {
+            background: #fff;
+            padding: 1.5mm 4mm;
+            border-radius: 3mm;
+            text-align: center;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        .reward-blank {
+            display: block;
+            width: 18mm;
+            height: 4mm;
+            border-bottom: 1mm dashed #8D6E63;
+            margin-top: 1mm;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 2mm;
+            background: linear-gradient(90deg, #A5D6A7, #81C784, #A5D6A7);
+            border-radius: 3mm;
+            margin-top: 2mm;
+            font-size: 11px;
+            color: #1B5E20;
+            font-weight: bold;
+            border: 1.5mm solid #4CAF50;
+        }
     </style>
 </head>
 <body>
@@ -182,25 +164,19 @@
     <span class="decor d2">🐶</span>
     <span class="decor d3">🐾</span>
     <span class="decor d4">🐾</span>
-    <span class="decor d5">🌱</span>
-    <span class="decor d6">🌸</span>
-    <span class="decor d7">🌻</span>
-    <span class="decor d8">🏆</span>
     
     <div class="header">
         <div class="title">📚 培生英语阅读成长之路 🌟</div>
     </div>
     
-    <div class="name-row">🌈 超级小读者：<span class="name-blank"></span>🌈</div>
-    
-    <div class="slogan">🐾 从种子到参天大树，每一步都是成长！🌳</div>
+    <div class="name-row">🌈 小读者：<span class="name-blank"></span>🌈</div>
 
     <div class="stage-label">
-        <span class="sl1">🌱 1-20 播种</span>
-        <span class="sl2">🌿 21-40 发芽</span>
-        <span class="sl3">🌸 41-60 开花</span>
-        <span class="sl4">🍊 61-80 结果</span>
-        <span class="sl5">🏆 81-96 丰收</span>
+        <span class="sl1">🌱1-20</span>
+        <span class="sl2">🌿21-40</span>
+        <span class="sl3">🌸41-60</span>
+        <span class="sl4">🍊61-80</span>
+        <span class="sl5">⭐81-96</span>
     </div>
     
     <div class="grid-container">
@@ -331,14 +307,14 @@
     </div>
     
     <div class="reward-row">
-        <div class="reward-item">🌱 20本<span class="reward-blank"></span></div>
-        <div class="reward-item">🌿 40本<span class="reward-blank"></span></div>
-        <div class="reward-item">🌸 60本<span class="reward-blank"></span></div>
-        <div class="reward-item">🍊 80本<span class="reward-blank"></span></div>
-        <div class="reward-item" style="background:#FFE082;">🏆 丰收!<span class="reward-blank"></span></div>
+        <div class="reward-item">🌱20本<span class="reward-blank"></span></div>
+        <div class="reward-item">🌿40本<span class="reward-blank"></span></div>
+        <div class="reward-item">🌸60本<span class="reward-blank"></span></div>
+        <div class="reward-item">🍊80本<span class="reward-blank"></span></div>
+        <div class="reward-item" style="background:#FFE082;">🏆完成<span class="reward-blank"></span></div>
     </div>
     
-    <div class="footer">🌱 播种→🌿 发芽→🌸 开花→🍊 结果→🏆 丰收！你在不断成长！</div>
+    <div class="footer">🌱播种→🌿发芽→🌸开花→🍊结果→🏆丰收！</div>
 </div>
 </body>
 </html>
