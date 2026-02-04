@@ -5,235 +5,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>儿童纪录片推荐 | 按年龄段精选</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
+        .container { max-width: 1400px; margin: 0 auto; }
+        header { text-align: center; padding: 40px 20px; color: white; }
+        header h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+        header p { font-size: 1.2em; opacity: 0.9; }
+        .filters { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin: 20px 0; }
+        .filter-btn {
+            padding: 10px 20px; border: none; border-radius: 25px;
+            background: rgba(255,255,255,0.2); color: white; font-size: 0.95em;
+            cursor: pointer; transition: all 0.3s ease; backdrop-filter: blur(10px);
         }
-        
-        header {
-            text-align: center;
-            padding: 40px 20px;
-            color: white;
-        }
-        
-        header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        }
-        
-        header p {
-            font-size: 1.2em;
-            opacity: 0.9;
-        }
-        
-        .age-filters {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 30px 0;
-        }
-        
-        .age-btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 25px;
-            background: rgba(255,255,255,0.2);
-            color: white;
-            font-size: 1em;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-        
-        .age-btn:hover, .age-btn.active {
-            background: white;
-            color: #667eea;
-            transform: translateY(-2px);
+        .filter-btn:hover, .filter-btn.active {
+            background: white; color: #667eea; transform: translateY(-2px);
             box-shadow: 0 5px 20px rgba(0,0,0,0.2);
         }
-        
-        .category-filters {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 30px;
-        }
-        
-        .cat-btn {
-            padding: 8px 16px;
-            border: 2px solid rgba(255,255,255,0.5);
-            border-radius: 20px;
-            background: transparent;
-            color: white;
-            font-size: 0.9em;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .cat-btn:hover, .cat-btn.active {
-            background: rgba(255,255,255,0.3);
-            border-color: white;
-        }
-        
         .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 25px;
-            padding: 20px 0;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 25px; padding: 20px 0;
         }
-        
         .card {
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
+            background: white; border-radius: 16px; overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15); transition: all 0.3s ease;
+            display: flex; flex-direction: column;
         }
-        
-        .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.25);
-        }
-        
-        .card-header {
-            padding: 20px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
-        }
-        
-        .card-title {
-            font-size: 1.3em;
-            color: #333;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-        
-        .card-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 10px;
-        }
-        
-        .tag {
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.8em;
-            font-weight: 500;
-        }
-        
-        .tag-country {
-            background: #e3f2fd;
-            color: #1565c0;
-        }
-        
-        .tag-duration {
-            background: #fff3e0;
-            color: #ef6c00;
-        }
-        
-        .tag-category {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-        
-        .tag-age {
-            background: #fce4ec;
-            color: #c2185b;
-        }
-        
-        .card-body {
-            padding: 20px;
-            flex-grow: 1;
-        }
-        
-        .card-desc {
-            color: #666;
-            line-height: 1.7;
-            font-size: 0.95em;
-        }
-        
-        .card-footer {
-            padding: 15px 20px;
-            border-top: 1px solid #eee;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        
+        .card:hover { transform: translateY(-8px); box-shadow: 0 20px 50px rgba(0,0,0,0.25); }
+        .card-header { padding: 20px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); }
+        .card-title { font-size: 1.25em; color: #333; font-weight: 600; margin-bottom: 12px; }
+        .card-meta { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tag { padding: 4px 10px; border-radius: 12px; font-size: 0.8em; font-weight: 500; }
+        .tag-country { background: #e3f2fd; color: #1565c0; }
+        .tag-duration { background: #fff3e0; color: #ef6c00; }
+        .tag-category { background: #e8f5e9; color: #2e7d32; }
+        .tag-age { background: #fce4ec; color: #c2185b; }
+        .card-body { padding: 20px; flex-grow: 1; }
+        .card-desc { color: #555; line-height: 1.7; font-size: 0.95em; }
+        .card-footer { padding: 15px 20px; border-top: 1px solid #eee; display: flex; gap: 10px; flex-wrap: wrap; }
         .watch-btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 20px;
+            padding: 10px 18px; border: none; border-radius: 20px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            font-size: 0.9em;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+            color: white; font-size: 0.85em; cursor: pointer; text-decoration: none;
+            transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 5px;
         }
-        
-        .watch-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-        
-        .watch-btn.secondary {
-            background: #f5f5f5;
-            color: #666;
-        }
-        
-        .watch-btn.secondary:hover {
-            background: #eee;
-            box-shadow: none;
-        }
-        
-        .no-results {
-            text-align: center;
-            padding: 60px 20px;
-            color: white;
-        }
-        
-        .no-results h3 {
-            font-size: 1.5em;
-            margin-bottom: 10px;
-        }
-        
-        footer {
-            text-align: center;
-            padding: 40px 20px;
-            color: rgba(255,255,255,0.8);
-            font-size: 0.9em;
-        }
-        
+        .watch-btn:hover { transform: scale(1.05); box-shadow: 0 5px 15px rgba(102,126,234,0.4); }
+        .watch-btn.alt { background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); }
+        .watch-btn.alt2 { background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%); }
+        .no-results { grid-column: 1/-1; text-align: center; padding: 60px; color: white; }
+        footer { text-align: center; padding: 40px 20px; color: rgba(255,255,255,0.8); font-size: 0.9em; }
+        .tip { background: rgba(255,255,255,0.1); padding: 15px 25px; border-radius: 10px; margin: 20px auto; max-width: 600px; color: white; text-align: center; }
         @media (max-width: 768px) {
-            header h1 {
-                font-size: 1.8em;
-            }
-            
-            .cards-grid {
-                grid-template-columns: 1fr;
-            }
+            header h1 { font-size: 1.8em; }
+            .cards-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -244,396 +72,206 @@
             <p>精选适合不同年龄段孩子观看的优质纪录片</p>
         </header>
         
-        <div class="age-filters">
-            <button class="age-btn active" data-age="all">全部年龄</button>
-            <button class="age-btn" data-age="3-6">3-6岁</button>
-            <button class="age-btn" data-age="6-9">6-9岁</button>
-            <button class="age-btn" data-age="9-12">9-12岁</button>
-            <button class="age-btn" data-age="12+">12岁以上</button>
+        <div class="tip">💡 点击按钮会跳转到对应平台的搜索结果，请选择官方/高清版本观看</div>
+        
+        <div class="filters">
+            <button class="filter-btn active" data-age="all">🌟 全部</button>
+            <button class="filter-btn" data-age="3-6">👶 3-6岁</button>
+            <button class="filter-btn" data-age="6-9">💒 6-9岁</button>
+            <button class="filter-btn" data-age="9-12">📚 9-12岁</button>
+            <button class="filter-btn" data-age="12+">🎓 12岁+</button>
         </div>
         
-        <div class="category-filters">
-            <button class="cat-btn active" data-cat="all">全部类别</button>
-            <button class="cat-btn" data-cat="自然">🌿 自然</button>
-            <button class="cat-btn" data-cat="动物">🐾 动物</button>
-            <button class="cat-btn" data-cat="科学">🔬 科学</button>
-            <button class="cat-btn" data-cat="历史">📜 历史</button>
-            <button class="cat-btn" data-cat="人文">🎭 人文</button>
-            <button class="cat-btn" data-cat="太空">🚀 太空</button>
-            <button class="cat-btn" data-cat="艺术">🎨 艺术</button>
+        <div class="filters">
+            <button class="filter-btn active" data-cat="all">全部类别</button>
+            <button class="filter-btn" data-cat="自然">🌿 自然</button>
+            <button class="filter-btn" data-cat="动物">🐾 动物</button>
+            <button class="filter-btn" data-cat="科学">🔬 科学</button>
+            <button class="filter-btn" data-cat="历史">📜 历史</button>
+            <button class="filter-btn" data-cat="人文">🎭 人文</button>
+            <button class="filter-btn" data-cat="太空">🚀 太空</button>
+            <button class="filter-btn" data-cat="艺术">🎨 艺术</button>
+            <button class="filter-btn" data-cat="地理">🗺️ 地理</button>
         </div>
         
-        <div class="cards-grid" id="cardsContainer"></div>
+        <div class="cards-grid" id="cards"></div>
         
         <footer>
             <p>💡 建议家长陪同观看，引导孩子思考讨论</p>
-            <p style="margin-top: 10px;">Made with ❤️ by 赛博话痨精</p>
+            <p style="margin-top:10px">Made with ❤️ by 赛博话痨精 | 数据更新：2026年2月</p>
         </footer>
     </div>
     
     <script>
-        const documentaries = [
-            // 3-6岁
-            {
-                title: "小小世界 Tiny World",
-                country: "美国",
-                duration: "每集30分钟",
-                category: "动物",
-                age: "3-6",
-                desc: "由保罗·路德配音，用微距镜头展示小动物们的奇妙世界。画面精美，节奏舒缓，非常适合低龄儿童观看，培养对自然的好奇心。",
-                links: [
-                    { name: "Apple TV+", url: "https://tv.apple.com/show/tiny-world/umc.cmc.2fkv2md8nx1c7dqt3omdtuwk2" }
-                ]
-            },
-            {
-                title: "萌宠成长记 Too Cute",
-                country: "美国",
-                duration: "每集45分钟",
-                category: "动物",
-                age: "3-6",
-                desc: "记录小猫、小狗等萌宠从出生到成长的温馨过程。画面治愈，旁白温柔，非常适合亲子共同观看，培养孩子的爱心。",
-                links: [
-                    { name: "B站", url: "https://www.bilibili.com/bangumi/media/md28229048/" }
-                ]
-            },
-            {
-                title: "如果我是一只动物",
-                country: "法国",
-                duration: "每集5分钟",
-                category: "动物",
-                age: "3-6",
-                desc: "以第一人称视角讲述动物宝宝的成长故事，短小精悍，画面唯美，旁白童趣，非常适合低龄儿童的注意力时长。",
-                links: [
-                    { name: "B站", url: "https://www.bilibili.com/bangumi/media/md28234889/" }
-                ]
-            },
-            {
-                title: "微观小世界 Minuscule",
-                country: "法国",
-                duration: "每集5分钟",
-                category: "动物",
-                age: "3-6",
-                desc: "无对白的昆虫动画纪录片，用幽默的方式展示昆虫世界。画风独特，节奏轻快，适合全球小朋友观看。",
-                links: [
-                    { name: "B站", url: "https://www.bilibili.com/bangumi/media/md1733/" }
-                ]
-            },
-            
-            // 6-9岁
-            {
-                title: "蓝色星球 Blue Planet",
-                country: "英国",
-                duration: "每集50分钟",
-                category: "自然",
-                age: "6-9",
-                desc: "BBC经典海洋纪录片，大卫·爱登堡爵士配音。壮观的海洋画面，让孩子领略海洋生命的神奇与脆弱，培养环保意识。",
-                links: [
-                    { name: "B站", url: "https://www.bilibili.com/bangumi/media/md20395/" },
-                    { name: "腾讯视频", url: "https://v.qq.com/x/cover/5350wqxnbyorhgk.html" }
-                ]
-            },
-            {
-                title: "地球脉动 Planet Earth",
-                country: "英国",
-                duration: "每集50分钟",
-                category: "自然",
-                age: "6-9",
-                desc: "史诗级自然纪录片，展示地球各个角落的壮丽景观和神奇生物。画面震撼，配乐动人，是自然教育的经典之作。",
-                links: [
-                    { name: "B站", url: "https://www.bilibili.com/bangumi/media/md20394/" },
-                    { name: "央视网", url: "https://tv.cctv.com/2016/12/03/VIDAQcOu3JVKxDO5a7xJpCeQ161203.shtml" }
-                ]
-            },
-            {
-                title: "我们的星球 Our Planet",
-                country: "英国",
-                duration: "每集50分钟",
-                category: "自然",
-                age: "6-9",
-                desc: "Netflix出品，大卫·爱登堡配音。在展示自然之美的同时，也真实呈现了气候变化的影响，适合培养孩子的环保责任感。",
-                links: [
-                    { name: "B站", url: "https://www.bilibili.com/bangumi/media/md28223744/" }
-                ]
-            },
-            {
-                title: "王朝 Dynasties",
-                country: "英国",
-                duration: "每集60分钟",
-                category: "动物",
-                age: "6-9",
-                desc: "BBC纪录片，聚焦五种濒危动物家族的生存故事。叙事性强，像动物版的宫斗剧，让孩子了解动物社会的复杂性。",
-                links: [
-                    { name: "B站", url: "https://www.bilibili.com/bangumi/media/md28221422/" },
-                    { name: "腾讯视频", url: "https://v.qq.com/x/cover/b7bneg8xvb6mkrv.html" }
-                ]
-            },
-            {
-                title: "航拍中国",
-                country: "中国",
-                duration: "每集50分钟",
-                category: "人文",
-                age: "6-9",
-                desc: "央视出品，以空中视角俯瞰中国大地的壮美山河和人文景观。培养孩子的家国情怀，了解祖国的地理与文化。",
-                links: [
-                    { name: "B站", url: "https://www.bilibili.com/bangumi/media/md20428/" },
-                    { name: "央视网", url: "https://tv.cctv.com/2017/01/28/VIDEPWfMPhRjSjoNBlH13L2w170128.shtml" }
-                ]
-            },
-            {
-                title: "舌尖上的中国",
-                country: "中国",
-                duration: "每集50分钟",
-                category: "人文",
-                age: "6-9",
-                desc: "通过美食讲述中国人的故事，展示各地饮食文化。画面精美，让孩子了解中华美食背后的文化与情感。",
-                links: [
-                    { name: "B站", url: "https://www.bilibili.com/bangumi/media/md1540/" },
-                    { name: "腾讯视频", url: "https://v.qq.com/x/cover/e0vu68qqo0j4iqn.html" }
-                ]
-            },
-            
-            // 9-12岁
-            {
-                title: "宇宙时空之旅 Cosmos",
-                country: "美国",
-                duration: "每集45分钟",
-                category: "太空",
-                age: "9-12",
-                desc: "天体物理学家尼尔·德格拉斯·泰森主持，用震撼的视觉效果讲述宇宙的故事。激发孩子对科学和宇宙的好奇心。",
-                links: [
-                    { name: "B站", url: "https://www.bilibili.com/bangumi/media/md28229400/" }
-                ]
-            },
-            {
-                title: "行星 The Planets",
-                country: "英国",
-                duration: "每集60分钟",
-                category: "太空",
-                age: "9-12",
-                desc: "BBC出品，讲述太阳系八大行星的故事。用最新科学发现和精美CG呈现行星的壮丽与神秘，点燃孩子的太空梦。",
-                links: [
-                    { name: "B站", url: "https://www.bilibili.com/bangumi/media/md28224376/" }
-                ]
-            },
-            {
-                title: "门捷列夫很忙",
-                country: "中国",
-                duration: "每集15分钟",
-                category: "科学",
-                age: "9-12",
-                desc: "用有趣的方式讲解化学元素知识，将枯燥的元素周期表变成有趣的故事。适合小学高年级科学启蒙。",
-                links: [
-                    { name: "B站", url: "https://www.bilibili.com/bangumi/media/md28233071/" }
-                ]
-            },
-            {
-                title: "河西走廊",
-                country: "中国",
-                duration: "每集50分钟",
-                category: "历史",
-                age: "9-12",
-                desc: "讲述河西走廊的历史变迁，丝绸之路的兴衰。画面大气，配乐优美，是了解中国历史地理的优质纪录片。",
-                links: [
-                    { name: "B站", url: "https://www.bilibili.com/bangumi/media/md20384/" }
-                ]
-            },
-            {
-                title: "如果国宝会说话",
-                country: "中国",
-                duration: "每集5分钟",
-                category: "历史",
-                age: "9-12",
-                desc: "央视出品，每集5分钟介绍一件国宝文物。短小精悍，文案优美，让孩子爱上中国历史文化。",
-                links: [
-                    { name: "B站", url: "https://www.bilibili.com/bangumi/media/md28221398/" },
-                    { name: "央视网", url: "https://tv.cctv.com/2018/01/01/VIDAuBaPbmV3ja4dVFzQfCea180101.shtml" }
-                ]
-            },
-            {
-                title: "工厂探秘 How It's Made",
-                country: "加拿大",
-                duration: "每集22分钟",
-                category: "科学",
-                age: "9-12",
-                desc: "探访各种工厂，展示日常物品的生产过程。满足孩子的好奇心，了解科技与制造业的奥秘。",
-                links: [
-                    { name: "B站", url: "https://www.bilibili.com/bangumi/media/md28234260/" }
-                ]
-            },
-            {
-                title: "像乌鸦一样思考",
-                country: "日本",
-                duration: "每集10分钟",
-                category: "科学",
-                age: "9-12",
-                desc: "NHK出品的科学思维训练节目，通过有趣的实验培养观察、假设、实验、评估的科学思维方法。",
-                links: [
-                    { name: "B站", url: "https://www.bilibili.com/bangumi/media/md28234894/" }
-                ]
-            },
-            
-            // 12岁以上
-            {
-                title: "人类星球 Human Planet",
-                country: "英国",
-                duration: "每集60分钟",
-                category: "人文",
-                age: "12+",
-                desc: "BBC出品，探索人类如何在地球各种极端环境中生存。展示人类的智慧与韧性，思考人与自然的关系。",
-                links: [
-                    { name: "B站", url: "https://www.bilibili.com/bangumi/media/md20396/" }
-                ]
-            },
-            {
-                title: "文明 Civilisations",
-                country: "英国",
-                duration: "每集60分钟",
-                category: "艺术",
-                age: "12+",
-                desc: "BBC出品，讲述人类文明史上的艺术发展。从史前洞穴壁画到现代艺术，培养孩子的艺术素养和审美能力。",
-                links: [
-                    { name: "B站", url: "https://www.bilibili.com/bangumi/media/md28221458/" }
-                ]
-            },
-            {
-                title: "人生七年 Up Series",
-                country: "英国",
-                duration: "每集约90分钟",
-                category: "人文",
-                age: "12+",
-                desc: "追踪记录14个英国孩子从7岁到63岁的人生轨迹。深刻探讨阶层、教育、命运等话题，引发对人生的思考。",
-                links: [
-                    { name: "B站", url: "https://www.bilibili.com/video/BV1Ks411W7oZ/" }
-                ]
-            },
-            {
-                title: "大国崛起",
-                country: "中国",
-                duration: "每集50分钟",
-                category: "历史",
-                age: "12+",
-                desc: "央视出品，讲述500年来9个世界大国的兴衰历程。帮助青少年理解世界格局的演变，培养大历史观。",
-                links: [
-                    { name: "B站", url: "https://www.bilibili.com/bangumi/media/md20390/" },
-                    { name: "央视网", url: "https://tv.cctv.com/2012/12/12/VIDA1355302785498808.shtml" }
-                ]
-            },
-            {
-                title: "抽象：设计的艺术 Abstract",
-                country: "美国",
-                duration: "每集45分钟",
-                category: "艺术",
-                age: "12+",
-                desc: "Netflix出品，每集聚焦一位顶尖设计师。涵盖插画、建筑、汽车、平面设计等领域，启发创意思维。",
-                links: [
-                    { name: "B站", url: "https://www.bilibili.com/bangumi/media/md28233034/" }
-                ]
-            },
-            {
-                title: "他乡的童年",
-                country: "中国",
-                duration: "每集50分钟",
-                category: "人文",
-                age: "12+",
-                desc: "周轶君导演，探访日本、芬兰、印度等国的教育现场。引发对教育本质的思考，适合亲子共同观看讨论。",
-                links: [
-                    { name: "B站", url: "https://www.bilibili.com/bangumi/media/md28224860/" },
-                    { name: "优酷", url: "https://www.youku.com/show_page/id_zefbfbd5befbfbdefbfbd11e9b2a6efbfbdefbfbdefbfbd.html" }
-                ]
-            },
-            {
-                title: "守护解放西",
-                country: "中国",
-                duration: "每集45分钟",
-                category: "人文",
-                age: "12+",
-                desc: "长沙警察执法纪实，展示真实的社会百态。帮助青少年了解社会现实，培养法律意识和安全意识。",
-                links: [
-                    { name: "B站", url: "https://www.bilibili.com/bangumi/media/md28223041/" }
-                ]
-            },
-            {
-                title: "人间世",
-                country: "中国",
-                duration: "每集45分钟",
-                category: "人文",
-                age: "12+",
-                desc: "上海医院纪实，展示医患故事与生命议题。画面真实，情感深沉，适合培养孩子对生命的敬畏与同理心。",
-                links: [
-                    { name: "B站", url: "https://www.bilibili.com/bangumi/media/md28221465/" }
-                ]
-            }
-        ];
-        
-        let currentAge = 'all';
-        let currentCat = 'all';
-        
-        function renderCards() {
-            const container = document.getElementById('cardsContainer');
-            
-            const filtered = documentaries.filter(doc => {
-                const ageMatch = currentAge === 'all' || doc.age === currentAge;
-                const catMatch = currentCat === 'all' || doc.category === currentCat;
-                return ageMatch && catMatch;
-            });
-            
-            if (filtered.length === 0) {
-                container.innerHTML = `
-                    <div class="no-results" style="grid-column: 1/-1;">
-                        <h3>😢 暂无符合条件的纪录片</h3>
-                        <p>试试其他筛选条件吧</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            container.innerHTML = filtered.map(doc => `
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">${doc.title}</div>
-                        <div class="card-meta">
-                            <span class="tag tag-country">📍 ${doc.country}</span>
-                            <span class="tag tag-duration">⏱️ ${doc.duration}</span>
-                            <span class="tag tag-category">📁 ${doc.category}</span>
-                            <span class="tag tag-age">👶 ${doc.age}岁</span>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-desc">${doc.desc}</p>
-                    </div>
-                    <div class="card-footer">
-                        ${doc.links.map(link => `
-                            <a href="${link.url}" target="_blank" class="watch-btn">
-                                ▶️ ${link.name}
-                            </a>
-                        `).join('')}
-                    </div>
+const docs = [
+    // ===== 3-6岁 =====
+    { title: "小小世界 Tiny World", country: "美国", duration: "每集30分钟", category: "动物", age: "3-6",
+      desc: "Apple TV+出品，保罗·路德配音。用微距镜头展示小动物的奇妙世界，画面精美温馨，非常适合幼儿观看。",
+      search: "小小世界+Tiny+World+纪录片" },
+    { title: "萌宠成长记 Too Cute", country: "美国", duration: "每集45分钟", category: "动物", age: "3-6",
+      desc: "记录小猫、小狗从出生到成长的温馨过程。画面治愈，适合培养孩子的爱心和责任感。",
+      search: "萌宠成长记+Too+Cute" },
+    { title: "如果我是一只动物", country: "法国", duration: "每集5分钟", category: "动物", age: "3-6",
+      desc: "以第一人称视角讲述动物宝宝的成长，短小精悍，画面唯美，非常适合幼儿的注意力时长。",
+      search: "如果我是一只动物+纪录片" },
+    { title: "微观小世界 Minuscule", country: "法国", duration: "每集5分钟", category: "动物", age: "3-6",
+      desc: "无对白的昆虫世界动画纪录片，用幽默方式展示昆虫生活，画风独特，全球小朋友都爱看。",
+      search: "微观小世界+Minuscule" },
+    { title: "小猪佩奇主题乐园之旅", country: "英国", duration: "45分钟", category: "人文", age: "3-6",
+      desc: "跟随小猪佩奇探索主题乐园的幕后故事，寓教于乐，适合低龄儿童。",
+      search: "小猪佩奇+纪录片" },
+    { title: "海底小纵队", country: "英国", duration: "每集12分钟", category: "动物", age: "3-6",
+      desc: "虽是动画但融入大量海洋知识，每集介绍一种海洋生物，科普性强，深受幼儿喜爱。",
+      search: "海底小纵队" },
+    
+    // ===== 6-9岁 =====
+    { title: "地球脉动 Planet Earth", country: "英国", duration: "每集50分钟", category: "自然", age: "6-9",
+      desc: "BBC经典自然纪录片，大卫·爱登堡配音。展示地球各角落的壮丽景观和神奇生物，画面震撼。",
+      search: "地球脉动+Planet+Earth+BBC" },
+    { title: "蓝色星球 Blue Planet", country: "英国", duration: "每集50分钟", category: "自然", age: "6-9",
+      desc: "BBC海洋纪录片巅峰之作，带孩子领略海洋生命的神奇与脆弱，培养环保意识。",
+      search: "蓝色星球+Blue+Planet+BBC" },
+    { title: "王朝 Dynasties", country: "英国", duration: "每集60分钟", category: "动物", age: "6-9",
+      desc: "聚焦五种濒危动物家族的生存故事，叙事性强如动物版宫斗剧，让孩子了解动物社会。",
+      search: "王朝+Dynasties+BBC纪录片" },
+    { title: "我们的星球 Our Planet", country: "英国", duration: "每集50分钟", category: "自然", age: "6-9",
+      desc: "Netflix出品，大卫·爱登堡配音。展示自然之美同时呈现气候变化影响，培养环保责任感。",
+      search: "我们的星球+Our+Planet+Netflix" },
+    { title: "航拍中国", country: "中国", duration: "每集50分钟", category: "地理", age: "6-9",
+      desc: "央视出品，以空中视角俯瞰中国大地的壮美山河，培养孩子的家国情怀。",
+      search: "航拍中国+纪录片+央视" },
+    { title: "舌尖上的中国", country: "中国", duration: "每集50分钟", category: "人文", age: "6-9",
+      desc: "通过美食讲述中国人的故事，展示各地饮食文化，让孩子了解中华美食背后的情感。",
+      search: "舌尖上的中国" },
+    { title: "冰冻星球 Frozen Planet", country: "英国", duration: "每集60分钟", category: "自然", age: "6-9",
+      desc: "BBC出品，探索南北极的壮观景象和独特生物，画面震撼，让孩子了解极地生态。",
+      search: "冰冻星球+Frozen+Planet+BBC" },
+    { title: "猎捕 The Hunt", country: "英国", duration: "每集60分钟", category: "动物", age: "6-9",
+      desc: "BBC出品，展示捕食者与猎物之间的生存博弈，节奏紧张刺激，自然法则的生动教材。",
+      search: "猎捕+The+Hunt+BBC纪录片" },
+    
+    // ===== 9-12岁 =====
+    { title: "宇宙时空之旅 Cosmos", country: "美国", duration: "每集45分钟", category: "太空", age: "9-12",
+      desc: "天体物理学家尼尔·泰森主持，用震撼视觉讲述宇宙故事，激发对科学的好奇心。",
+      search: "宇宙时空之旅+Cosmos+纪录片" },
+    { title: "行星 The Planets", country: "英国", duration: "每集60分钟", category: "太空", age: "9-12",
+      desc: "BBC出品，讲述太阳系八大行星的故事，用最新科学发现呈现行星的壮丽与神秘。",
+      search: "行星+The+Planets+BBC" },
+    { title: "河西走廊", country: "中国", duration: "每集50分钟", category: "历史", age: "9-12",
+      desc: "讲述河西走廊的历史变迁和丝绸之路兴衰，画面大气配乐优美，了解中国历史地理。",
+      search: "河西走廊+纪录片" },
+    { title: "如果国宝会说话", country: "中国", duration: "每集5分钟", category: "历史", age: "9-12",
+      desc: "央视出品，每集5分钟介绍一件国宝文物，短小精悍文案优美，让孩子爱上历史文化。",
+      search: "如果国宝会说话" },
+    { title: "门捷列夫很忙", country: "中国", duration: "每集15分钟", category: "科学", age: "9-12",
+      desc: "用有趣方式讲解化学元素知识，将枯燥的元素周期表变成有趣故事，适合科学启蒙。",
+      search: "门捷列夫很忙" },
+    { title: "工厂探秘 How It's Made", country: "加拿大", duration: "每集22分钟", category: "科学", age: "9-12",
+      desc: "探访各种工厂展示日常物品的生产过程，满足好奇心，了解科技与制造业的奥秘。",
+      search: "工厂探秘+How+It's+Made" },
+    { title: "像乌鸦一样思考", country: "日本", duration: "每集10分钟", category: "科学", age: "9-12",
+      desc: "NHK出品的科学思维训练节目，通过有趣实验培养观察、假设、实验的科学方法。",
+      search: "像乌鸦一样思考+NHK" },
+    { title: "故宫100", country: "中国", duration: "每集6分钟", category: "历史", age: "9-12",
+      desc: "100集短片讲述故宫的建筑与故事，每集6分钟，碎片时间也能学历史。",
+      search: "故宫100+纪录片" },
+    { title: "美丽中国 Wild China", country: "中国/英国", duration: "每集60分钟", category: "自然", age: "9-12",
+      desc: "BBC与央视合拍，展示中国的自然风光和野生动物，画面精美，了解祖国自然之美。",
+      search: "美丽中国+Wild+China" },
+    
+    // ===== 12岁以上 =====
+    { title: "人类星球 Human Planet", country: "英国", duration: "每集60分钟", category: "人文", age: "12+",
+      desc: "BBC出品，探索人类如何在地球各种极端环境中生存，展示人类的智慧与韧性。",
+      search: "人类星球+Human+Planet+BBC" },
+    { title: "文明 Civilisations", country: "英国", duration: "每集60分钟", category: "艺术", age: "12+",
+      desc: "BBC出品，讲述人类文明史上的艺术发展，从史前壁画到现代艺术，培养艺术素养。",
+      search: "文明+Civilisations+BBC" },
+    { title: "大国崛起", country: "中国", duration: "每集50分钟", category: "历史", age: "12+",
+      desc: "央视出品，讲述500年来9个世界大国的兴衰历程，帮助理解世界格局演变。",
+      search: "大国崛起+纪录片+央视" },
+    { title: "他乡的童年", country: "中国", duration: "每集50分钟", category: "人文", age: "12+",
+      desc: "周轶君导演，探访日本、芬兰、印度等国的教育现场，引发对教育本质的思考。",
+      search: "他乡的童年+周轶君" },
+    { title: "人间世", country: "中国", duration: "每集45分钟", category: "人文", age: "12+",
+      desc: "上海医院纪实，展示医患故事与生命议题，培养对生命的敬畏与同理心。",
+      search: "人间世+纪录片" },
+    { title: "守护解放西", country: "中国", duration: "每集45分钟", category: "人文", age: "12+",
+      desc: "长沙警察执法纪实，展示真实社会百态，帮助了解社会现实和法律意识。",
+      search: "守护解放西" },
+    { title: "抽象：设计的艺术 Abstract", country: "美国", duration: "每集45分钟", category: "艺术", age: "12+",
+      desc: "Netflix出品，每集聚焦一位顶尖设计师，涵盖插画、建筑、平面设计等，启发创意思维。",
+      search: "抽象+设计的艺术+Abstract+Netflix" },
+    { title: "但是还有书籍", country: "中国", duration: "每集30分钟", category: "人文", age: "12+",
+      desc: "B站出品，讲述与书籍相关的人和故事，培养阅读兴趣，文艺清新。",
+      search: "但是还有书籍+纪录片" },
+    { title: "人生七年 Up Series", country: "英国", duration: "每集约100分钟", category: "人文", age: "12+",
+      desc: "追踪记录14个英国孩子从7岁到63岁的人生，探讨阶层、教育、命运，引发人生思考。",
+      search: "人生七年+56up+纪录片" },
+    { title: "生命 Life", country: "英国", duration: "每集50分钟", category: "自然", age: "12+",
+      desc: "BBC出品，大卫·爱登堡配音，展示生物界的生存策略和进化奇迹。",
+      search: "生命+Life+BBC+大卫爱登堡" },
+    { title: "互联网之子", country: "美国", duration: "105分钟", category: "人文", age: "12+",
+      desc: "讲述互联网先驱亚伦·斯沃茨的故事，关于自由、创新与理想主义，适合对科技感兴趣的青少年。",
+      search: "互联网之子+Aaron+Swartz" },
+    { title: "寻找手艺", country: "中国", duration: "每集25分钟", category: "人文", age: "12+",
+      desc: "走访中国各地记录传统手艺人，朴实温暖，了解即将消失的民间技艺。",
+      search: "寻找手艺+纪录片" }
+];
+
+let currentAge = 'all', currentCat = 'all';
+
+function render() {
+    const container = document.getElementById('cards');
+    const filtered = docs.filter(d => 
+        (currentAge === 'all' || d.age === currentAge) &&
+        (currentCat === 'all' || d.category === currentCat)
+    );
+    
+    if (!filtered.length) {
+        container.innerHTML = '<div class="no-results"><h3>😢 暂无符合条件的纪录片</h3></div>';
+        return;
+    }
+    
+    container.innerHTML = filtered.map(d => `
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">${d.title}</div>
+                <div class="card-meta">
+                    <span class="tag tag-country">📍 ${d.country}</span>
+                    <span class="tag tag-duration">⏱️ ${d.duration}</span>
+                    <span class="tag tag-category">📁 ${d.category}</span>
+                    <span class="tag tag-age">👤 ${d.age}岁</span>
                 </div>
-            `).join('');
-        }
-        
-        // 年龄筛选
-        document.querySelectorAll('.age-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.age-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentAge = btn.dataset.age;
-                renderCards();
-            });
-        });
-        
-        // 类别筛选
-        document.querySelectorAll('.cat-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentCat = btn.dataset.cat;
-                renderCards();
-            });
-        });
-        
-        // 初始渲染
-        renderCards();
+            </div>
+            <div class="card-body"><p class="card-desc">${d.desc}</p></div>
+            <div class="card-footer">
+                <a href="https://search.bilibili.com/all?keyword=${d.search}" target="_blank" class="watch-btn">▶️ B站搜索</a>
+                <a href="https://v.qq.com/x/search/?q=${d.search}" target="_blank" class="watch-btn alt">▶️ 腾讯视频</a>
+                <a href="https://so.youku.com/search_video/q_${d.search}" target="_blank" class="watch-btn alt2">▶️ 优酷</a>
+            </div>
+        </div>
+    `).join('');
+}
+
+document.querySelectorAll('.filter-btn[data-age]').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn[data-age]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentAge = btn.dataset.age;
+        render();
+    });
+});
+
+document.querySelectorAll('.filter-btn[data-cat]').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn[data-cat]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentCat = btn.dataset.cat;
+        render();
+    });
+});
+
+render();
     </script>
 </body>
 </html>
