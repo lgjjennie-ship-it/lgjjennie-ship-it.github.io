@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Global 渠道来源分析</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+body { font-family: 'Microsoft YaHei', Arial, sans-serif; padding: 20px; background: #f5f7fa; }
+.container { max-width: 1400px; margin: 0 auto; }
+.header { text-align: center; margin-bottom: 30px; }
+.header h1 { color: #2c3e50; margin-bottom: 10px; }
+.header p { color: #7f8c8d; font-size: 14px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
+.stat-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
+.stat-card .number { font-size: 32px; font-weight: bold; color: #3498db; margin-bottom: 5px; }
+.stat-card .label { color: #7f8c8d; font-size: 14px; }
+.chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+.chart-box { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.chart-box h3 { margin: 0 0 20px 0; color: #2c3e50; font-size: 18px; }
+.full-width { grid-column: 1 / -1; }
+canvas { max-height: 400px; }
+@media (max-width: 768px) { .chart-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>🌍 Global 渠道来源分析</h1>
+<p>数据周期：2025年1月 - 2026年2月 | 总样本：8,743人</p>
+</div>
+
+<div class="stats">
+<div class="stat-card"><div class="number">62.9%</div><div class="label">站内自然流量</div></div>
+<div class="stat-card"><div class="number">10.0%</div><div class="label">外部自然流量</div></div>
+<div class="stat-card"><div class="number">7.3%</div><div class="label">搜索引擎</div></div>
+<div class="stat-card"><div class="number">3.6%</div><div class="label">邀请码注册</div></div>
+</div>
+
+<div class="chart-grid">
+<div class="chart-box">
+<h3>📊 渠道类型分布</h3>
+<canvas id="typeChart"></canvas>
+</div>
+<div class="chart-box">
+<h3>🏷️ Top 10 渠道标签</h3>
+<canvas id="tagChart"></canvas>
+</div>
+</div>
+
+<div class="chart-box full-width">
+<h3>🔍 渠道类型 × 渠道标签 交叉分析（Top 3标签）</h3>
+<canvas id="crossChart"></canvas>
+</div>
+</div>
+
+<script>
+// 渠道类型饼图
+new Chart(document.getElementById('typeChart'), {
+type: 'doughnut',
+data: {
+labels: ['natural_self', 'natural_other', 'abnormal_data', 'natural_search', 'natural_direct', 'invitation_code', 'ytag_search', 'ytag_other'],
+datasets: [{
+data: [5501, 875, 761, 634, 331, 318, 226, 97],
+backgroundColor: ['#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6', '#1abc9c', '#34495e', '#95a5a6']
+}]
+},
+options: {
+responsive: true,
+plugins: {
+legend: { position: 'right' },
+tooltip: {
+callbacks: {
+label: function(context) {
+let label = context.label || '';
+let value = context.parsed;
+let total = context.dataset.data.reduce((a, b) => a + b, 0);
+let pct = ((value / total) * 100).toFixed(1);
+return label + ': ' + value + '人 (' + pct + '%)';
+}
+}
+}
+}
+}
+});
+
+// 渠道标签柱状图
+new Chart(document.getElementById('tagChart'), {
+type: 'bar',
+data: {
+labels: ['passport.ucloud-global.com', 'console.ucloud-global.com', 'accounts.google.com', 'www.ucloud.cn', 'Google', 'www.ucloud-global.com', 'link.zhihu.com', 'linux.do', 'passport../register', 'console../api-keys'],
+datasets: [{
+label: '客户数',
+data: [3705, 1405, 694, 503, 497, 307, 135, 110, 94, 81],
+backgroundColor: '#3498db'
+}]
+},
+options: {
+indexAxis: 'y',
+responsive: true,
+plugins: { legend: { display: false } },
+scales: { x: { beginAtZero: true } }
+}
+});
+
+// 交叉分析堆叠柱状图
+new Chart(document.getElementById('crossChart'), {
+type: 'bar',
+data: {
+labels: ['natural_self', 'natural_other', 'abnormal_data', 'natural_search', 'natural_direct', 'invitation_code', 'ytag_search', 'ytag_other'],
+datasets: [
+{
+label: 'Top 1标签',
+data: [3705, 503, 679, 492, 94, 50, 65, 26],
+backgroundColor: '#3498db'
+},
+{
+label: 'Top 2标签',
+data: [1405, 134, 16, 49, 81, 41, 55, 13],
+backgroundColor: '#2ecc71'
+},
+{
+label: 'Top 3标签',
+data: [307, 110, 12, 44, 73, 34, 39, 13],
+backgroundColor: '#f39c12'
+},
+{
+label: '其他标签',
+data: [84, 128, 54, 49, 83, 193, 67, 45],
+backgroundColor: '#95a5a6'
+}
+]
+},
+options: {
+responsive: true,
+scales: {
+x: { stacked: true },
+y: { stacked: true, beginAtZero: true }
+},
+plugins: {
+legend: { position: 'top' },
+tooltip: {
+callbacks: {
+footer: function(items) {
+let sum = items.reduce((a, item) => a + item.parsed.y, 0);
+return '总计: ' + sum + '人';
+}
+}
+}
+}
+}
+});
+</script>
+</body>
+</html>
