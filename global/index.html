@@ -5,6 +5,7 @@
 <title>Global 客户来源完整分析</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.45.0/dist/apexcharts.min.js"></script>
 <style>
 body { font-family: 'Microsoft YaHei', Arial, sans-serif; padding: 20px; background: #f5f7fa; margin: 0; }
 .container { max-width: 1400px; margin: 0 auto; }
@@ -20,7 +21,8 @@ body { font-family: 'Microsoft YaHei', Arial, sans-serif; padding: 20px; backgro
 .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 25px; }
 .chart-box { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 .chart-box h3 { margin: 0 0 15px 0; color: #2c3e50; font-size: 16px; }
-canvas { max-height: 450px; }
+canvas { max-height: 400px; }
+.treemap-container { min-height: 500px; }
 .legend-note { font-size: 12px; color: #7f8c8d; margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px; }
 @media (max-width: 900px) { .chart-row, .stats { grid-template-columns: 1fr; } }
 </style>
@@ -60,12 +62,12 @@ canvas { max-height: 450px; }
 </div>
 </div>
 
-<!-- 交叉分析 - 核心图表 -->
+<!-- 交叉分析 - Treemap -->
 <div class="section">
-<h2>🔍 渠道类型 × 渠道标签 交叉分析</h2>
-<canvas id="crossChart" height="140"></canvas>
+<h2>🔍 渠道类型 × 渠道标签 交叉分析（矩形树图）</h2>
+<div id="treemap" class="treemap-container"></div>
 <div class="legend-note">
-<strong>说明：</strong>每个渠道类型下显示其Top标签的客户数分布。natural_direct渠道标签为空（直接访问无来源标记）。
+<strong>说明：</strong>面积大小代表客户数量占比。每个大色块是一个渠道类型，内部嵌套的小块是该类型下的渠道标签。
 </div>
 </div>
 
@@ -137,10 +139,7 @@ canvas { max-height: 450px; }
 </div>
 
 <script>
-// 注册插件
 Chart.register(ChartDataLabels);
-
-const mainColors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe', '#43e97b', '#fa709a'];
 
 // 1. 月度注册量趋势
 new Chart(document.getElementById('monthlyChart'), {
@@ -148,7 +147,6 @@ type: 'bar',
 data: {
 labels: ['2025-01','2025-02','2025-03','2025-04','2025-05','2025-06','2025-07','2025-08','2025-09','2025-10','2025-11','2025-12','2026-01','2026-02'],
 datasets: [{
-label: '注册客户数',
 data: [10, 115, 265, 242, 468, 230, 276, 324, 1741, 871, 635, 1591, 1493, 482],
 backgroundColor: '#667eea',
 borderRadius: 4
@@ -158,18 +156,9 @@ options: {
 responsive: true,
 plugins: {
 legend: { display: false },
-datalabels: {
-anchor: 'end',
-align: 'top',
-color: '#333',
-font: { weight: 'bold', size: 11 },
-formatter: (v) => v.toLocaleString()
-}
+datalabels: { anchor: 'end', align: 'top', color: '#333', font: { weight: 'bold', size: 11 } }
 },
-scales: {
-y: { beginAtZero: true, max: 2000 },
-x: { grid: { display: false } }
-}
+scales: { y: { beginAtZero: true, max: 2000 }, x: { grid: { display: false } } }
 }
 });
 
@@ -180,7 +169,7 @@ data: {
 labels: ['natural_self', 'natural_other', 'abnormal_data', 'natural_search', 'natural_direct', 'invitation_code', 'ytag_search', 'ytag_other'],
 datasets: [{
 data: [5501, 875, 761, 634, 331, 318, 226, 97],
-backgroundColor: mainColors
+backgroundColor: ['#4285f4', '#9c27b0', '#e91e63', '#ff9800', '#4caf50', '#f44336', '#ffc107', '#00bcd4']
 }]
 },
 options: {
@@ -188,12 +177,8 @@ responsive: true,
 plugins: {
 legend: { position: 'right', labels: { font: { size: 11 }, padding: 12 } },
 datalabels: {
-color: '#fff',
-font: { weight: 'bold', size: 11 },
-formatter: (v, ctx) => {
-let pct = ((v / 8743) * 100).toFixed(1);
-return v >= 300 ? v.toLocaleString() + '\n(' + pct + '%)' : '';
-}
+color: '#fff', font: { weight: 'bold', size: 11 },
+formatter: (v) => v >= 300 ? v.toLocaleString() : ''
 }
 }
 }
@@ -205,9 +190,8 @@ type: 'bar',
 data: {
 labels: ['passport.ucloud-global.com', 'console.ucloud-global.com', 'accounts.google.com', 'www.ucloud.cn', 'Google', 'www.ucloud-global.com', 'link.zhihu.com', 'linux.do', 'com.google.android.gm', 'Bing'],
 datasets: [{
-label: '客户数',
 data: [3705, 1405, 694, 503, 497, 307, 135, 110, 61, 44],
-backgroundColor: ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe', '#43e97b', '#fa709a', '#38ef7d', '#11998e']
+backgroundColor: ['#4285f4', '#4285f4', '#9c27b0', '#9c27b0', '#ff9800', '#4285f4', '#9c27b0', '#9c27b0', '#ff9800', '#ff9800']
 }]
 },
 options: {
@@ -215,87 +199,108 @@ indexAxis: 'y',
 responsive: true,
 plugins: {
 legend: { display: false },
-datalabels: {
-anchor: 'end',
-align: 'right',
-color: '#333',
-font: { weight: 'bold', size: 11 },
-formatter: (v) => v.toLocaleString()
-}
+datalabels: { anchor: 'end', align: 'right', color: '#333', font: { weight: 'bold', size: 11 } }
 },
-scales: {
-x: { beginAtZero: true, max: 4500 }
-}
+scales: { x: { beginAtZero: true, max: 4500 } }
 }
 });
 
-// 4. 交叉分析堆叠柱状图
-new Chart(document.getElementById('crossChart'), {
-type: 'bar',
-data: {
-labels: ['natural_self', 'natural_other', 'abnormal_data', 'natural_search', 'natural_direct', 'invitation_code', 'ytag_search', 'ytag_other'],
-datasets: [
+// 4. Treemap 矩形树图
+var treemapOptions = {
+series: [
 {
-label: 'Top 1 标签',
-data: [3705, 503, 679, 492, 331, 50, 65, 26],
-backgroundColor: '#667eea',
-},
-{
-label: 'Top 2 标签',
-data: [1405, 134, 16, 49, 0, 41, 55, 13],
-backgroundColor: '#764ba2',
-},
-{
-label: 'Top 3 标签',
-data: [307, 110, 12, 44, 0, 34, 39, 13],
-backgroundColor: '#f093fb',
-},
-{
-label: '其他标签',
-data: [84, 128, 54, 49, 0, 193, 67, 45],
-backgroundColor: '#d5d8dc',
-}
+name: 'NATURAL_SELF',
+data: [
+{ x: 'passport.ucloud-global.com', y: 3705 },
+{ x: 'console.ucloud-global.com', y: 1405 },
+{ x: 'www.ucloud-global.com', y: 307 },
+{ x: 'ucloud-global.com', y: 79 },
+{ x: '其他', y: 5 }
 ]
 },
-options: {
-responsive: true,
-plugins: {
-legend: { position: 'top' },
-datalabels: {
-color: '#fff',
-font: { weight: 'bold', size: 10 },
-formatter: (v) => v > 50 ? v : ''
+{
+name: 'NATURAL_OTHER',
+data: [
+{ x: 'www.ucloud.cn', y: 503 },
+{ x: 'link.zhihu.com', y: 134 },
+{ x: 'linux.do', y: 110 },
+{ x: 'accounts.google.com', y: 694 },
+{ x: '其他', y: 128 }
+]
 },
-tooltip: {
-callbacks: {
-afterTitle: function(ctx) {
-const tagNames = {
-'natural_self': ['passport.ucloud-global.com', 'console.ucloud-global.com', 'www.ucloud-global.com', '其他7个'],
-'natural_other': ['www.ucloud.cn', 'link.zhihu.com', 'linux.do', '其他45个'],
-'abnormal_data': ['accounts.google.com', '10minemail.com', 'com.google.android.gm', '其他23个'],
-'natural_search': ['Google', 'com.google.android.gm', 'Bing', '其他5个'],
-'natural_direct': ['(空)', '-', '-', '-'],
-'invitation_code': ['C1x6DB2B0779164', 'C1x37345EF50453', 'C1x513082CD5EC0', '其他69个'],
-'ytag_search': ['22271935341', 'A04', 'A03', '其他12个'],
-'ytag_other': ['nodeseek', 'gwvpsceping', 'p1-1', '其他18个']
+{
+name: 'NATURAL_SEARCH',
+data: [
+{ x: 'Google', y: 492 },
+{ x: 'com.google...', y: 49 },
+{ x: 'Bing', y: 44 },
+{ x: 'Yandex', y: 25 },
+{ x: '其他', y: 24 }
+]
+},
+{
+name: 'INVITATION_CODE',
+data: [
+{ x: '72个邀请码', y: 318 }
+]
+},
+{
+name: 'YTAG_SEARCH',
+data: [
+{ x: '22271935341', y: 65 },
+{ x: 'A04', y: 55 },
+{ x: 'A03', y: 39 },
+{ x: '其他', y: 67 }
+]
+},
+{
+name: 'NATURAL_DIRECT',
+data: [
+{ x: '(空)', y: 331 }
+]
+},
+{
+name: 'YTAG_OTHER',
+data: [
+{ x: 'nodeseek', y: 26 },
+{ x: 'gwvpsceping', y: 13 },
+{ x: '其他', y: 58 }
+]
+},
+{
+name: 'ABNORMAL_DATA',
+data: [
+{ x: 'accounts.google.com', y: 679 },
+{ x: '临时邮箱', y: 82 }
+]
+}
+],
+legend: { show: true, position: 'bottom' },
+chart: { height: 500, type: 'treemap' },
+title: { text: '', align: 'center' },
+colors: ['#4285f4', '#9c27b0', '#ff9800', '#f44336', '#ffc107', '#4caf50', '#00bcd4', '#e91e63'],
+plotOptions: {
+treemap: {
+distributed: false,
+enableShades: true,
+shadeIntensity: 0.5,
+dataLabels: {
+format: 'scale'
+}
+}
+},
+dataLabels: {
+enabled: true,
+style: { fontSize: '12px', fontWeight: 'bold' },
+formatter: function(text, op) {
+return [text, op.value];
+},
+offsetY: -4
+}
 };
-const idx = ctx[0].datasetIndex;
-const channel = ctx[0].label;
-const tags = tagNames[channel];
-if (tags && tags[idx]) {
-return '标签: ' + tags[idx];
-}
-return '';
-}
-}
-}
-},
-scales: {
-x: { stacked: true, grid: { display: false } },
-y: { stacked: true, beginAtZero: true, title: { display: true, text: '客户数（人）' } }
-}
-}
-});
+
+var treemap = new ApexCharts(document.getElementById('treemap'), treemapOptions);
+treemap.render();
 </script>
 </body>
 </html>
