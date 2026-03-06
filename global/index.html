@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>Global 客户来源完整分析</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <style>
 body { font-family: 'Microsoft YaHei', Arial, sans-serif; padding: 20px; background: #f5f7fa; margin: 0; }
 .container { max-width: 1400px; margin: 0 auto; }
@@ -19,12 +20,9 @@ body { font-family: 'Microsoft YaHei', Arial, sans-serif; padding: 20px; backgro
 .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 25px; }
 .chart-box { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 .chart-box h3 { margin: 0 0 15px 0; color: #2c3e50; font-size: 16px; }
-.full-width { grid-column: 1 / -1; }
-canvas { max-height: 400px; }
+canvas { max-height: 450px; }
 .legend-note { font-size: 12px; color: #7f8c8d; margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px; }
-@media (max-width: 900px) { 
-  .chart-row, .stats { grid-template-columns: 1fr; } 
-}
+@media (max-width: 900px) { .chart-row, .stats { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -45,7 +43,7 @@ canvas { max-height: 400px; }
 <!-- 月度注册量趋势 -->
 <div class="section">
 <h2>📈 月度注册客户量趋势</h2>
-<canvas id="monthlyChart" height="100"></canvas>
+<canvas id="monthlyChart" height="80"></canvas>
 </div>
 
 <div class="chart-row">
@@ -65,7 +63,7 @@ canvas { max-height: 400px; }
 <!-- 交叉分析 - 核心图表 -->
 <div class="section">
 <h2>🔍 渠道类型 × 渠道标签 交叉分析</h2>
-<canvas id="crossChart" height="120"></canvas>
+<canvas id="crossChart" height="140"></canvas>
 <div class="legend-note">
 <strong>说明：</strong>每个渠道类型下显示其Top标签的客户数分布。natural_direct渠道标签为空（直接访问无来源标记）。
 </div>
@@ -139,33 +137,38 @@ canvas { max-height: 400px; }
 </div>
 
 <script>
-// 颜色方案
+// 注册插件
+Chart.register(ChartDataLabels);
+
 const mainColors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe', '#43e97b', '#fa709a'];
-const tagColors = ['#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6', '#1abc9c', '#e67e22', '#95a5a6'];
 
 // 1. 月度注册量趋势
 new Chart(document.getElementById('monthlyChart'), {
-type: 'line',
+type: 'bar',
 data: {
 labels: ['2025-01','2025-02','2025-03','2025-04','2025-05','2025-06','2025-07','2025-08','2025-09','2025-10','2025-11','2025-12','2026-01','2026-02'],
 datasets: [{
 label: '注册客户数',
 data: [10, 115, 265, 242, 468, 230, 276, 324, 1741, 871, 635, 1591, 1493, 482],
-borderColor: '#667eea',
-backgroundColor: 'rgba(102, 126, 234, 0.1)',
-borderWidth: 3,
-fill: true,
-tension: 0.3,
-pointRadius: 5,
-pointBackgroundColor: '#667eea'
+backgroundColor: '#667eea',
+borderRadius: 4
 }]
 },
 options: {
 responsive: true,
-plugins: { legend: { display: false } },
+plugins: {
+legend: { display: false },
+datalabels: {
+anchor: 'end',
+align: 'top',
+color: '#333',
+font: { weight: 'bold', size: 11 },
+formatter: (v) => v.toLocaleString()
+}
+},
 scales: {
-y: { beginAtZero: true, title: { display: true, text: '客户数（人）' } },
-x: { title: { display: true, text: '月份' } }
+y: { beginAtZero: true, max: 2000 },
+x: { grid: { display: false } }
 }
 }
 });
@@ -183,13 +186,13 @@ backgroundColor: mainColors
 options: {
 responsive: true,
 plugins: {
-legend: { position: 'right', labels: { font: { size: 11 }, padding: 15 } },
-tooltip: {
-callbacks: {
-label: function(ctx) {
-let pct = ((ctx.parsed / 8743) * 100).toFixed(1);
-return ctx.label + ': ' + ctx.parsed.toLocaleString() + '人 (' + pct + '%)';
-}
+legend: { position: 'right', labels: { font: { size: 11 }, padding: 12 } },
+datalabels: {
+color: '#fff',
+font: { weight: 'bold', size: 11 },
+formatter: (v, ctx) => {
+let pct = ((v / 8743) * 100).toFixed(1);
+return v >= 300 ? v.toLocaleString() + '\n(' + pct + '%)' : '';
 }
 }
 }
@@ -200,26 +203,37 @@ return ctx.label + ': ' + ctx.parsed.toLocaleString() + '人 (' + pct + '%)';
 new Chart(document.getElementById('tagChart'), {
 type: 'bar',
 data: {
-labels: ['passport.ucloud-global.com', 'console.ucloud-global.com', 'accounts.google.com', 'www.ucloud.cn', 'Google', 'www.ucloud-global.com', 'link.zhihu.com', 'linux.do', 'Bing', 'com.google.android.gm'],
+labels: ['passport.ucloud-global.com', 'console.ucloud-global.com', 'accounts.google.com', 'www.ucloud.cn', 'Google', 'www.ucloud-global.com', 'link.zhihu.com', 'linux.do', 'com.google.android.gm', 'Bing'],
 datasets: [{
 label: '客户数',
-data: [3705, 1405, 694, 503, 497, 307, 135, 110, 44, 61],
-backgroundColor: tagColors
+data: [3705, 1405, 694, 503, 497, 307, 135, 110, 61, 44],
+backgroundColor: ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe', '#43e97b', '#fa709a', '#38ef7d', '#11998e']
 }]
 },
 options: {
 indexAxis: 'y',
 responsive: true,
-plugins: { legend: { display: false } },
-scales: { x: { beginAtZero: true } }
+plugins: {
+legend: { display: false },
+datalabels: {
+anchor: 'end',
+align: 'right',
+color: '#333',
+font: { weight: 'bold', size: 11 },
+formatter: (v) => v.toLocaleString()
+}
+},
+scales: {
+x: { beginAtZero: true, max: 4500 }
+}
 }
 });
 
-// 4. 交叉分析堆叠柱状图 - 核心图表
+// 4. 交叉分析堆叠柱状图
 new Chart(document.getElementById('crossChart'), {
 type: 'bar',
 data: {
-labels: ['natural_self\n(5501人)', 'natural_other\n(875人)', 'abnormal_data\n(761人)', 'natural_search\n(634人)', 'natural_direct\n(331人)', 'invitation_code\n(318人)', 'ytag_search\n(226人)', 'ytag_other\n(97人)'],
+labels: ['natural_self', 'natural_other', 'abnormal_data', 'natural_search', 'natural_direct', 'invitation_code', 'ytag_search', 'ytag_other'],
 datasets: [
 {
 label: 'Top 1 标签',
@@ -239,7 +253,7 @@ backgroundColor: '#f093fb',
 {
 label: '其他标签',
 data: [84, 128, 54, 49, 0, 193, 67, 45],
-backgroundColor: '#e0e0e0',
+backgroundColor: '#d5d8dc',
 }
 ]
 },
@@ -247,23 +261,29 @@ options: {
 responsive: true,
 plugins: {
 legend: { position: 'top' },
+datalabels: {
+color: '#fff',
+font: { weight: 'bold', size: 10 },
+formatter: (v) => v > 50 ? v : ''
+},
 tooltip: {
 callbacks: {
 afterTitle: function(ctx) {
-const labels = {
-'natural_self\n(5501人)': ['passport.ucloud-global.com', 'console.ucloud-global.com', 'www.ucloud-global.com', '其他'],
-'natural_other\n(875人)': ['www.ucloud.cn', 'link.zhihu.com', 'linux.do', '其他'],
-'abnormal_data\n(761人)': ['accounts.google.com', '10minemail.com', 'com.google.android.gm', '其他'],
-'natural_search\n(634人)': ['Google', 'com.google.android.gm', 'Bing', '其他'],
-'natural_direct\n(331人)': ['(空)', '-', '-', '-'],
-'invitation_code\n(318人)': ['C1x6DB2B0779164', 'C1x37345EF50453', 'C1x513082CD5EC0', '其他68个'],
-'ytag_search\n(226人)': ['22271935341', 'A04', 'A03', '其他'],
-'ytag_other\n(97人)': ['nodeseek', 'gwvpsceping', 'p1-1', '其他']
+const tagNames = {
+'natural_self': ['passport.ucloud-global.com', 'console.ucloud-global.com', 'www.ucloud-global.com', '其他7个'],
+'natural_other': ['www.ucloud.cn', 'link.zhihu.com', 'linux.do', '其他45个'],
+'abnormal_data': ['accounts.google.com', '10minemail.com', 'com.google.android.gm', '其他23个'],
+'natural_search': ['Google', 'com.google.android.gm', 'Bing', '其他5个'],
+'natural_direct': ['(空)', '-', '-', '-'],
+'invitation_code': ['C1x6DB2B0779164', 'C1x37345EF50453', 'C1x513082CD5EC0', '其他69个'],
+'ytag_search': ['22271935341', 'A04', 'A03', '其他12个'],
+'ytag_other': ['nodeseek', 'gwvpsceping', 'p1-1', '其他18个']
 };
 const idx = ctx[0].datasetIndex;
-const channelLabels = labels[ctx[0].label];
-if (channelLabels && channelLabels[idx]) {
-return '标签: ' + channelLabels[idx];
+const channel = ctx[0].label;
+const tags = tagNames[channel];
+if (tags && tags[idx]) {
+return '标签: ' + tags[idx];
 }
 return '';
 }
@@ -271,7 +291,7 @@ return '';
 }
 },
 scales: {
-x: { stacked: true },
+x: { stacked: true, grid: { display: false } },
 y: { stacked: true, beginAtZero: true, title: { display: true, text: '客户数（人）' } }
 }
 }
