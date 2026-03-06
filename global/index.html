@@ -5,7 +5,7 @@
 <title>Global 客户来源完整分析</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.45.0/dist/apexcharts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <style>
 body { font-family: 'Microsoft YaHei', Arial, sans-serif; padding: 20px; background: #f5f7fa; margin: 0; }
 .container { max-width: 1400px; margin: 0 auto; }
@@ -22,7 +22,7 @@ body { font-family: 'Microsoft YaHei', Arial, sans-serif; padding: 20px; backgro
 .chart-box { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 .chart-box h3 { margin: 0 0 15px 0; color: #2c3e50; font-size: 16px; }
 canvas { max-height: 400px; }
-.treemap-container { min-height: 500px; }
+#treemap { width: 100%; height: 600px; }
 .legend-note { font-size: 12px; color: #7f8c8d; margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px; }
 @media (max-width: 900px) { .chart-row, .stats { grid-template-columns: 1fr; } }
 </style>
@@ -49,25 +49,22 @@ canvas { max-height: 400px; }
 </div>
 
 <div class="chart-row">
-<!-- 渠道类型分布 -->
 <div class="chart-box">
 <h3>📊 渠道类型分布</h3>
 <canvas id="typeChart"></canvas>
 </div>
-
-<!-- 渠道标签Top10 -->
 <div class="chart-box">
 <h3>🏷️ 渠道标签 Top 10</h3>
 <canvas id="tagChart"></canvas>
 </div>
 </div>
 
-<!-- 交叉分析 - Treemap -->
+<!-- 交叉分析 Treemap -->
 <div class="section">
-<h2>🔍 渠道类型 × 渠道标签 交叉分析（矩形树图）</h2>
-<div id="treemap" class="treemap-container"></div>
+<h2>🔍 渠道类型 × 渠道标签 交叉分析</h2>
+<div id="treemap"></div>
 <div class="legend-note">
-<strong>说明：</strong>面积大小代表客户数量占比。每个大色块是一个渠道类型，内部嵌套的小块是该类型下的渠道标签。
+<strong>说明：</strong>面积大小代表客户数量。大矩形框代表渠道类型，内部小块代表该类型下的渠道标签。
 </div>
 </div>
 
@@ -84,54 +81,14 @@ canvas { max-height: 400px; }
 </tr>
 </thead>
 <tbody>
-<tr style="background: #f8f9fa;">
-<td style="padding: 10px;"><strong>natural_self</strong></td>
-<td style="padding: 10px; text-align: right;">5,501</td>
-<td style="padding: 10px; text-align: right;">62.9%</td>
-<td style="padding: 10px;">passport.ucloud-global.com (67.4%), console.ucloud-global.com (25.5%), www.ucloud-global.com (5.6%)</td>
-</tr>
-<tr>
-<td style="padding: 10px;"><strong>natural_other</strong></td>
-<td style="padding: 10px; text-align: right;">875</td>
-<td style="padding: 10px; text-align: right;">10.0%</td>
-<td style="padding: 10px;">www.ucloud.cn (57.5%), link.zhihu.com (15.3%), linux.do (12.6%)</td>
-</tr>
-<tr style="background: #f8f9fa;">
-<td style="padding: 10px;"><strong>abnormal_data</strong></td>
-<td style="padding: 10px; text-align: right;">761</td>
-<td style="padding: 10px; text-align: right;">8.7%</td>
-<td style="padding: 10px;">accounts.google.com (89.2%), 10minemail.com (2.1%), com.google.android.gm (1.6%)</td>
-</tr>
-<tr>
-<td style="padding: 10px;"><strong>natural_search</strong></td>
-<td style="padding: 10px; text-align: right;">634</td>
-<td style="padding: 10px; text-align: right;">7.3%</td>
-<td style="padding: 10px;">Google (77.6%), com.google.android.gm (7.7%), Bing (6.9%), Yandex (2.1%)</td>
-</tr>
-<tr style="background: #f8f9fa;">
-<td style="padding: 10px;"><strong>natural_direct</strong></td>
-<td style="padding: 10px; text-align: right;">331</td>
-<td style="padding: 10px; text-align: right;">3.8%</td>
-<td style="padding: 10px;"><em>(空) - 直接访问无来源标记</em></td>
-</tr>
-<tr>
-<td style="padding: 10px;"><strong>invitation_code</strong></td>
-<td style="padding: 10px; text-align: right;">318</td>
-<td style="padding: 10px; text-align: right;">3.6%</td>
-<td style="padding: 10px;">C1x6DB2B0779164 (15.7%), C1x37345EF50453 (12.9%), C1x513082CD5EC0 (10.7%)</td>
-</tr>
-<tr style="background: #f8f9fa;">
-<td style="padding: 10px;"><strong>ytag_search</strong></td>
-<td style="padding: 10px; text-align: right;">226</td>
-<td style="padding: 10px; text-align: right;">2.6%</td>
-<td style="padding: 10px;">22271935341 (28.8%), A04 (24.3%), A03 (17.3%), A05 (8.8%)</td>
-</tr>
-<tr>
-<td style="padding: 10px;"><strong>ytag_other</strong></td>
-<td style="padding: 10px; text-align: right;">97</td>
-<td style="padding: 10px; text-align: right;">1.1%</td>
-<td style="padding: 10px;">nodeseek (26.8%), gwvpsceping (13.4%), p1-1 (13.4%), edm0320 (11.3%)</td>
-</tr>
+<tr style="background: #f8f9fa;"><td style="padding: 10px;"><strong>natural_self</strong></td><td style="padding: 10px; text-align: right;">5,501</td><td style="padding: 10px; text-align: right;">62.9%</td><td style="padding: 10px;">passport.ucloud-global.com (67.4%), console.ucloud-global.com (25.5%), www.ucloud-global.com (5.6%)</td></tr>
+<tr><td style="padding: 10px;"><strong>natural_other</strong></td><td style="padding: 10px; text-align: right;">875</td><td style="padding: 10px; text-align: right;">10.0%</td><td style="padding: 10px;">www.ucloud.cn (57.5%), link.zhihu.com (15.3%), linux.do (12.6%)</td></tr>
+<tr style="background: #f8f9fa;"><td style="padding: 10px;"><strong>abnormal_data</strong></td><td style="padding: 10px; text-align: right;">761</td><td style="padding: 10px; text-align: right;">8.7%</td><td style="padding: 10px;">accounts.google.com (89.2%), 10minemail.com (2.1%), com.google.android.gm (1.6%)</td></tr>
+<tr><td style="padding: 10px;"><strong>natural_search</strong></td><td style="padding: 10px; text-align: right;">634</td><td style="padding: 10px; text-align: right;">7.3%</td><td style="padding: 10px;">Google (77.6%), com.google.android.gm (7.7%), Bing (6.9%), Yandex (2.1%)</td></tr>
+<tr style="background: #f8f9fa;"><td style="padding: 10px;"><strong>natural_direct</strong></td><td style="padding: 10px; text-align: right;">331</td><td style="padding: 10px; text-align: right;">3.8%</td><td style="padding: 10px;"><em>(空) - 直接访问无来源标记</em></td></tr>
+<tr><td style="padding: 10px;"><strong>invitation_code</strong></td><td style="padding: 10px; text-align: right;">318</td><td style="padding: 10px; text-align: right;">3.6%</td><td style="padding: 10px;">C1x6DB2B0779164 (15.7%), C1x37345EF50453 (12.9%), C1x513082CD5EC0 (10.7%)</td></tr>
+<tr style="background: #f8f9fa;"><td style="padding: 10px;"><strong>ytag_search</strong></td><td style="padding: 10px; text-align: right;">226</td><td style="padding: 10px; text-align: right;">2.6%</td><td style="padding: 10px;">22271935341 (28.8%), A04 (24.3%), A03 (17.3%), A05 (8.8%)</td></tr>
+<tr><td style="padding: 10px;"><strong>ytag_other</strong></td><td style="padding: 10px; text-align: right;">97</td><td style="padding: 10px; text-align: right;">1.1%</td><td style="padding: 10px;">nodeseek (26.8%), gwvpsceping (13.4%), p1-1 (13.4%), edm0320 (11.3%)</td></tr>
 </tbody>
 </table>
 </div>
@@ -141,166 +98,216 @@ canvas { max-height: 400px; }
 <script>
 Chart.register(ChartDataLabels);
 
-// 1. 月度注册量趋势
+// 月度趋势
 new Chart(document.getElementById('monthlyChart'), {
 type: 'bar',
 data: {
 labels: ['2025-01','2025-02','2025-03','2025-04','2025-05','2025-06','2025-07','2025-08','2025-09','2025-10','2025-11','2025-12','2026-01','2026-02'],
-datasets: [{
-data: [10, 115, 265, 242, 468, 230, 276, 324, 1741, 871, 635, 1591, 1493, 482],
-backgroundColor: '#667eea',
-borderRadius: 4
-}]
+datasets: [{ data: [10, 115, 265, 242, 468, 230, 276, 324, 1741, 871, 635, 1591, 1493, 482], backgroundColor: '#667eea', borderRadius: 4 }]
 },
 options: {
 responsive: true,
-plugins: {
-legend: { display: false },
-datalabels: { anchor: 'end', align: 'top', color: '#333', font: { weight: 'bold', size: 11 } }
-},
+plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'top', color: '#333', font: { weight: 'bold', size: 11 } } },
 scales: { y: { beginAtZero: true, max: 2000 }, x: { grid: { display: false } } }
 }
 });
 
-// 2. 渠道类型分布饼图
+// 渠道类型饼图
 new Chart(document.getElementById('typeChart'), {
 type: 'doughnut',
 data: {
 labels: ['natural_self', 'natural_other', 'abnormal_data', 'natural_search', 'natural_direct', 'invitation_code', 'ytag_search', 'ytag_other'],
-datasets: [{
-data: [5501, 875, 761, 634, 331, 318, 226, 97],
-backgroundColor: ['#4285f4', '#9c27b0', '#e91e63', '#ff9800', '#4caf50', '#f44336', '#ffc107', '#00bcd4']
-}]
+datasets: [{ data: [5501, 875, 761, 634, 331, 318, 226, 97], backgroundColor: ['#4285f4', '#9c27b0', '#e91e63', '#ff9800', '#4caf50', '#f44336', '#ffc107', '#00bcd4'] }]
 },
 options: {
 responsive: true,
-plugins: {
-legend: { position: 'right', labels: { font: { size: 11 }, padding: 12 } },
-datalabels: {
-color: '#fff', font: { weight: 'bold', size: 11 },
-formatter: (v) => v >= 300 ? v.toLocaleString() : ''
-}
-}
+plugins: { legend: { position: 'right', labels: { font: { size: 11 }, padding: 12 } }, datalabels: { color: '#fff', font: { weight: 'bold', size: 11 }, formatter: (v) => v >= 300 ? v.toLocaleString() : '' } }
 }
 });
 
-// 3. 渠道标签Top10
+// 渠道标签Top10
 new Chart(document.getElementById('tagChart'), {
 type: 'bar',
 data: {
 labels: ['passport.ucloud-global.com', 'console.ucloud-global.com', 'accounts.google.com', 'www.ucloud.cn', 'Google', 'www.ucloud-global.com', 'link.zhihu.com', 'linux.do', 'com.google.android.gm', 'Bing'],
-datasets: [{
-data: [3705, 1405, 694, 503, 497, 307, 135, 110, 61, 44],
-backgroundColor: ['#4285f4', '#4285f4', '#9c27b0', '#9c27b0', '#ff9800', '#4285f4', '#9c27b0', '#9c27b0', '#ff9800', '#ff9800']
-}]
+datasets: [{ data: [3705, 1405, 694, 503, 497, 307, 135, 110, 61, 44], backgroundColor: ['#4285f4','#4285f4','#e91e63','#9c27b0','#ff9800','#4285f4','#9c27b0','#9c27b0','#ff9800','#ff9800'] }]
 },
 options: {
-indexAxis: 'y',
-responsive: true,
-plugins: {
-legend: { display: false },
-datalabels: { anchor: 'end', align: 'right', color: '#333', font: { weight: 'bold', size: 11 } }
-},
+indexAxis: 'y', responsive: true,
+plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'right', color: '#333', font: { weight: 'bold', size: 11 } } },
 scales: { x: { beginAtZero: true, max: 4500 } }
 }
 });
 
-// 4. Treemap 矩形树图
-var treemapOptions = {
-series: [
+// ECharts Treemap - 保持原始数据
+var treemapChart = echarts.init(document.getElementById('treemap'));
+var treemapData = [
 {
 name: 'NATURAL_SELF',
-data: [
-{ x: 'passport.ucloud-global.com', y: 3705 },
-{ x: 'console.ucloud-global.com', y: 1405 },
-{ x: 'www.ucloud-global.com', y: 307 },
-{ x: 'ucloud-global.com', y: 79 },
-{ x: '其他', y: 5 }
+value: 5501,
+children: [
+{ name: 'passport.ucloud-global.com', value: 3705 },
+{ name: 'console.ucloud-global.com', value: 1405 },
+{ name: 'www.ucloud-global.com', value: 307 },
+{ name: 'ucloud-global.com', value: 79 },
+{ name: 'spt.ucloud-global.com', value: 3 },
+{ name: 'crm-148.ucloud-global.com', value: 1 },
+{ name: 'crm-165.ucloud-global.com', value: 1 }
 ]
 },
 {
 name: 'NATURAL_OTHER',
-data: [
-{ x: 'www.ucloud.cn', y: 503 },
-{ x: 'link.zhihu.com', y: 134 },
-{ x: 'linux.do', y: 110 },
-{ x: 'accounts.google.com', y: 694 },
-{ x: '其他', y: 128 }
-]
-},
-{
-name: 'NATURAL_SEARCH',
-data: [
-{ x: 'Google', y: 492 },
-{ x: 'com.google...', y: 49 },
-{ x: 'Bing', y: 44 },
-{ x: 'Yandex', y: 25 },
-{ x: '其他', y: 24 }
-]
-},
-{
-name: 'INVITATION_CODE',
-data: [
-{ x: '72个邀请码', y: 318 }
-]
-},
-{
-name: 'YTAG_SEARCH',
-data: [
-{ x: '22271935341', y: 65 },
-{ x: 'A04', y: 55 },
-{ x: 'A03', y: 39 },
-{ x: '其他', y: 67 }
-]
-},
-{
-name: 'NATURAL_DIRECT',
-data: [
-{ x: '(空)', y: 331 }
-]
-},
-{
-name: 'YTAG_OTHER',
-data: [
-{ x: 'nodeseek', y: 26 },
-{ x: 'gwvpsceping', y: 13 },
-{ x: '其他', y: 58 }
+value: 875,
+children: [
+{ name: 'www.ucloud.cn', value: 503 },
+{ name: 'link.zhihu.com', value: 134 },
+{ name: 'linux.do', value: 110 },
+{ name: 'internxt.com', value: 11 },
+{ name: 'googleads.g.doubleclick.net', value: 10 },
+{ name: 'chatgpt.com', value: 10 },
+{ name: 'minmail.app', value: 10 },
+{ name: '10minemail.com', value: 9 },
+{ name: 'xueqiu.com', value: 8 },
+{ name: '10minutes.email', value: 8 },
+{ name: 'others', value: 62 }
 ]
 },
 {
 name: 'ABNORMAL_DATA',
-data: [
-{ x: 'accounts.google.com', y: 679 },
-{ x: '临时邮箱', y: 82 }
+value: 761,
+children: [
+{ name: 'accounts.google.com', value: 679 },
+{ name: '10minemail.com', value: 16 },
+{ name: 'com.google.android.gm', value: 12 },
+{ name: 'e.mail.ru', value: 8 },
+{ name: 'temp-mail.org', value: 6 },
+{ name: 'internxt.com', value: 6 },
+{ name: 'chatgpt.com', value: 5 },
+{ name: 'Google', value: 5 },
+{ name: 'mail.qq.com', value: 4 },
+{ name: 'minutemail.io', value: 4 },
+{ name: 'others', value: 16 }
+]
+},
+{
+name: 'NATURAL_SEARCH',
+value: 634,
+children: [
+{ name: 'Google', value: 492 },
+{ name: 'com.google.android.gm', value: 49 },
+{ name: 'Bing', value: 44 },
+{ name: 'accounts.google.com', value: 15 },
+{ name: 'Yandex', value: 13 },
+{ name: 'yandex.ru', value: 12 },
+{ name: 'DuckDuckGo', value: 5 },
+{ name: 'mail.google.com', value: 4 }
+]
+},
+{
+name: 'NATURAL_DIRECT',
+value: 331,
+children: [
+{ name: '(空)', value: 331 }
+]
+},
+{
+name: 'INVITATION_CODE',
+value: 318,
+children: [
+{ name: 'C1x6DB2B0779164', value: 50 },
+{ name: 'C1x37345EF50453', value: 41 },
+{ name: 'C1x513082CD5EC0', value: 34 },
+{ name: 'C1xCBCCB7AED6FD', value: 33 },
+{ name: 'C1x4A9AAB1BA06C', value: 8 },
+{ name: 'C1x2765E4085167', value: 6 },
+{ name: 'C1x424872CF1E37', value: 6 },
+{ name: 'C1x2A03B0748EB6', value: 6 },
+{ name: 'cozGxiT', value: 5 },
+{ name: 'C1xAD8F7CEE0C56', value: 5 },
+{ name: 'others', value: 124 }
+]
+},
+{
+name: 'YTAG_SEARCH',
+value: 226,
+children: [
+{ name: '22271935341', value: 65 },
+{ name: 'A04', value: 55 },
+{ name: 'A03', value: 39 },
+{ name: 'A05', value: 20 },
+{ name: '22278741242', value: 11 },
+{ name: 'A01', value: 10 },
+{ name: 'A16', value: 7 },
+{ name: '23516727000', value: 5 },
+{ name: 'A203', value: 4 },
+{ name: 'A06', value: 4 },
+{ name: 'others', value: 6 }
+]
+},
+{
+name: 'YTAG_OTHER',
+value: 97,
+children: [
+{ name: 'nodeseek', value: 26 },
+{ name: 'gwvpsceping', value: 13 },
+{ name: 'p1-1', value: 13 },
+{ name: 'edm0320', value: 11 },
+{ name: 'seo', value: 9 },
+{ name: 'zjcp', value: 4 },
+{ name: 'ip_hknotice', value: 3 },
+{ name: 'yuntue', value: 3 },
+{ name: 'sms', value: 2 },
+{ name: 'ulidc', value: 2 },
+{ name: 'others', value: 11 }
 ]
 }
+];
+
+var option = {
+tooltip: {
+formatter: function(info) {
+var val = info.value;
+var name = info.name;
+return '<b>' + name + '</b>: ' + val.toLocaleString() + '人';
+}
+},
+series: [{
+type: 'treemap',
+data: treemapData,
+width: '100%',
+height: '100%',
+roam: false,
+nodeClick: false,
+breadcrumb: { show: false },
+levels: [
+{
+itemStyle: { borderColor: '#fff', borderWidth: 3, gapWidth: 3 },
+upperLabel: { show: true, height: 30, color: '#fff', fontSize: 14, fontWeight: 'bold', backgroundColor: 'transparent' }
+},
+{
+itemStyle: { borderColor: '#fff', borderWidth: 1, gapWidth: 1 },
+colorSaturation: [0.3, 0.6]
+}
 ],
-legend: { show: true, position: 'bottom' },
-chart: { height: 500, type: 'treemap' },
-title: { text: '', align: 'center' },
-colors: ['#4285f4', '#9c27b0', '#ff9800', '#f44336', '#ffc107', '#4caf50', '#00bcd4', '#e91e63'],
-plotOptions: {
-treemap: {
-distributed: false,
-enableShades: true,
-shadeIntensity: 0.5,
-dataLabels: {
-format: 'scale'
-}
-}
+label: {
+show: true,
+formatter: function(params) {
+if (params.data.children) return '';
+return params.name + '\n' + params.value;
 },
-dataLabels: {
-enabled: true,
-style: { fontSize: '12px', fontWeight: 'bold' },
-formatter: function(text, op) {
-return [text, op.value];
+fontSize: 11,
+color: '#fff'
 },
-offsetY: -4
-}
+itemStyle: { borderColor: '#fff' },
+colorMappingBy: 'index',
+visualMin: 0,
+visualMax: 5501
+}],
+color: ['#4285f4', '#9c27b0', '#e91e63', '#ff9800', '#4caf50', '#f44336', '#ffc107', '#00bcd4']
 };
 
-var treemap = new ApexCharts(document.getElementById('treemap'), treemapOptions);
-treemap.render();
+treemapChart.setOption(option);
+window.addEventListener('resize', function() { treemapChart.resize(); });
 </script>
 </body>
 </html>
