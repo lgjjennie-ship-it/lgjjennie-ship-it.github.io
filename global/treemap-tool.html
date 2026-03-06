@@ -96,17 +96,29 @@ NATURAL_OTHER,link.zhihu.com,134
 </div>
 
 <script>
-// 颜色方案
+// 颜色方案 - 每个渠道类型一个主色
 const colorScheme = {
-'NATURAL_SELF': '#4285f4',
-'NATURAL_OTHER': '#9c27b0',
-'ABNORMAL_DATA': '#e91e63',
-'NATURAL_SEARCH': '#ff9800',
-'NATURAL_DIRECT': '#4caf50',
-'INVITATION_CODE': '#f44336',
-'YTAG_SEARCH': '#ffc107',
-'YTAG_OTHER': '#00bcd4'
+'NATURAL_SELF': { main: '#4285f4', light: '#a4c8ff' },
+'NATURAL_OTHER': { main: '#9c27b0', light: '#e1bee7' },
+'ABNORMAL_DATA': { main: '#e91e63', light: '#f8bbd9' },
+'NATURAL_SEARCH': { main: '#ff9800', light: '#ffe0b2' },
+'NATURAL_DIRECT': { main: '#4caf50', light: '#c8e6c9' },
+'INVITATION_CODE': { main: '#f44336', light: '#ffcdd2' },
+'YTAG_SEARCH': { main: '#ffc107', light: '#fff8e1' },
+'YTAG_OTHER': { main: '#00bcd4', light: '#b2ebf2' }
 };
+
+// 默认颜色
+const defaultColors = [
+{ main: '#3498db', light: '#aed6f1' },
+{ main: '#9b59b6', light: '#d7bde2' },
+{ main: '#e74c3c', light: '#f5b7b1' },
+{ main: '#f39c12', light: '#fdebd0' },
+{ main: '#1abc9c', light: '#a3e4d7' },
+{ main: '#e91e63', light: '#f8bbd9' },
+{ main: '#00bcd4', light: '#b2ebf2' },
+{ main: '#8bc34a', light: '#dcedc8' }
+];
 
 let currentData = null;
 
@@ -116,7 +128,6 @@ const lines = text.trim().split('\n').filter(l => l.trim());
 const data = {};
 
 lines.forEach(line => {
-// 支持逗号或Tab分隔
 const parts = line.includes('\t') ? line.split('\t') : line.split(',');
 if (parts.length >= 3) {
 const type = parts[0].trim().toUpperCase();
@@ -131,117 +142,100 @@ data[type].value += value;
 }
 });
 
-// 转为数组并排序
 return Object.values(data).sort((a, b) => b.value - a.value);
 }
 
 // Squarified Treemap 算法
-function squarify(items, rect, result = []) {
-if (items.length === 0) return result;
+function squarify(items, rect) {
+if (items.length === 0) return [];
 
+const result = [];
 const total = items.reduce((sum, item) => sum + item.value, 0);
 const { x, y, width, height } = rect;
 
-if (width >= height) {
-// 水平切分
-let rowItems = [];
+let remaining = [...items];
+let currentX = x;
+let currentY = y;
+let remainingWidth = width;
+let remainingHeight = height;
+
+while (remaining.length > 0) {
+const isHorizontal = remainingWidth >= remainingHeight;
+const side = isHorizontal ? remainingHeight : remainingWidth;
+
+// 找到最佳行
+let row = [];
 let rowSum = 0;
-let bestRatio = Infinity;
+const remainingTotal = remaining.reduce((sum, item) => sum + item.value, 0);
 
-for (let i = 0; i < items.length; i++) {
-const testItems = [...rowItems, items[i]];
-const testSum = rowSum + items[i].value;
-const rowWidth = (testSum / total) * width;
+for (let i = 0; i < remaining.length; i++) {
+const testRow = [...row, remaining[i]];
+const testSum = rowSum + remaining[i].value;
+const rowSize = (testSum / remainingTotal) * (isHorizontal ? remainingWidth : remainingHeight);
 
-// 计算最差宽高比
-let worstRatio = 0;
-testItems.forEach(item => {
-const itemHeight = (item.value / testSum) * height;
-const ratio = Math.max(rowWidth / itemHeight, itemHeight / rowWidth);
-worstRatio = Math.max(worstRatio, ratio);
-});
+// 计算宽高比
+const worstRatio = testRow.reduce((worst, item) => {
+const itemSize = (item.value / testSum) * side;
+const ratio = Math.max(rowSize / itemSize, itemSize / rowSize);
+return Math.max(worst, ratio);
+}, 0);
 
-if (worstRatio <= bestRatio || rowItems.length === 0) {
-rowItems.push(items[i]);
+const prevWorst = row.length === 0 ? Infinity : row.reduce((worst, item) => {
+const itemSize = (item.value / rowSum) * side;
+const prevRowSize = (rowSum / remainingTotal) * (isHorizontal ? remainingWidth : remainingHeight);
+const ratio = Math.max(prevRowSize / itemSize, itemSize / prevRowSize);
+return Math.max(worst, ratio);
+}, 0);
+
+if (worstRatio <= prevWorst || row.length === 0) {
+row.push(remaining[i]);
 rowSum = testSum;
-bestRatio = worstRatio;
 } else {
 break;
 }
 }
 
 // 布局当前行
-const rowWidth = (rowSum / total) * width;
-let currentY = y;
-rowItems.forEach(item => {
-const itemHeight = (item.value / rowSum) * height;
+const rowSize = (rowSum / remainingTotal) * (isHorizontal ? remainingWidth : remainingHeight);
+
+if (isHorizontal) {
+let cy = currentY;
+row.forEach(item => {
+const itemHeight = (item.value / rowSum) * remainingHeight;
 result.push({
 ...item,
-rect: { x, y: currentY, width: rowWidth, height: itemHeight }
+rect: { x: currentX, y: cy, width: rowSize, height: itemHeight }
 });
-currentY += itemHeight;
+cy += itemHeight;
 });
-
-// 递归剩余项
-const remaining = items.slice(rowItems.length);
-if (remaining.length > 0) {
-squarify(remaining, {
-x: x + rowWidth,
-y,
-width: width - rowWidth,
-height
-}, result);
-}
+currentX += rowSize;
+remainingWidth -= rowSize;
 } else {
-// 垂直切分
-let rowItems = [];
-let rowSum = 0;
-let bestRatio = Infinity;
-
-for (let i = 0; i < items.length; i++) {
-const testItems = [...rowItems, items[i]];
-const testSum = rowSum + items[i].value;
-const rowHeight = (testSum / total) * height;
-
-let worstRatio = 0;
-testItems.forEach(item => {
-const itemWidth = (item.value / testSum) * width;
-const ratio = Math.max(rowHeight / itemWidth, itemWidth / rowHeight);
-worstRatio = Math.max(worstRatio, ratio);
-});
-
-if (worstRatio <= bestRatio || rowItems.length === 0) {
-rowItems.push(items[i]);
-rowSum = testSum;
-bestRatio = worstRatio;
-} else {
-break;
-}
-}
-
-const rowHeight = (rowSum / total) * height;
-let currentX = x;
-rowItems.forEach(item => {
-const itemWidth = (item.value / rowSum) * width;
+let cx = currentX;
+row.forEach(item => {
+const itemWidth = (item.value / rowSum) * remainingWidth;
 result.push({
 ...item,
-rect: { x: currentX, y, width: itemWidth, height: rowHeight }
+rect: { x: cx, y: currentY, width: itemWidth, height: rowSize }
 });
-currentX += itemWidth;
+cx += itemWidth;
 });
-
-const remaining = items.slice(rowItems.length);
-if (remaining.length > 0) {
-squarify(remaining, {
-x,
-y: y + rowHeight,
-width,
-height: height - rowHeight
-}, result);
+currentY += rowSize;
+remainingHeight -= rowSize;
 }
+
+remaining = remaining.slice(row.length);
 }
 
 return result;
+}
+
+// 获取颜色
+function getColor(typeName, index) {
+if (colorScheme[typeName]) {
+return colorScheme[typeName];
+}
+return defaultColors[index % defaultColors.length];
 }
 
 // 绘制Treemap
@@ -249,7 +243,7 @@ function drawTreemap(data, canvas) {
 const ctx = canvas.getContext('2d');
 const width = canvas.width;
 const height = canvas.height;
-const padding = 3;
+const padding = 4;
 
 ctx.fillStyle = '#fff';
 ctx.fillRect(0, 0, width, height);
@@ -257,77 +251,94 @@ ctx.fillRect(0, 0, width, height);
 // 第一层布局
 const level1 = squarify(data, { x: padding, y: padding, width: width - padding * 2, height: height - padding * 2 });
 
-level1.forEach(item => {
+level1.forEach((item, typeIndex) => {
 const rect = item.rect;
-const color = colorScheme[item.name] || '#666';
+const colors = getColor(item.name, typeIndex);
 
-// 绘制第一层背景
-ctx.fillStyle = color;
+// 绘制第一层边框背景
+ctx.fillStyle = colors.main;
 ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
 
-// 绘制边框
+// 白色边框
 ctx.strokeStyle = '#fff';
-ctx.lineWidth = 3;
+ctx.lineWidth = 4;
 ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
 
-// 绘制渠道类型名称（左上角）
-ctx.fillStyle = '#fff';
-ctx.font = 'bold 13px Microsoft YaHei';
-ctx.fillText(item.name, rect.x + 8, rect.y + 20);
-
-// 第二层布局（子标签）
-if (item.children && item.children.length > 0) {
-const innerPadding = 28; // 给类型名称留空间
+// 第二层布局（子标签）- 给类型名称预留空间
+const headerHeight = 25;
+const innerPadding = 3;
 const innerRect = {
-x: rect.x + 2,
-y: rect.y + innerPadding,
-width: rect.width - 4,
-height: rect.height - innerPadding - 2
+x: rect.x + innerPadding,
+y: rect.y + headerHeight,
+width: rect.width - innerPadding * 2,
+height: rect.height - headerHeight - innerPadding
 };
 
-if (innerRect.height > 20 && innerRect.width > 20) {
+if (item.children && item.children.length > 0 && innerRect.height > 30 && innerRect.width > 30) {
 const level2 = squarify(item.children, innerRect);
 
-level2.forEach((child, idx) => {
+level2.forEach((child, childIndex) => {
 const cr = child.rect;
 
-// 子块颜色（同色系深浅变化）
-const alpha = 0.6 + (idx % 3) * 0.15;
-ctx.fillStyle = adjustColor(color, alpha);
+// 子块颜色 - 同色系渐变
+const lightness = 0.3 + (childIndex % 4) * 0.15;
+ctx.fillStyle = blendColor(colors.main, colors.light, lightness);
 ctx.fillRect(cr.x, cr.y, cr.width, cr.height);
 
 // 子块边框
-ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+ctx.strokeStyle = 'rgba(255,255,255,0.7)';
 ctx.lineWidth = 1;
 ctx.strokeRect(cr.x, cr.y, cr.width, cr.height);
 
 // 绘制标签和数值
-drawLabel(ctx, child.name, child.value, cr);
-});
-}
-}
+drawChildLabel(ctx, child.name, child.value, cr);
 });
 }
 
-// 调整颜色亮度
-function adjustColor(hex, factor) {
-const r = parseInt(hex.slice(1, 3), 16);
-const g = parseInt(hex.slice(3, 5), 16);
-const b = parseInt(hex.slice(5, 7), 16);
-
-const nr = Math.round(r + (255 - r) * (1 - factor));
-const ng = Math.round(g + (255 - g) * (1 - factor));
-const nb = Math.round(b + (255 - b) * (1 - factor));
-
-return `rgb(${nr},${ng},${nb})`;
+// 最后绘制渠道类型名称（在最上层）
+drawTypeLabel(ctx, item.name, rect);
+});
 }
 
-// 绘制标签
-function drawLabel(ctx, name, value, rect) {
-const minWidth = 30;
-const minHeight = 25;
+// 颜色混合
+function blendColor(color1, color2, ratio) {
+const c1 = hexToRgb(color1);
+const c2 = hexToRgb(color2);
 
-if (rect.width < minWidth || rect.height < minHeight) return;
+const r = Math.round(c1.r + (c2.r - c1.r) * ratio);
+const g = Math.round(c1.g + (c2.g - c1.g) * ratio);
+const b = Math.round(c1.b + (c2.b - c1.b) * ratio);
+
+return `rgb(${r},${g},${b})`;
+}
+
+function hexToRgb(hex) {
+const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+return result ? {
+r: parseInt(result[1], 16),
+g: parseInt(result[2], 16),
+b: parseInt(result[3], 16)
+} : { r: 0, g: 0, b: 0 };
+}
+
+// 绘制渠道类型名称
+function drawTypeLabel(ctx, name, rect) {
+ctx.fillStyle = 'rgba(0,0,0,0.3)';
+ctx.fillRect(rect.x, rect.y, rect.width, 22);
+
+ctx.fillStyle = '#fff';
+ctx.font = 'bold 12px Microsoft YaHei';
+ctx.textAlign = 'left';
+ctx.textBaseline = 'middle';
+ctx.fillText(name, rect.x + 6, rect.y + 11);
+}
+
+// 绘制子标签
+function drawChildLabel(ctx, name, value, rect) {
+const area = rect.width * rect.height;
+const minArea = 800;
+
+if (area < minArea) return; // 面积太小不显示
 
 ctx.fillStyle = '#fff';
 ctx.textAlign = 'center';
@@ -336,28 +347,26 @@ ctx.textBaseline = 'middle';
 const centerX = rect.x + rect.width / 2;
 const centerY = rect.y + rect.height / 2;
 
-// 根据面积决定显示方式
-const area = rect.width * rect.height;
-
-if (area > 15000) {
-// 大块：显示名称 + 数值
-ctx.font = 'bold 14px Microsoft YaHei';
-const displayName = name.length > 25 ? name.substring(0, 22) + '...' : name;
+if (area > 20000 && rect.width > 100 && rect.height > 50) {
+// 大块：完整显示
+ctx.font = 'bold 13px Microsoft YaHei';
+const displayName = name.length > 22 ? name.substring(0, 20) + '...' : name;
 ctx.fillText(displayName, centerX, centerY - 10);
-ctx.font = 'bold 16px Microsoft YaHei';
+ctx.font = 'bold 15px Microsoft YaHei';
 ctx.fillText(value.toLocaleString(), centerX, centerY + 12);
-} else if (area > 5000) {
-// 中块：缩短名称 + 数值
+} else if (area > 6000 && rect.width > 60 && rect.height > 40) {
+// 中块：缩短名称
 ctx.font = 'bold 11px Microsoft YaHei';
-const shortName = name.length > 15 ? name.substring(0, 12) + '...' : name;
+const shortName = name.length > 12 ? name.substring(0, 10) + '...' : name;
 ctx.fillText(shortName, centerX, centerY - 8);
 ctx.font = 'bold 13px Microsoft YaHei';
 ctx.fillText(value.toLocaleString(), centerX, centerY + 10);
-} else if (area > 1500) {
+} else if (area > 2000 && rect.width > 35 && rect.height > 25) {
 // 小块：只显示数值
 ctx.font = 'bold 11px Microsoft YaHei';
 ctx.fillText(value.toLocaleString(), centerX, centerY);
 }
+// 更小的块不显示任何文字
 }
 
 // 生成Treemap
