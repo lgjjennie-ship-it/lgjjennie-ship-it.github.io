@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Treemap 绘制工具</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Microsoft YaHei', Arial, sans-serif; background: #f5f7fa; min-height: 100vh; }
+.container { max-width: 1600px; margin: 0 auto; padding: 20px; }
+.header { text-align: center; padding: 20px; margin-bottom: 20px; }
+.header h1 { color: #2c3e50; font-size: 24px; }
+.header p { color: #7f8c8d; margin-top: 8px; }
+.main { display: grid; grid-template-columns: 380px 1fr; gap: 20px; }
+.panel { background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 20px; }
+.panel h3 { color: #2c3e50; margin-bottom: 15px; font-size: 16px; border-bottom: 2px solid #667eea; padding-bottom: 8px; }
+.input-group { margin-bottom: 15px; }
+.input-group label { display: block; margin-bottom: 5px; color: #555; font-size: 13px; font-weight: bold; }
+.input-group textarea { width: 100%; height: 280px; border: 1px solid #ddd; border-radius: 5px; padding: 10px; font-family: monospace; font-size: 12px; resize: vertical; }
+.input-group textarea:focus { outline: none; border-color: #667eea; }
+.btn { padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; transition: all 0.2s; }
+.btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102,126,234,0.4); }
+.btn-secondary { background: #95a5a6; color: white; }
+.btn-success { background: #27ae60; color: white; }
+.actions { margin-top: 15px; display: flex; flex-wrap: wrap; gap: 10px; }
+#treemapCanvas { width: 100%; background: white; border-radius: 5px; display: block; }
+.status { margin-top: 10px; padding: 10px; border-radius: 5px; font-size: 13px; }
+.status.success { background: #d4edda; color: #155724; }
+.status.error { background: #f8d7da; color: #721c24; }
+.size-controls { display: flex; gap: 15px; margin-top: 15px; align-items: center; flex-wrap: wrap; }
+.size-controls label { font-size: 13px; color: #555; }
+.size-controls input { width: 80px; padding: 5px; border: 1px solid #ddd; border-radius: 4px; }
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>📊 Treemap 绘制工具</h1>
+<p>粘贴数据，一键生成矩形树图</p>
+</div>
+<div class="main">
+<div class="panel">
+<h3>📝 数据输入</h3>
+<div class="input-group">
+<label>格式: 渠道类型,渠道标签,数值</label>
+<textarea id="dataInput"></textarea>
+</div>
+<div class="actions">
+<button class="btn btn-primary" onclick="generateTreemap()">🎨 生成图表</button>
+<button class="btn btn-secondary" onclick="loadSampleData()">📋 示例</button>
+<button class="btn btn-success" onclick="downloadPNG()">💾 下载PNG</button>
+</div>
+<div id="status"></div>
+<div class="size-controls">
+<label>宽度: <input type="number" id="canvasWidth" value="1200"></label>
+<label>高度: <input type="number" id="canvasHeight" value="900"></label>
+</div>
+</div>
+<div class="panel">
+<h3>👁️ 预览</h3>
+<canvas id="treemapCanvas"></canvas>
+</div>
+</div>
+</div>
+
+<script>
+const colorScheme = {
+'NATURAL_SELF': '#5B9CFF',
+'NATURAL_OTHER': '#CE93D8', 
+'ABNORMAL_DATA': '#F48FB1',
+'NATURAL_SEARCH': '#FFB74D',
+'NATURAL_DIRECT': '#A5D6A7',
+'INVITATION_CODE': '#FFAB91',
+'YTAG_SEARCH': '#FFE082',
+'YTAG_OTHER': '#80DEEA'
+};
+const defaultColors = ['#64B5F6','#BA68C8','#F06292','#FFB74D','#81C784','#FF8A65','#FFD54F','#4DD0E1'];
+
+let currentData = null;
+const HEADER_HEIGHT = 22; // 渠道类型标题栏高度
+
+function parseData(text) {
+const lines = text.trim().split('\n').filter(l => l.trim());
+const data = {};
+lines.forEach(line => {
+const parts = line.includes('\t') ? line.split('\t') : line.split(',');
+if (parts.length >= 3) {
+const type = parts[0].trim().toUpperCase();
+const tag = parts[1].trim();
+const value = parseInt(parts[2].trim()) || 0;
+if (!data[type]) data[type] = { name: type, value: 0, children: [] };
+data[type].children.push({ name: tag, value: value });
+data[type].value += value;
+}
+});
+return Object.values(data).sort((a, b) => b.value - a.value);
+}
+
+function squarify(items, rect) {
+if (!items.length) return [];
+const result = [];
+let { x, y, width: w, height: h } = rect;
+let remaining = [...items];
+
+while (remaining.length) {
+const horizontal = w >= h;
+const side = horizontal ? h : w;
+let row = [], rowSum = 0, bestRatio = Infinity;
+const remTotal = remaining.reduce((s, i) => s + i.value, 0);
+
+for (let i = 0; i < remaining.length; i++) {
+const testRow = [...row, remaining[i]];
+const testSum = rowSum + remaining[i].value;
+const rowLen = (testSum / remTotal) * (horizontal ? w : h);
+let worst = 0;
+testRow.forEach(item => {
+const itemLen = (item.value / testSum) * side;
+worst = Math.max(worst, Math.max(rowLen / itemLen, itemLen / rowLen));
+});
+if (worst <= bestRatio || !row.length) {
+row.push(remaining[i]); rowSum = testSum; bestRatio = worst;
+} else break;
+}
+
+const rowLen = (rowSum / remTotal) * (horizontal ? w : h);
+if (horizontal) {
+let cy = y;
+row.forEach(item => {
+const ih = (item.value / rowSum) * h;
+result.push({ ...item, rect: { x, y: cy, width: rowLen, height: ih } });
+cy += ih;
+});
+x += rowLen; w -= rowLen;
+} else {
+let cx = x;
+row.forEach(item => {
+const iw = (item.value / rowSum) * w;
+result.push({ ...item, rect: { x: cx, y, width: iw, height: rowLen } });
+cx += iw;
+});
+y += rowLen; h -= rowLen;
+}
+remaining = remaining.slice(row.length);
+}
+return result;
+}
+
+function getColor(name, idx) { return colorScheme[name] || defaultColors[idx % defaultColors.length]; }
+
+function darken(hex, amt) {
+const num = parseInt(hex.slice(1), 16);
+const r = Math.max(0, Math.min(255, (num >> 16) - amt * 255));
+const g = Math.max(0, Math.min(255, ((num >> 8) & 0xFF) - amt * 255));
+const b = Math.max(0, Math.min(255, (num & 0xFF) - amt * 255));
+return `rgb(${Math.round(r)},${Math.round(g)},${Math.round(b)})`;
+}
+
+function drawTreemap(data, canvas) {
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+ctx.fillStyle = '#fff';
+ctx.fillRect(0, 0, W, H);
+
+const pad = 3;
+const level1 = squarify(data, { x: pad, y: pad, width: W - pad * 2, height: H - pad * 2 });
+
+level1.forEach((item, idx) => {
+const r = item.rect;
+const baseColor = getColor(item.name, idx);
+
+// 1. 绘制整个区域背景（包含标题栏）
+ctx.fillStyle = darken(baseColor, 0.15); // 标题栏颜色更深
+ctx.fillRect(r.x, r.y, r.width, HEADER_HEIGHT);
+
+// 2. 绘制标题栏文字：渠道类型 + 总数
+ctx.fillStyle = '#fff';
+ctx.font = 'bold 12px Microsoft YaHei';
+ctx.textAlign = 'left';
+ctx.textBaseline = 'middle';
+const titleText = item.name;
+ctx.fillText(titleText, r.x + 6, r.y + HEADER_HEIGHT / 2);
+
+// 3. 子块区域
+const contentRect = {
+x: r.x,
+y: r.y + HEADER_HEIGHT,
+width: r.width,
+height: r.height - HEADER_HEIGHT
+};
+
+// 绘制内容区背景
+ctx.fillStyle = baseColor;
+ctx.fillRect(contentRect.x, contentRect.y, contentRect.width, contentRect.height);
+
+// 4. 绘制子块
+if (item.children?.length && contentRect.width > 15 && contentRect.height > 15) {
+const level2 = squarify(item.children, {
+x: contentRect.x + 1,
+y: contentRect.y + 1,
+width: contentRect.width - 2,
+height: contentRect.height - 2
+});
+
+level2.forEach((child, ci) => {
+const cr = child.rect;
+// 子块颜色渐变
+ctx.fillStyle = darken(baseColor, -0.05 + (ci % 4) * 0.08);
+ctx.fillRect(cr.x, cr.y, cr.width, cr.height);
+// 子块边框
+ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+ctx.lineWidth = 1;
+ctx.strokeRect(cr.x, cr.y, cr.width, cr.height);
+// 标签
+drawLabel(ctx, child.name, child.value, cr);
+});
+}
+
+// 5. 绘制整体边框（粗边框）
+ctx.strokeStyle = '#fff';
+ctx.lineWidth = 4;
+ctx.strokeRect(r.x, r.y, r.width, r.height);
+});
+}
+
+function drawLabel(ctx, name, value, r) {
+const area = r.width * r.height;
+const minW = 25, minH = 18;
+if (r.width < minW || r.height < minH) return;
+
+ctx.fillStyle = '#fff';
+ctx.textAlign = 'center';
+ctx.textBaseline = 'middle';
+const cx = r.x + r.width / 2;
+const cy = r.y + r.height / 2;
+
+// 根据面积和尺寸决定显示方式
+if (area > 20000 && r.width > 100 && r.height > 50) {
+// 大块：完整显示
+ctx.font = '12px Microsoft YaHei';
+const dn = name.length > 20 ? name.slice(0, 18) + '...' : name;
+ctx.fillText(dn, cx, cy - 9);
+ctx.font = 'bold 14px Microsoft YaHei';
+ctx.fillText(value.toLocaleString(), cx, cy + 10);
+} else if (area > 6000 && r.width > 55 && r.height > 35) {
+// 中块
+ctx.font = '10px Microsoft YaHei';
+const sn = name.length > 12 ? name.slice(0, 10) + '...' : name;
+ctx.fillText(sn, cx, cy - 7);
+ctx.font = 'bold 11px Microsoft YaHei';
+ctx.fillText(value.toLocaleString(), cx, cy + 8);
+} else if (area > 1200 && r.width > 30 && r.height > 20) {
+// 小块：只显示数值
+ctx.font = 'bold 10px Microsoft YaHei';
+ctx.fillText(value, cx, cy);
+}
+}
+
+function generateTreemap() {
+const input = document.getElementById('dataInput').value;
+if (!input.trim()) { showStatus('请输入数据', 'error'); return; }
+try {
+currentData = parseData(input);
+if (!currentData.length) { showStatus('未解析到有效数据', 'error'); return; }
+const canvas = document.getElementById('treemapCanvas');
+canvas.width = parseInt(document.getElementById('canvasWidth').value) || 1200;
+canvas.height = parseInt(document.getElementById('canvasHeight').value) || 900;
+drawTreemap(currentData, canvas);
+showStatus(`成功！共 ${currentData.length} 个渠道类型`, 'success');
+} catch (e) { showStatus('出错: ' + e.message, 'error'); }
+}
+
+function loadSampleData() {
+document.getElementById('dataInput').value = `NATURAL_SELF,passport.ucloud-global.com,3705
+NATURAL_SELF,console.ucloud-global.com,1405
+NATURAL_SELF,www.ucloud-global.com,307
+NATURAL_SELF,ucloud-global.com,79
+NATURAL_OTHER,www.ucloud.cn,503
+NATURAL_OTHER,link.zhihu.com,134
+NATURAL_OTHER,linux.do,110
+NATURAL_OTHER,others,128
+ABNORMAL_DATA,accounts.google.com,679
+ABNORMAL_DATA,others,82
+NATURAL_SEARCH,Google,492
+NATURAL_SEARCH,com.google.android.gm,49
+NATURAL_SEARCH,Bing,44
+NATURAL_SEARCH,others,49
+NATURAL_DIRECT,(空),331
+INVITATION_CODE,C1x6DB2B0779164,50
+INVITATION_CODE,C1x37345EF50453,41
+INVITATION_CODE,C1x513082CD5EC0,34
+INVITATION_CODE,others,193
+YTAG_SEARCH,22271935341,65
+YTAG_SEARCH,A04,55
+YTAG_SEARCH,A03,39
+YTAG_SEARCH,others,67
+YTAG_OTHER,nodeseek,26
+YTAG_OTHER,gwvpsceping,13
+YTAG_OTHER,p1-1,13
+YTAG_OTHER,others,45`;
+showStatus('已加载示例', 'success');
+}
+
+function downloadPNG() {
+if (!currentData) { showStatus('请先生成图表', 'error'); return; }
+const link = document.createElement('a');
+link.download = 'Treemap_' + new Date().toISOString().slice(0, 10) + '.png';
+link.href = document.getElementById('treemapCanvas').toDataURL('image/png');
+link.click();
+showStatus('已下载', 'success');
+}
+
+function showStatus(msg, type) {
+const el = document.getElementById('status');
+el.className = 'status ' + type;
+el.textContent = msg;
+}
+
+loadSampleData();
+generateTreemap();
+</script>
+</body>
+</html>
