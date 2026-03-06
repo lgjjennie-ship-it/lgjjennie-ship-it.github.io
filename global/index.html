@@ -156,10 +156,14 @@ scales: { x: { beginAtZero: true, max: 4500 } }
 // ECharts Treemap
 var treemapChart = echarts.init(document.getElementById('treemap'));
 
+// 定义颜色
+var colors = ['#4285f4', '#9c27b0', '#e91e63', '#ff9800', '#4caf50', '#f44336', '#ffc107', '#00bcd4'];
+
 var treemapData = [
 {
 name: 'NATURAL_SELF',
 value: 5501,
+itemStyle: { color: colors[0], borderColor: '#fff', borderWidth: 3 },
 children: [
 { name: 'passport.ucloud-global.com', value: 3705 },
 { name: 'console.ucloud-global.com', value: 1405 },
@@ -173,6 +177,7 @@ children: [
 {
 name: 'NATURAL_OTHER',
 value: 875,
+itemStyle: { color: colors[1], borderColor: '#fff', borderWidth: 3 },
 children: [
 { name: 'www.ucloud.cn', value: 503 },
 { name: 'link.zhihu.com', value: 134 },
@@ -190,6 +195,7 @@ children: [
 {
 name: 'ABNORMAL_DATA',
 value: 761,
+itemStyle: { color: colors[2], borderColor: '#fff', borderWidth: 3 },
 children: [
 { name: 'accounts.google.com', value: 679 },
 { name: '10minemail.com', value: 16 },
@@ -207,6 +213,7 @@ children: [
 {
 name: 'NATURAL_SEARCH',
 value: 634,
+itemStyle: { color: colors[3], borderColor: '#fff', borderWidth: 3 },
 children: [
 { name: 'Google', value: 492 },
 { name: 'com.google.android.gm', value: 49 },
@@ -221,6 +228,7 @@ children: [
 {
 name: 'NATURAL_DIRECT',
 value: 331,
+itemStyle: { color: colors[4], borderColor: '#fff', borderWidth: 3 },
 children: [
 { name: '(空)', value: 331 }
 ]
@@ -228,6 +236,7 @@ children: [
 {
 name: 'INVITATION_CODE',
 value: 318,
+itemStyle: { color: colors[5], borderColor: '#fff', borderWidth: 3 },
 children: [
 { name: 'C1x6DB2B0779164', value: 50 },
 { name: 'C1x37345EF50453', value: 41 },
@@ -245,6 +254,7 @@ children: [
 {
 name: 'YTAG_SEARCH',
 value: 226,
+itemStyle: { color: colors[6], borderColor: '#fff', borderWidth: 3 },
 children: [
 { name: '22271935341', value: 65 },
 { name: 'A04', value: 55 },
@@ -262,6 +272,7 @@ children: [
 {
 name: 'YTAG_OTHER',
 value: 97,
+itemStyle: { color: colors[7], borderColor: '#fff', borderWidth: 3 },
 children: [
 { name: 'nodeseek', value: 26 },
 { name: 'gwvpsceping', value: 13 },
@@ -304,58 +315,77 @@ roam: false,
 nodeClick: false,
 breadcrumb: { show: false },
 visibleMin: 5,
+label: {
+show: true,
+color: '#fff',
+fontSize: 12,
+fontWeight: 'bold'
+},
+upperLabel: {
+show: true,
+height: 26,
+color: '#fff',
+fontSize: 13,
+fontWeight: 'bold',
+formatter: '{b}'
+},
 levels: [
 {
 // 第一层：渠道类型
 itemStyle: {
 borderColor: '#fff',
-borderWidth: 3,
-gapWidth: 3
+borderWidth: 4,
+gapWidth: 4
 },
 upperLabel: {
 show: true,
-height: 24,
 color: '#fff',
-fontSize: 12,
+fontSize: 13,
 fontWeight: 'bold',
+height: 26,
 backgroundColor: 'transparent',
-padding: [4, 8],
-position: [5, 5]
+padding: [5, 10]
 },
 label: {
 show: false
-},
-color: ['#4285f4', '#9c27b0', '#e91e63', '#ff9800', '#4caf50', '#f44336', '#ffc107', '#00bcd4']
+}
 },
 {
-// 第二层：渠道标签
+// 第二层：渠道标签 - 自适应换行
 itemStyle: {
-borderColor: 'rgba(255,255,255,0.5)',
+borderColor: 'rgba(255,255,255,0.6)',
 borderWidth: 1,
 gapWidth: 1
 },
-colorSaturation: [0.35, 0.65],
+colorSaturation: [0.4, 0.7],
 label: {
 show: true,
+position: 'inside',
+color: '#fff',
+fontSize: 11,
+fontWeight: 'normal',
+overflow: 'break',
+lineOverflow: 'truncate',
 formatter: function(params) {
 var val = params.value;
 var name = params.name;
-if (val >= 300) {
+// 根据数值判断显示方式
+if (val >= 200) {
+// 大块：完整显示，换行
 return name + '\n' + val.toLocaleString();
-} else if (val >= 50) {
-var shortName = name.length > 18 ? name.substring(0, 15) + '...' : name;
-return shortName + '\n' + val;
-} else if (val >= 10) {
-return val;
+} else if (val >= 40) {
+// 中块：截短+数值
+if (name.length > 12) {
+return name.substring(0, 10) + '...\n' + val;
+}
+return name + '\n' + val;
+} else if (val >= 8) {
+// 小块：只显示数值
+return val.toString();
 } else {
 return '';
 }
-},
-color: '#fff',
-fontSize: 11,
-lineHeight: 16,
-textShadowColor: 'rgba(0,0,0,0.3)',
-textShadowBlur: 2
+}
 }
 }
 ]
@@ -365,12 +395,17 @@ textShadowBlur: 2
 treemapChart.setOption(option);
 window.addEventListener('resize', function() { treemapChart.resize(); });
 
-// 下载图表
+// 下载图表 - 确保标签显示
 function downloadTreemap() {
+// 强制刷新渲染
+treemapChart.resize();
+    
+setTimeout(function() {
 var url = treemapChart.getDataURL({
 type: 'png',
-pixelRatio: 2,
-backgroundColor: '#fff'
+pixelRatio: 3,
+backgroundColor: '#fff',
+excludeComponents: ['tooltip']
 });
 var link = document.createElement('a');
 link.download = 'Global渠道来源交叉分析_' + new Date().toISOString().slice(0,10) + '.png';
@@ -378,6 +413,7 @@ link.href = url;
 document.body.appendChild(link);
 link.click();
 document.body.removeChild(link);
+}, 100);
 }
 </script>
 </body>
