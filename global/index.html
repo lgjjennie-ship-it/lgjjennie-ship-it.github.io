@@ -27,8 +27,8 @@ body { font-family: 'Microsoft YaHei', Arial, sans-serif; padding: 20px; backgro
 .chart-box { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 .chart-box h3 { margin: 0 0 15px 0; color: #2c3e50; font-size: 16px; }
 canvas { max-height: 400px; }
-#treemap { width: 100%; height: 700px; }
-.legend-note { font-size: 12px; color: #7f8c8d; margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px; }
+.treemap-wrapper { width: 100%; max-width: 1000px; margin: 0 auto; }
+#treemap { width: 100%; height: 750px; }
 .treemap-footer { font-size: 12px; color: #95a5a6; text-align: center; margin-top: 10px; }
 @media (max-width: 900px) { .chart-row, .stats { grid-template-columns: 1fr; } }
 </style>
@@ -76,8 +76,10 @@ canvas { max-height: 400px; }
 下载图表
 </button>
 </div>
+<div class="treemap-wrapper">
 <div id="treemap"></div>
-<div class="treemap-footer">共8个渠道类型：natural_self、natural_other、abnormal_data、natural_search、natural_direct、invitation_code、ytag_search、ytag_other</div>
+</div>
+<div class="treemap-footer">共8个渠道类型：NATURAL_SELF、NATURAL_OTHER、ABNORMAL_DATA、NATURAL_SEARCH、NATURAL_DIRECT、INVITATION_CODE、YTAG_SEARCH、YTAG_OTHER</div>
 </div>
 
 <!-- 数据明细表 -->
@@ -151,14 +153,13 @@ scales: { x: { beginAtZero: true, max: 4500 } }
 }
 });
 
-// ECharts Treemap - 修正版
+// ECharts Treemap
 var treemapChart = echarts.init(document.getElementById('treemap'));
 
 var treemapData = [
 {
 name: 'NATURAL_SELF',
 value: 5501,
-itemStyle: { color: '#4285f4' },
 children: [
 { name: 'passport.ucloud-global.com', value: 3705 },
 { name: 'console.ucloud-global.com', value: 1405 },
@@ -172,7 +173,6 @@ children: [
 {
 name: 'NATURAL_OTHER',
 value: 875,
-itemStyle: { color: '#9c27b0' },
 children: [
 { name: 'www.ucloud.cn', value: 503 },
 { name: 'link.zhihu.com', value: 134 },
@@ -190,7 +190,6 @@ children: [
 {
 name: 'ABNORMAL_DATA',
 value: 761,
-itemStyle: { color: '#e91e63' },
 children: [
 { name: 'accounts.google.com', value: 679 },
 { name: '10minemail.com', value: 16 },
@@ -208,7 +207,6 @@ children: [
 {
 name: 'NATURAL_SEARCH',
 value: 634,
-itemStyle: { color: '#ff9800' },
 children: [
 { name: 'Google', value: 492 },
 { name: 'com.google.android.gm', value: 49 },
@@ -223,7 +221,6 @@ children: [
 {
 name: 'NATURAL_DIRECT',
 value: 331,
-itemStyle: { color: '#4caf50' },
 children: [
 { name: '(空)', value: 331 }
 ]
@@ -231,7 +228,6 @@ children: [
 {
 name: 'INVITATION_CODE',
 value: 318,
-itemStyle: { color: '#f44336' },
 children: [
 { name: 'C1x6DB2B0779164', value: 50 },
 { name: 'C1x37345EF50453', value: 41 },
@@ -249,7 +245,6 @@ children: [
 {
 name: 'YTAG_SEARCH',
 value: 226,
-itemStyle: { color: '#ffc107' },
 children: [
 { name: '22271935341', value: 65 },
 { name: 'A04', value: 55 },
@@ -267,7 +262,6 @@ children: [
 {
 name: 'YTAG_OTHER',
 value: 97,
-itemStyle: { color: '#00bcd4' },
 children: [
 { name: 'nodeseek', value: 26 },
 { name: 'gwvpsceping', value: 13 },
@@ -291,77 +285,77 @@ formatter: function(info) {
 var treePath = info.treePathInfo;
 var text = '';
 if (treePath.length > 1) {
-text = '<b>' + treePath[1].name + '</b><br/>';
+text = '<b style="color:' + info.color + '">' + treePath[1].name + '</b><br/>';
 }
 if (treePath.length > 2) {
-text += '标签: ' + info.name + '<br/>';
+text += '渠道标签: ' + info.name + '<br/>';
 }
-text += '客户数: ' + info.value.toLocaleString() + '人';
+text += '客户数: <b>' + info.value.toLocaleString() + '</b>人';
 return text;
 }
 },
 series: [{
 type: 'treemap',
 data: treemapData,
-top: 10,
-left: 10,
-right: 10,
-bottom: 10,
+width: '100%',
+height: '100%',
+squareRatio: 0.75,
 roam: false,
 nodeClick: false,
 breadcrumb: { show: false },
-visibleMin: 10,
+visibleMin: 5,
 levels: [
 {
-// 第一层：渠道类型 - 显示边界和名称
-itemStyle: { 
-borderColor: '#333',
+// 第一层：渠道类型
+itemStyle: {
+borderColor: '#fff',
 borderWidth: 3,
 gapWidth: 3
 },
 upperLabel: {
 show: true,
-height: 28,
+height: 24,
 color: '#fff',
-fontSize: 13,
+fontSize: 12,
 fontWeight: 'bold',
-textShadowColor: 'rgba(0,0,0,0.5)',
-textShadowBlur: 3,
-formatter: function(params) {
-return params.name + ' (' + params.value.toLocaleString() + ')';
-}
+backgroundColor: 'transparent',
+padding: [4, 8],
+position: [5, 5]
 },
-label: { show: false }
+label: {
+show: false
+},
+color: ['#4285f4', '#9c27b0', '#e91e63', '#ff9800', '#4caf50', '#f44336', '#ffc107', '#00bcd4']
 },
 {
-// 第二层：渠道标签 - 自适应显示
+// 第二层：渠道标签
 itemStyle: {
-borderColor: 'rgba(255,255,255,0.6)',
+borderColor: 'rgba(255,255,255,0.5)',
 borderWidth: 1,
 gapWidth: 1
 },
-colorSaturation: [0.4, 0.7],
+colorSaturation: [0.35, 0.65],
 label: {
 show: true,
-position: 'inside',
-color: '#fff',
-textShadowColor: 'rgba(0,0,0,0.4)',
-textShadowBlur: 2,
 formatter: function(params) {
 var val = params.value;
 var name = params.name;
-// 根据数值大小自适应
-if (val >= 500) {
+if (val >= 300) {
 return name + '\n' + val.toLocaleString();
-} else if (val >= 100) {
-var shortName = name.length > 20 ? name.substring(0, 17) + '...' : name;
+} else if (val >= 50) {
+var shortName = name.length > 18 ? name.substring(0, 15) + '...' : name;
 return shortName + '\n' + val;
-} else if (val >= 30) {
+} else if (val >= 10) {
 return val;
 } else {
 return '';
 }
-}
+},
+color: '#fff',
+fontSize: 11,
+lineHeight: 16,
+textShadowColor: 'rgba(0,0,0,0.3)',
+textShadowBlur: 2
 }
 }
 ]
