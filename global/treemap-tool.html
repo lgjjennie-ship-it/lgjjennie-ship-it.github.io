@@ -10,38 +10,28 @@ body { font-family: 'Microsoft YaHei', Arial, sans-serif; background: #f5f7fa; m
 .header { text-align: center; padding: 20px; margin-bottom: 20px; }
 .header h1 { color: #2c3e50; font-size: 24px; }
 .header p { color: #7f8c8d; margin-top: 8px; }
-
-.main { display: grid; grid-template-columns: 400px 1fr; gap: 20px; }
-
+.main { display: grid; grid-template-columns: 380px 1fr; gap: 20px; }
 .panel { background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 20px; }
 .panel h3 { color: #2c3e50; margin-bottom: 15px; font-size: 16px; border-bottom: 2px solid #667eea; padding-bottom: 8px; }
-
 .input-group { margin-bottom: 15px; }
 .input-group label { display: block; margin-bottom: 5px; color: #555; font-size: 13px; font-weight: bold; }
-.input-group textarea { width: 100%; height: 300px; border: 1px solid #ddd; border-radius: 5px; padding: 10px; font-family: monospace; font-size: 12px; resize: vertical; }
+.input-group textarea { width: 100%; height: 280px; border: 1px solid #ddd; border-radius: 5px; padding: 10px; font-family: monospace; font-size: 12px; resize: vertical; }
 .input-group textarea:focus { outline: none; border-color: #667eea; }
-
 .btn { padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; transition: all 0.2s; }
 .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
 .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102,126,234,0.4); }
-.btn-secondary { background: #95a5a6; color: white; margin-left: 10px; }
+.btn-secondary { background: #95a5a6; color: white; }
 .btn-secondary:hover { background: #7f8c8d; }
-.btn-success { background: #27ae60; color: white; margin-left: 10px; }
+.btn-success { background: #27ae60; color: white; }
 .btn-success:hover { background: #219a52; }
-
 .actions { margin-top: 15px; display: flex; flex-wrap: wrap; gap: 10px; }
-
 .preview-panel { min-height: 600px; }
-#treemapCanvas { width: 100%; background: white; border-radius: 5px; }
-
+#treemapCanvas { width: 100%; background: white; border-radius: 5px; display: block; }
 .format-help { background: #f8f9fa; padding: 12px; border-radius: 5px; margin-top: 15px; font-size: 12px; color: #666; }
-.format-help code { background: #e9ecef; padding: 2px 6px; border-radius: 3px; }
-
 .status { margin-top: 10px; padding: 10px; border-radius: 5px; font-size: 13px; }
 .status.success { background: #d4edda; color: #155724; }
 .status.error { background: #f8d7da; color: #721c24; }
-
-.size-controls { display: flex; gap: 15px; margin-bottom: 15px; align-items: center; }
+.size-controls { display: flex; gap: 15px; margin-top: 15px; align-items: center; flex-wrap: wrap; }
 .size-controls label { font-size: 13px; color: #555; }
 .size-controls input { width: 80px; padding: 5px; border: 1px solid #ddd; border-radius: 4px; }
 </style>
@@ -52,42 +42,30 @@ body { font-family: 'Microsoft YaHei', Arial, sans-serif; background: #f5f7fa; m
 <h1>📊 Treemap 绘制工具</h1>
 <p>粘贴数据，一键生成矩形树图</p>
 </div>
-
 <div class="main">
 <div class="panel">
 <h3>📝 数据输入</h3>
-
 <div class="input-group">
-<label>粘贴数据 (CSV格式: 渠道类型,渠道标签,数值)</label>
-<textarea id="dataInput" placeholder="示例格式：
-NATURAL_SELF,passport.ucloud-global.com,3705
+<label>粘贴数据 (格式: 渠道类型,渠道标签,数值)</label>
+<textarea id="dataInput" placeholder="NATURAL_SELF,passport.ucloud-global.com,3705
 NATURAL_SELF,console.ucloud-global.com,1405
-NATURAL_OTHER,www.ucloud.cn,503
-NATURAL_OTHER,link.zhihu.com,134
 ..."></textarea>
 </div>
-
 <div class="actions">
 <button class="btn btn-primary" onclick="generateTreemap()">🎨 生成图表</button>
-<button class="btn btn-secondary" onclick="loadSampleData()">📋 加载示例</button>
+<button class="btn btn-secondary" onclick="loadSampleData()">📋 示例数据</button>
 <button class="btn btn-success" onclick="downloadPNG()">💾 下载PNG</button>
 </div>
-
 <div id="status"></div>
-
-<div class="format-help">
-<strong>数据格式说明：</strong><br>
-每行一条数据，用逗号分隔：<br>
-<code>渠道类型,渠道标签,数值</code><br><br>
-支持直接从Excel复制粘贴（Tab分隔也可以）
-</div>
-
-<div class="size-controls" style="margin-top: 15px;">
+<div class="size-controls">
 <label>宽度: <input type="number" id="canvasWidth" value="1200"></label>
 <label>高度: <input type="number" id="canvasHeight" value="900"></label>
 </div>
+<div class="format-help">
+<strong>格式：</strong>每行 <code>渠道类型,渠道标签,数值</code><br>
+支持Excel直接复制（Tab分隔）
 </div>
-
+</div>
 <div class="panel preview-panel">
 <h3>👁️ 预览</h3>
 <canvas id="treemapCanvas"></canvas>
@@ -96,308 +74,204 @@ NATURAL_OTHER,link.zhihu.com,134
 </div>
 
 <script>
-// 颜色方案 - 每个渠道类型一个主色
+// 颜色方案 - 参考原图配色
 const colorScheme = {
-'NATURAL_SELF': { main: '#4285f4', light: '#a4c8ff' },
-'NATURAL_OTHER': { main: '#9c27b0', light: '#e1bee7' },
-'ABNORMAL_DATA': { main: '#e91e63', light: '#f8bbd9' },
-'NATURAL_SEARCH': { main: '#ff9800', light: '#ffe0b2' },
-'NATURAL_DIRECT': { main: '#4caf50', light: '#c8e6c9' },
-'INVITATION_CODE': { main: '#f44336', light: '#ffcdd2' },
-'YTAG_SEARCH': { main: '#ffc107', light: '#fff8e1' },
-'YTAG_OTHER': { main: '#00bcd4', light: '#b2ebf2' }
+'NATURAL_SELF': '#5B9CFF',
+'NATURAL_OTHER': '#CE93D8', 
+'ABNORMAL_DATA': '#F48FB1',
+'NATURAL_SEARCH': '#FFB74D',
+'NATURAL_DIRECT': '#A5D6A7',
+'INVITATION_CODE': '#FFAB91',
+'YTAG_SEARCH': '#FFE082',
+'YTAG_OTHER': '#80DEEA'
 };
 
-// 默认颜色
-const defaultColors = [
-{ main: '#3498db', light: '#aed6f1' },
-{ main: '#9b59b6', light: '#d7bde2' },
-{ main: '#e74c3c', light: '#f5b7b1' },
-{ main: '#f39c12', light: '#fdebd0' },
-{ main: '#1abc9c', light: '#a3e4d7' },
-{ main: '#e91e63', light: '#f8bbd9' },
-{ main: '#00bcd4', light: '#b2ebf2' },
-{ main: '#8bc34a', light: '#dcedc8' }
-];
+const defaultColors = ['#64B5F6', '#BA68C8', '#F06292', '#FFB74D', '#81C784', '#FF8A65', '#FFD54F', '#4DD0E1'];
 
 let currentData = null;
 
-// 解析数据
 function parseData(text) {
 const lines = text.trim().split('\n').filter(l => l.trim());
 const data = {};
-
 lines.forEach(line => {
 const parts = line.includes('\t') ? line.split('\t') : line.split(',');
 if (parts.length >= 3) {
 const type = parts[0].trim().toUpperCase();
 const tag = parts[1].trim();
 const value = parseInt(parts[2].trim()) || 0;
-
-if (!data[type]) {
-data[type] = { name: type, value: 0, children: [] };
-}
+if (!data[type]) data[type] = { name: type, value: 0, children: [] };
 data[type].children.push({ name: tag, value: value });
 data[type].value += value;
 }
 });
-
 return Object.values(data).sort((a, b) => b.value - a.value);
 }
 
-// Squarified Treemap 算法
 function squarify(items, rect) {
-if (items.length === 0) return [];
-
+if (!items.length) return [];
 const result = [];
-const total = items.reduce((sum, item) => sum + item.value, 0);
-const { x, y, width, height } = rect;
-
+const total = items.reduce((s, i) => s + i.value, 0);
+let { x, y, width: w, height: h } = rect;
 let remaining = [...items];
-let currentX = x;
-let currentY = y;
-let remainingWidth = width;
-let remainingHeight = height;
 
-while (remaining.length > 0) {
-const isHorizontal = remainingWidth >= remainingHeight;
-const side = isHorizontal ? remainingHeight : remainingWidth;
-
-// 找到最佳行
-let row = [];
-let rowSum = 0;
-const remainingTotal = remaining.reduce((sum, item) => sum + item.value, 0);
+while (remaining.length) {
+const horizontal = w >= h;
+const side = horizontal ? h : w;
+let row = [], rowSum = 0, bestRatio = Infinity;
+const remTotal = remaining.reduce((s, i) => s + i.value, 0);
 
 for (let i = 0; i < remaining.length; i++) {
 const testRow = [...row, remaining[i]];
 const testSum = rowSum + remaining[i].value;
-const rowSize = (testSum / remainingTotal) * (isHorizontal ? remainingWidth : remainingHeight);
-
-// 计算宽高比
-const worstRatio = testRow.reduce((worst, item) => {
-const itemSize = (item.value / testSum) * side;
-const ratio = Math.max(rowSize / itemSize, itemSize / rowSize);
-return Math.max(worst, ratio);
-}, 0);
-
-const prevWorst = row.length === 0 ? Infinity : row.reduce((worst, item) => {
-const itemSize = (item.value / rowSum) * side;
-const prevRowSize = (rowSum / remainingTotal) * (isHorizontal ? remainingWidth : remainingHeight);
-const ratio = Math.max(prevRowSize / itemSize, itemSize / prevRowSize);
-return Math.max(worst, ratio);
-}, 0);
-
-if (worstRatio <= prevWorst || row.length === 0) {
+const rowLen = (testSum / remTotal) * (horizontal ? w : h);
+let worst = 0;
+testRow.forEach(item => {
+const itemLen = (item.value / testSum) * side;
+worst = Math.max(worst, Math.max(rowLen / itemLen, itemLen / rowLen));
+});
+if (worst <= bestRatio || !row.length) {
 row.push(remaining[i]);
 rowSum = testSum;
-} else {
-break;
-}
+bestRatio = worst;
+} else break;
 }
 
-// 布局当前行
-const rowSize = (rowSum / remainingTotal) * (isHorizontal ? remainingWidth : remainingHeight);
-
-if (isHorizontal) {
-let cy = currentY;
+const rowLen = (rowSum / remTotal) * (horizontal ? w : h);
+if (horizontal) {
+let cy = y;
 row.forEach(item => {
-const itemHeight = (item.value / rowSum) * remainingHeight;
-result.push({
-...item,
-rect: { x: currentX, y: cy, width: rowSize, height: itemHeight }
+const ih = (item.value / rowSum) * h;
+result.push({ ...item, rect: { x, y: cy, width: rowLen, height: ih } });
+cy += ih;
 });
-cy += itemHeight;
-});
-currentX += rowSize;
-remainingWidth -= rowSize;
+x += rowLen; w -= rowLen;
 } else {
-let cx = currentX;
+let cx = x;
 row.forEach(item => {
-const itemWidth = (item.value / rowSum) * remainingWidth;
-result.push({
-...item,
-rect: { x: cx, y: currentY, width: itemWidth, height: rowSize }
+const iw = (item.value / rowSum) * w;
+result.push({ ...item, rect: { x: cx, y, width: iw, height: rowLen } });
+cx += iw;
 });
-cx += itemWidth;
-});
-currentY += rowSize;
-remainingHeight -= rowSize;
+y += rowLen; h -= rowLen;
 }
-
 remaining = remaining.slice(row.length);
 }
-
 return result;
 }
 
-// 获取颜色
-function getColor(typeName, index) {
-if (colorScheme[typeName]) {
-return colorScheme[typeName];
-}
-return defaultColors[index % defaultColors.length];
+function getColor(name, idx) {
+return colorScheme[name] || defaultColors[idx % defaultColors.length];
 }
 
-// 绘制Treemap
+function darken(hex, amount) {
+const num = parseInt(hex.slice(1), 16);
+let r = (num >> 16) - amount * 255;
+let g = ((num >> 8) & 0x00FF) - amount * 255;
+let b = (num & 0x0000FF) - amount * 255;
+r = Math.max(0, Math.min(255, r));
+g = Math.max(0, Math.min(255, g));
+b = Math.max(0, Math.min(255, b));
+return `rgb(${Math.round(r)},${Math.round(g)},${Math.round(b)})`;
+}
+
 function drawTreemap(data, canvas) {
 const ctx = canvas.getContext('2d');
-const width = canvas.width;
-const height = canvas.height;
-const padding = 4;
-
+const W = canvas.width, H = canvas.height;
 ctx.fillStyle = '#fff';
-ctx.fillRect(0, 0, width, height);
+ctx.fillRect(0, 0, W, H);
 
-// 第一层布局
-const level1 = squarify(data, { x: padding, y: padding, width: width - padding * 2, height: height - padding * 2 });
+const pad = 2;
+const level1 = squarify(data, { x: pad, y: pad, width: W - pad * 2, height: H - pad * 2 });
 
-level1.forEach((item, typeIndex) => {
-const rect = item.rect;
-const colors = getColor(item.name, typeIndex);
+level1.forEach((item, idx) => {
+const r = item.rect;
+const baseColor = getColor(item.name, idx);
 
-// 绘制第一层边框背景
-ctx.fillStyle = colors.main;
-ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
+// 绘制整个区域背景
+ctx.fillStyle = baseColor;
+ctx.fillRect(r.x, r.y, r.width, r.height);
 
 // 白色边框
 ctx.strokeStyle = '#fff';
-ctx.lineWidth = 4;
-ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
+ctx.lineWidth = 3;
+ctx.strokeRect(r.x, r.y, r.width, r.height);
 
-// 第二层布局（子标签）- 给类型名称预留空间
-const headerHeight = 25;
-const innerPadding = 3;
-const innerRect = {
-x: rect.x + innerPadding,
-y: rect.y + headerHeight,
-width: rect.width - innerPadding * 2,
-height: rect.height - headerHeight - innerPadding
-};
+// 子块区域
+const innerPad = by = 2;
+const inner = { x: r.x + innerPad, y: r.y + innerPad, width: r.width - innerPad * 2, height: r.height - innerPad * 2 };
 
-if (item.children && item.children.length > 0 && innerRect.height > 30 && innerRect.width > 30) {
-const level2 = squarify(item.children, innerRect);
-
-level2.forEach((child, childIndex) => {
+if (item.children?.length && inner.width > 20 && inner.height > 20) {
+const level2 = squarify(item.children, inner);
+level2.forEach((child, ci) => {
 const cr = child.rect;
-
-// 子块颜色 - 同色系渐变
-const lightness = 0.3 + (childIndex % 4) * 0.15;
-ctx.fillStyle = blendColor(colors.main, colors.light, lightness);
+// 子块颜色 - 比基色深一点，有层次
+ctx.fillStyle = darken(baseColor, 0.05 + (ci % 3) * 0.08);
 ctx.fillRect(cr.x, cr.y, cr.width, cr.height);
-
-// 子块边框
-ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+// 细边框
+ctx.strokeStyle = 'rgba(255,255,255,0.4)';
 ctx.lineWidth = 1;
 ctx.strokeRect(cr.x, cr.y, cr.width, cr.height);
-
-// 绘制标签和数值
-drawChildLabel(ctx, child.name, child.value, cr);
+// 标签
+drawLabel(ctx, child.name, child.value, cr);
 });
 }
 
-// 最后绘制渠道类型名称（在最上层）
-drawTypeLabel(ctx, item.name, rect);
-});
-}
-
-// 颜色混合
-function blendColor(color1, color2, ratio) {
-const c1 = hexToRgb(color1);
-const c2 = hexToRgb(color2);
-
-const r = Math.round(c1.r + (c2.r - c1.r) * ratio);
-const g = Math.round(c1.g + (c2.g - c1.g) * ratio);
-const b = Math.round(c1.b + (c2.b - c1.b) * ratio);
-
-return `rgb(${r},${g},${b})`;
-}
-
-function hexToRgb(hex) {
-const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-return result ? {
-r: parseInt(result[1], 16),
-g: parseInt(result[2], 16),
-b: parseInt(result[3], 16)
-} : { r: 0, g: 0, b: 0 };
-}
-
-// 绘制渠道类型名称
-function drawTypeLabel(ctx, name, rect) {
-ctx.fillStyle = 'rgba(0,0,0,0.3)';
-ctx.fillRect(rect.x, rect.y, rect.width, 22);
-
-ctx.fillStyle = '#fff';
-ctx.font = 'bold 12px Microsoft YaHei';
+// 渠道类型名称 - 左上角小字
+ctx.fillStyle = 'rgba(255,255,255,0.9)';
+ctx.font = 'bold 11px Microsoft YaHei';
 ctx.textAlign = 'left';
-ctx.textBaseline = 'middle';
-ctx.fillText(name, rect.x + 6, rect.y + 11);
+ctx.textBaseline = 'top';
+ctx.fillText(item.name, r.x + 5, r.y + 4);
+});
 }
 
-// 绘制子标签
-function drawChildLabel(ctx, name, value, rect) {
-const area = rect.width * rect.height;
-const minArea = 800;
-
-if (area < minArea) return; // 面积太小不显示
+function drawLabel(ctx, name, value, r) {
+const area = r.width * r.height;
+if (area < 600 || r.width < 25 || r.height < 20) return;
 
 ctx.fillStyle = '#fff';
 ctx.textAlign = 'center';
 ctx.textBaseline = 'middle';
+const cx = r.x + r.width / 2;
+const cy = r.y + r.height / 2;
 
-const centerX = rect.x + rect.width / 2;
-const centerY = rect.y + rect.height / 2;
-
-if (area > 20000 && rect.width > 100 && rect.height > 50) {
-// 大块：完整显示
+if (area > 25000 && r.width > 120 && r.height > 60) {
+// 大块
+ctx.font = '14px Microsoft YaHei';
+const dn = name.length > 24 ? name.slice(0, 22) + '...' : name;
+ctx.fillText(dn, cx, cy - 12);
+ctx.font = 'bold 16px Microsoft YaHei';
+ctx.fillText(value.toLocaleString(), cx, cy + 12);
+} else if (area > 8000 && r.width > 70 && r.height > 45) {
+// 中块
+ctx.font = '11px Microsoft YaHei';
+const sn = name.length > 14 ? name.slice(0, 12) + '...' : name;
+ctx.fillText(sn, cx, cy - 9);
 ctx.font = 'bold 13px Microsoft YaHei';
-const displayName = name.length > 22 ? name.substring(0, 20) + '...' : name;
-ctx.fillText(displayName, centerX, centerY - 10);
-ctx.font = 'bold 15px Microsoft YaHei';
-ctx.fillText(value.toLocaleString(), centerX, centerY + 12);
-} else if (area > 6000 && rect.width > 60 && rect.height > 40) {
-// 中块：缩短名称
+ctx.fillText(value.toLocaleString(), cx, cy + 9);
+} else if (area > 1500) {
+// 小块 - 只显示数值
 ctx.font = 'bold 11px Microsoft YaHei';
-const shortName = name.length > 12 ? name.substring(0, 10) + '...' : name;
-ctx.fillText(shortName, centerX, centerY - 8);
-ctx.font = 'bold 13px Microsoft YaHei';
-ctx.fillText(value.toLocaleString(), centerX, centerY + 10);
-} else if (area > 2000 && rect.width > 35 && rect.height > 25) {
-// 小块：只显示数值
-ctx.font = 'bold 11px Microsoft YaHei';
-ctx.fillText(value.toLocaleString(), centerX, centerY);
+ctx.fillText(value, cx, cy);
 }
-// 更小的块不显示任何文字
 }
 
-// 生成Treemap
 function generateTreemap() {
 const input = document.getElementById('dataInput').value;
-if (!input.trim()) {
-showStatus('请输入数据', 'error');
-return;
-}
-
+if (!input.trim()) { showStatus('请输入数据', 'error'); return; }
 try {
 currentData = parseData(input);
-if (currentData.length === 0) {
-showStatus('未能解析到有效数据，请检查格式', 'error');
-return;
-}
-
+if (!currentData.length) { showStatus('未解析到有效数据', 'error'); return; }
 const canvas = document.getElementById('treemapCanvas');
 canvas.width = parseInt(document.getElementById('canvasWidth').value) || 1200;
 canvas.height = parseInt(document.getElementById('canvasHeight').value) || 900;
-
 drawTreemap(currentData, canvas);
-showStatus(`成功生成图表！共 ${currentData.length} 个渠道类型`, 'success');
-} catch (e) {
-showStatus('解析数据出错: ' + e.message, 'error');
-}
+showStatus(`成功！共 ${currentData.length} 个渠道类型`, 'success');
+} catch (e) { showStatus('出错: ' + e.message, 'error'); }
 }
 
-// 加载示例数据
 function loadSampleData() {
-const sampleData = `NATURAL_SELF,passport.ucloud-global.com,3705
+document.getElementById('dataInput').value = `NATURAL_SELF,passport.ucloud-global.com,3705
 NATURAL_SELF,console.ucloud-global.com,1405
 NATURAL_SELF,www.ucloud-global.com,307
 NATURAL_SELF,ucloud-global.com,79
@@ -424,34 +298,24 @@ YTAG_OTHER,nodeseek,26
 YTAG_OTHER,gwvpsceping,13
 YTAG_OTHER,p1-1,13
 YTAG_OTHER,others,45`;
-
-document.getElementById('dataInput').value = sampleData;
-showStatus('已加载示例数据，点击"生成图表"预览', 'success');
+showStatus('已加载示例', 'success');
 }
 
-// 下载PNG
 function downloadPNG() {
-const canvas = document.getElementById('treemapCanvas');
-if (!currentData) {
-showStatus('请先生成图表', 'error');
-return;
-}
-
+if (!currentData) { showStatus('请先生成图表', 'error'); return; }
 const link = document.createElement('a');
 link.download = 'Treemap_' + new Date().toISOString().slice(0, 10) + '.png';
-link.href = canvas.toDataURL('image/png');
+link.href = document.getElementById('treemapCanvas').toDataURL('image/png');
 link.click();
-showStatus('图片已下载', 'success');
+showStatus('已下载', 'success');
 }
 
-// 显示状态
 function showStatus(msg, type) {
 const el = document.getElementById('status');
 el.className = 'status ' + type;
 el.textContent = msg;
 }
 
-// 初始化
 loadSampleData();
 generateTreemap();
 </script>
