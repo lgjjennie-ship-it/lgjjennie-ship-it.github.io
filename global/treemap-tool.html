@@ -47,9 +47,7 @@ body { font-family: 'Microsoft YaHei', Arial, sans-serif; background: #f5f7fa; m
 <h3>📝 数据输入</h3>
 <div class="input-group">
 <label>粘贴数据 (格式: 渠道类型,渠道标签,数值)</label>
-<textarea id="dataInput" placeholder="NATURAL_SELF,passport.ucloud-global.com,3705
-NATURAL_SELF,console.ucloud-global.com,1405
-..."></textarea>
+<textarea id="dataInput"></textarea>
 </div>
 <div class="actions">
 <button class="btn btn-primary" onclick="generateTreemap()">🎨 生成图表</button>
@@ -74,7 +72,7 @@ NATURAL_SELF,console.ucloud-global.com,1405
 </div>
 
 <script>
-// 颜色方案 - 参考原图配色
+// 颜色方案
 const colorScheme = {
 'NATURAL_SELF': '#5B9CFF',
 'NATURAL_OTHER': '#CE93D8', 
@@ -85,8 +83,7 @@ const colorScheme = {
 'YTAG_SEARCH': '#FFE082',
 'YTAG_OTHER': '#80DEEA'
 };
-
-const defaultColors = ['#64B5F6', '#BA68C8', '#F06292', '#FFB74D', '#81C784', '#FF8A65', '#FFD54F', '#4DD0E1'];
+const defaultColors = ['#64B5F6','#BA68C8','#F06292','#FFB74D','#81C784','#FF8A65','#FFD54F','#4DD0E1'];
 
 let currentData = null;
 
@@ -110,7 +107,6 @@ return Object.values(data).sort((a, b) => b.value - a.value);
 function squarify(items, rect) {
 if (!items.length) return [];
 const result = [];
-const total = items.reduce((s, i) => s + i.value, 0);
 let { x, y, width: w, height: h } = rect;
 let remaining = [...items];
 
@@ -130,9 +126,7 @@ const itemLen = (item.value / testSum) * side;
 worst = Math.max(worst, Math.max(rowLen / itemLen, itemLen / rowLen));
 });
 if (worst <= bestRatio || !row.length) {
-row.push(remaining[i]);
-rowSum = testSum;
-bestRatio = worst;
+row.push(remaining[i]); rowSum = testSum; bestRatio = worst;
 } else break;
 }
 
@@ -159,18 +153,13 @@ remaining = remaining.slice(row.length);
 return result;
 }
 
-function getColor(name, idx) {
-return colorScheme[name] || defaultColors[idx % defaultColors.length];
-}
+function getColor(name, idx) { return colorScheme[name] || defaultColors[idx % defaultColors.length]; }
 
-function darken(hex, amount) {
+function darken(hex, amt) {
 const num = parseInt(hex.slice(1), 16);
-let r = (num >> 16) - amount * 255;
-let g = ((num >> 8) & 0x00FF) - amount * 255;
-let b = (num & 0x0000FF) - amount * 255;
-r = Math.max(0, Math.min(255, r));
-g = Math.max(0, Math.min(255, g));
-b = Math.max(0, Math.min(255, b));
+const r = Math.max(0, Math.min(255, (num >> 16) - amt * 255));
+const g = Math.max(0, Math.min(255, ((num >> 8) & 0xFF) - amt * 255));
+const b = Math.max(0, Math.min(255, (num & 0xFF) - amt * 255));
 return `rgb(${Math.round(r)},${Math.round(g)},${Math.round(b)})`;
 }
 
@@ -183,51 +172,63 @@ ctx.fillRect(0, 0, W, H);
 const pad = 2;
 const level1 = squarify(data, { x: pad, y: pad, width: W - pad * 2, height: H - pad * 2 });
 
+// 存储所有要绘制的类型名称，最后统一绘制（确保在最上层）
+const typeLabels = [];
+
 level1.forEach((item, idx) => {
 const r = item.rect;
 const baseColor = getColor(item.name, idx);
 
-// 绘制整个区域背景
+// 整个区域背景
 ctx.fillStyle = baseColor;
 ctx.fillRect(r.x, r.y, r.width, r.height);
 
-// 白色边框
+// 外边框
 ctx.strokeStyle = '#fff';
 ctx.lineWidth = 3;
 ctx.strokeRect(r.x, r.y, r.width, r.height);
 
-// 子块区域
-const innerPad = by = 2;
-const inner = { x: r.x + innerPad, y: r.y + innerPad, width: r.width - innerPad * 2, height: r.height - innerPad * 2 };
+// 子块
+const ip = 2;
+const inner = { x: r.x + ip, y: r.y + ip, width: r.width - ip * 2, height: r.height - ip * 2 };
 
 if (item.children?.length && inner.width > 20 && inner.height > 20) {
 const level2 = squarify(item.children, inner);
 level2.forEach((child, ci) => {
 const cr = child.rect;
-// 子块颜色 - 比基色深一点，有层次
-ctx.fillStyle = darken(baseColor, 0.05 + (ci % 3) * 0.08);
+ctx.fillStyle = darken(baseColor, 0.03 + (ci % 4) * 0.06);
 ctx.fillRect(cr.x, cr.y, cr.width, cr.height);
-// 细边框
-ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+ctx.strokeStyle = 'rgba(255,255,255,0.35)';
 ctx.lineWidth = 1;
 ctx.strokeRect(cr.x, cr.y, cr.width, cr.height);
-// 标签
 drawLabel(ctx, child.name, child.value, cr);
 });
 }
 
-// 渠道类型名称 - 左上角小字
-ctx.fillStyle = 'rgba(255,255,255,0.9)';
+// 记录类型名称位置
+typeLabels.push({ name: item.name, x: r.x, y: r.y });
+});
+
+// 最后绘制所有渠道类型名称（确保在最上层）
+ctx.fillStyle = 'rgba(255,255,255,0.95)';
 ctx.font = 'bold 11px Microsoft YaHei';
 ctx.textAlign = 'left';
 ctx.textBaseline = 'top';
-ctx.fillText(item.name, r.x + 5, r.y + 4);
+ctx.shadowColor = 'rgba(0,0,0,0.3)';
+ctx.shadowBlur = 2;
+ctx.shadowOffsetX = 1;
+ctx.shadowOffsetY = 1;
+typeLabels.forEach(t => {
+ctx.fillText(t.name, t.x + 4, t.y + 3);
 });
+ctx.shadowColor = 'transparent';
+ctx.shadowBlur = 0;
 }
 
 function drawLabel(ctx, name, value, r) {
 const area = r.width * r.height;
-if (area < 600 || r.width < 25 || r.height < 20) return;
+// 更严格的显示条件，避免拥挤
+if (area < 1000 || r.width < 30 || r.height < 25) return;
 
 ctx.fillStyle = '#fff';
 ctx.textAlign = 'center';
@@ -235,25 +236,26 @@ ctx.textBaseline = 'middle';
 const cx = r.x + r.width / 2;
 const cy = r.y + r.height / 2;
 
-if (area > 25000 && r.width > 120 && r.height > 60) {
+if (area > 30000 && r.width > 130 && r.height > 65) {
 // 大块
-ctx.font = '14px Microsoft YaHei';
-const dn = name.length > 24 ? name.slice(0, 22) + '...' : name;
-ctx.fillText(dn, cx, cy - 12);
-ctx.font = 'bold 16px Microsoft YaHei';
+ctx.font = '13px Microsoft YaHei';
+const dn = name.length > 22 ? name.slice(0, 20) + '...' : name;
+ctx.fillText(dn, cx, cy - 10);
+ctx.font = 'bold 15px Microsoft YaHei';
 ctx.fillText(value.toLocaleString(), cx, cy + 12);
-} else if (area > 8000 && r.width > 70 && r.height > 45) {
+} else if (area > 10000 && r.width > 75 && r.height > 50) {
 // 中块
-ctx.font = '11px Microsoft YaHei';
-const sn = name.length > 14 ? name.slice(0, 12) + '...' : name;
-ctx.fillText(sn, cx, cy - 9);
-ctx.font = 'bold 13px Microsoft YaHei';
+ctx.font = '10px Microsoft YaHei';
+const sn = name.length > 12 ? name.slice(0, 10) + '...' : name;
+ctx.fillText(sn, cx, cy - 8);
+ctx.font = 'bold 12px Microsoft YaHei';
 ctx.fillText(value.toLocaleString(), cx, cy + 9);
-} else if (area > 1500) {
+} else if (area > 2500 && r.width > 40 && r.height > 30) {
 // 小块 - 只显示数值
-ctx.font = 'bold 11px Microsoft YaHei';
+ctx.font = 'bold 10px Microsoft YaHei';
 ctx.fillText(value, cx, cy);
 }
+// 更小的不显示
 }
 
 function generateTreemap() {
