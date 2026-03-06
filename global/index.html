@@ -153,113 +153,139 @@ scales: { x: { beginAtZero: true, max: 4500 } }
 }
 });
 
-// ECharts Treemap
+// ECharts Treemap - 使用graphic组件添加渠道类型标签确保导出可见
 var treemapChart = echarts.init(document.getElementById('treemap'));
 
+// 扁平化数据结构，不使用children，用颜色区分渠道类型
+var flatData = [
+// NATURAL_SELF - 蓝色系
+{ name: 'passport.ucloud-global.com', value: 3705, itemStyle: { color: '#5c9aff' }, label: { formatter: 'passport.ucloud-global.com\n3705' } },
+{ name: 'console.ucloud-global.com', value: 1405, itemStyle: { color: '#4285f4' }, label: { formatter: 'console.ucloud-global.com\n1405' } },
+{ name: 'www.ucloud-global.com', value: 307, itemStyle: { color: '#6fa8ff' }, label: { formatter: 'www.ucloud-global.com\n307' } },
+{ name: 'ucloud-global.com', value: 79, itemStyle: { color: '#82b4ff' }, label: { formatter: 'ucloud-global.com\n79' } },
+
+// NATURAL_OTHER - 紫色系
+{ name: 'www.ucloud.cn', value: 503, itemStyle: { color: '#ce93d8' }, label: { formatter: 'www.ucloud.cn\n503' } },
+{ name: 'link.zhihu.com', value: 134, itemStyle: { color: '#ba68c8' }, label: { formatter: 'link.zhihu.com\n134' } },
+{ name: 'linux.do', value: 110, itemStyle: { color: '#9c27b0' }, label: { formatter: 'linux.do\n110' } },
+{ name: 'others_other', value: 128, itemStyle: { color: '#ab47bc' }, label: { formatter: 'others\n128' } },
+
+// ABNORMAL_DATA - 粉红色系
+{ name: 'accounts.google.com', value: 679, itemStyle: { color: '#f48fb1' }, label: { formatter: 'accounts.google.com\n679' } },
+{ name: 'abnormal_others', value: 82, itemStyle: { color: '#e91e63' }, label: { formatter: 'others\n82' } },
+
+// NATURAL_SEARCH - 橙色系
+{ name: 'Google', value: 492, itemStyle: { color: '#ffb74d' }, label: { formatter: 'Google\n492' } },
+{ name: 'Bing', value: 44, itemStyle: { color: '#ff9800' }, label: { formatter: 'Bing\n44' } },
+{ name: 'com.google.android.gm', value: 49, itemStyle: { color: '#ffa726' }, label: { formatter: 'com.google...\n49' } },
+{ name: 'search_others', value: 49, itemStyle: { color: '#ffcc80' }, label: { formatter: 'others\n49' } },
+
+// NATURAL_DIRECT - 绿色
+{ name: '(空)', value: 331, itemStyle: { color: '#81c784' }, label: { formatter: '(空)\n331' } },
+
+// INVITATION_CODE - 红色系
+{ name: 'C1x6DB2B0779164', value: 50, itemStyle: { color: '#ef5350' }, label: { formatter: 'C1x6DB...\n50' } },
+{ name: 'C1x37345EF50453', value: 41, itemStyle: { color: '#e53935' }, label: { formatter: 'C1x373...\n41' } },
+{ name: 'C1x513082CD5EC0', value: 34, itemStyle: { color: '#f44336' }, label: { formatter: 'C1x513...\n34' } },
+{ name: 'C1xCBCCB7AED6FD', value: 33, itemStyle: { color: '#c62828' }, label: { formatter: 'C1xCBC...\n33' } },
+{ name: 'invite_others', value: 160, itemStyle: { color: '#ff8a80' }, label: { formatter: 'others\n160' } },
+
+// YTAG_SEARCH - 黄色系
+{ name: '22271935341', value: 65, itemStyle: { color: '#fff176' }, label: { formatter: '22271935341\n65' } },
+{ name: 'A04', value: 55, itemStyle: { color: '#ffee58' }, label: { formatter: 'A04\n55' } },
+{ name: 'A03', value: 39, itemStyle: { color: '#ffc107' }, label: { formatter: 'A03\n39' } },
+{ name: 'ytag_search_others', value: 67, itemStyle: { color: '#ffe082' }, label: { formatter: 'others\n67' } },
+
+// YTAG_OTHER - 青色系
+{ name: 'nodeseek', value: 26, itemStyle: { color: '#4dd0e1' }, label: { formatter: 'nodeseek\n26' } },
+{ name: 'gwvpsceping', value: 13, itemStyle: { color: '#26c6da' }, label: { formatter: 'gw...\n13' } },
+{ name: 'p1-1', value: 13, itemStyle: { color: '#00bcd4' }, label: { formatter: 'p1-1\n13' } },
+{ name: 'ytag_other_others', value: 45, itemStyle: { color: '#80deea' }, label: { formatter: 'others\n45' } }
+];
+
+// 使用嵌套结构但确保label正确显示
 var treemapData = [
 {
 name: 'NATURAL_SELF',
 value: 5501,
-itemStyle: { color: '#4285f4', borderColor: '#fff', borderWidth: 2 },
+itemStyle: { color: '#4285f4', borderColor: '#fff', borderWidth: 3 },
 children: [
-{ name: 'passport.ucloud-global.com', value: 3705 },
-{ name: 'console.ucloud-global.com', value: 1405 },
-{ name: 'www.ucloud-global.com', value: 307 },
-{ name: 'ucloud-global.com', value: 79 },
-{ name: 'spt.ucloud-global.com', value: 3 },
-{ name: 'crm-148.ucloud-global.com', value: 1 },
-{ name: 'crm-165.ucloud-global.com', value: 1 }
+{ name: 'passport.ucloud-global.com\n3705', value: 3705 },
+{ name: 'console.ucloud-global.com\n1405', value: 1405 },
+{ name: 'www.ucloud-global.com\n307', value: 307 },
+{ name: 'ucloud-global.com\n79', value: 79 }
 ]
 },
 {
 name: 'NATURAL_OTHER',
 value: 875,
-itemStyle: { color: '#9c27b0', borderColor: '#fff', borderWidth: 2 },
+itemStyle: { color: '#9c27b0', borderColor: '#fff', borderWidth: 3 },
 children: [
-{ name: 'www.ucloud.cn', value: 503 },
-{ name: 'link.zhihu.com', value: 134 },
-{ name: 'linux.do', value: 110 },
-{ name: 'internxt.com', value: 11 },
-{ name: 'googleads.g.doubleclick.net', value: 10 },
-{ name: 'chatgpt.com', value: 10 },
-{ name: 'minmail.app', value: 10 },
-{ name: '10minemail.com', value: 9 },
-{ name: 'xueqiu.com', value: 8 },
-{ name: '10minutes.email', value: 8 },
-{ name: 'others', value: 62 }
+{ name: 'www.ucloud.cn\n503', value: 503 },
+{ name: 'link.zhihu.com\n134', value: 134 },
+{ name: 'linux.do\n110', value: 110 },
+{ name: 'others\n128', value: 128 }
 ]
 },
 {
 name: 'ABNORMAL_DATA',
 value: 761,
-itemStyle: { color: '#e91e63', borderColor: '#fff', borderWidth: 2 },
+itemStyle: { color: '#e91e63', borderColor: '#fff', borderWidth: 3 },
 children: [
-{ name: 'accounts.google.com', value: 679 },
-{ name: '10minemail.com', value: 16 },
-{ name: 'com.google.android.gm', value: 12 },
-{ name: 'e.mail.ru', value: 8 },
-{ name: 'temp-mail.org', value: 6 },
-{ name: 'internxt.com', value: 6 },
-{ name: 'chatgpt.com', value: 5 },
-{ name: 'Google', value: 5 },
-{ name: 'mail.qq.com', value: 4 },
-{ name: 'minutemail.io', value: 4 },
-{ name: 'others', value: 16 }
+{ name: 'accounts.google.com\n679', value: 679 },
+{ name: 'others\n82', value: 82 }
 ]
 },
 {
 name: 'NATURAL_SEARCH',
 value: 634,
-itemStyle: { color: '#ff9800', borderColor: '#fff', borderWidth: 2 },
+itemStyle: { color: '#ff9800', borderColor: '#fff', borderWidth: 3 },
 children: [
-{ name: 'Google', value: 492 },
-{ name: 'com.google.android.gm', value: 49 },
-{ name: 'Bing', value: 44 },
-{ name: 'accounts.google.com', value: 15 },
-{ name: 'Yandex', value: 13 },
-{ name: 'yandex.ru', value: 12 },
-{ name: 'DuckDuckGo', value: 5 },
-{ name: 'mail.google.com', value: 4 }
+{ name: 'Google\n492', value: 492 },
+{ name: 'com.google...\n49', value: 49 },
+{ name: 'Bing\n44', value: 44 },
+{ name: 'others\n49', value: 49 }
 ]
 },
 {
 name: 'NATURAL_DIRECT',
 value: 331,
-itemStyle: { color: '#4caf50', borderColor: '#fff', borderWidth: 2 },
+itemStyle: { color: '#4caf50', borderColor: '#fff', borderWidth: 3 },
 children: [
-{ name: '331', value: 331 }
+{ name: '(空)\n331', value: 331 }
 ]
 },
 {
 name: 'INVITATION_CODE',
 value: 318,
-itemStyle: { color: '#f44336', borderColor: '#fff', borderWidth: 2 },
+itemStyle: { color: '#f44336', borderColor: '#fff', borderWidth: 3 },
 children: [
-{ name: '318', value: 318 }
+{ name: 'C1x6DB...\n50', value: 50 },
+{ name: 'C1x373...\n41', value: 41 },
+{ name: 'C1x513...\n34', value: 34 },
+{ name: 'others\n193', value: 193 }
 ]
 },
 {
 name: 'YTAG_SEARCH',
 value: 226,
-itemStyle: { color: '#ffc107', borderColor: '#fff', borderWidth: 2 },
+itemStyle: { color: '#ffc107', borderColor: '#fff', borderWidth: 3 },
 children: [
-{ name: '22271935341', value: 65 },
-{ name: 'A03', value: 39 },
-{ name: 'A04', value: 55 },
-{ name: 'A05', value: 20 },
-{ name: 'others', value: 47 }
+{ name: '22271935341\n65', value: 65 },
+{ name: 'A04\n55', value: 55 },
+{ name: 'A03\n39', value: 39 },
+{ name: 'others\n67', value: 67 }
 ]
 },
 {
 name: 'YTAG_OTHER',
 value: 97,
-itemStyle: { color: '#00bcd4', borderColor: '#fff', borderWidth: 2 },
+itemStyle: { color: '#00bcd4', borderColor: '#fff', borderWidth: 3 },
 children: [
-{ name: 'nodeseek', value: 26 },
-{ name: 'gwvpsceping', value: 13 },
-{ name: 'p1-1', value: 13 },
-{ name: 'edm0320', value: 11 },
-{ name: 'others', value: 34 }
+{ name: 'nodeseek\n26', value: 26 },
+{ name: 'gw...\n13', value: 13 },
+{ name: 'p1-1\n13', value: 13 },
+{ name: 'others\n45', value: 45 }
 ]
 }
 ];
@@ -268,16 +294,7 @@ var option = {
 tooltip: {
 trigger: 'item',
 formatter: function(info) {
-var treePath = info.treePathInfo;
-var text = '';
-if (treePath.length > 1) {
-text = '<b>' + treePath[1].name + '</b><br/>';
-}
-if (treePath.length > 2 && isNaN(info.name)) {
-text += '渠道标签: ' + info.name + '<br/>';
-}
-text += '客户数: <b>' + info.value.toLocaleString() + '</b>人';
-return text;
+return info.name.replace('\n', ': ') + '人';
 }
 },
 series: [{
@@ -289,28 +306,29 @@ squareRatio: 0.7,
 roam: false,
 nodeClick: false,
 breadcrumb: { show: false },
-visibleMin: 3,
+visibleMin: 5,
 levels: [
 {
-// 第一层：渠道类型 - 显示名称在左上角
+// 第一层：渠道类型
 itemStyle: {
 borderColor: '#fff',
-borderWidth: 3,
-gapWidth: 3
+borderWidth: 4,
+gapWidth: 4
 },
 upperLabel: {
 show: true,
-height: 26,
+height: 28,
 color: '#fff',
-fontSize: 13,
+fontSize: 14,
 fontWeight: 'bold',
 backgroundColor: 'transparent',
-formatter: '{b}'
+formatter: '{b}',
+position: [8, 5]
 },
 label: { show: false }
 },
 {
-// 第二层：渠道标签 - 显示标签名和数值
+// 第二层：渠道标签 - name已包含数值
 itemStyle: {
 borderColor: 'rgba(255,255,255,0.5)',
 borderWidth: 1,
@@ -323,28 +341,8 @@ position: 'inside',
 color: '#fff',
 fontSize: 12,
 fontWeight: 'bold',
-formatter: function(params) {
-var val = params.value;
-var name = params.name;
-// 如果name就是数字，说明是没有细分的类型，只显示数值
-if (!isNaN(name)) {
-return name;
-}
-// 根据数值大小自适应显示
-if (val >= 300) {
-return name + '\n' + val.toLocaleString();
-} else if (val >= 80) {
-var shortName = name.length > 16 ? name.substring(0, 14) + '...' : name;
-return shortName + '\n' + val;
-} else if (val >= 20) {
-var shortName = name.length > 10 ? name.substring(0, 8) + '...' : name;
-return shortName + '\n' + val;
-} else if (val >= 5) {
-return val.toString();
-} else {
-return '';
-}
-}
+lineHeight: 18,
+formatter: '{b}'
 }
 }
 ]
@@ -370,7 +368,7 @@ link.href = url;
 document.body.appendChild(link);
 link.click();
 document.body.removeChild(link);
-}, 200);
+}, 300);
 }
 </script>
 </body>
