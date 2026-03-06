@@ -18,11 +18,16 @@ body { font-family: 'Microsoft YaHei', Arial, sans-serif; padding: 20px; backgro
 .stat-card .label { color: #7f8c8d; font-size: 13px; margin-top: 5px; }
 .section { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 25px; }
 .section h2 { margin: 0 0 20px 0; color: #2c3e50; font-size: 18px; border-left: 4px solid #667eea; padding-left: 12px; }
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.section-header h2 { margin: 0; }
+.download-btn { background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+.download-btn:hover { background: #5a6fd6; }
+.download-btn svg { width: 16px; height: 16px; }
 .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 25px; }
 .chart-box { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 .chart-box h3 { margin: 0 0 15px 0; color: #2c3e50; font-size: 16px; }
 canvas { max-height: 400px; }
-#treemap { width: 100%; height: 600px; }
+#treemap { width: 100%; height: 650px; }
 .legend-note { font-size: 12px; color: #7f8c8d; margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px; }
 @media (max-width: 900px) { .chart-row, .stats { grid-template-columns: 1fr; } }
 </style>
@@ -61,10 +66,18 @@ canvas { max-height: 400px; }
 
 <!-- 交叉分析 Treemap -->
 <div class="section">
-<h2>🔍 渠道类型 × 渠道标签 交叉分析</h2>
+<div class="section-header">
+<h2 style="border-left: 4px solid #667eea; padding-left: 12px;">🔍 渠道类型 × 渠道标签 交叉分析</h2>
+<button class="download-btn" onclick="downloadTreemap()">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+</svg>
+下载图表
+</button>
+</div>
 <div id="treemap"></div>
 <div class="legend-note">
-<strong>说明：</strong>面积大小代表客户数量。大矩形框代表渠道类型，内部小块代表该类型下的渠道标签。
+<strong>说明：</strong>面积大小代表客户数量。大矩形框代表渠道类型，内部小块代表该类型下的渠道标签。共8个渠道类型。
 </div>
 </div>
 
@@ -139,7 +152,7 @@ scales: { x: { beginAtZero: true, max: 4500 } }
 }
 });
 
-// ECharts Treemap - 保持原始数据
+// ECharts Treemap
 var treemapChart = echarts.init(document.getElementById('treemap'));
 var treemapData = [
 {
@@ -266,9 +279,7 @@ children: [
 var option = {
 tooltip: {
 formatter: function(info) {
-var val = info.value;
-var name = info.name;
-return '<b>' + name + '</b>: ' + val.toLocaleString() + '人';
+return '<b>' + info.name + '</b><br/>客户数: ' + info.value.toLocaleString() + '人';
 }
 },
 series: [{
@@ -281,33 +292,92 @@ nodeClick: false,
 breadcrumb: { show: false },
 levels: [
 {
-itemStyle: { borderColor: '#fff', borderWidth: 3, gapWidth: 3 },
-upperLabel: { show: true, height: 30, color: '#fff', fontSize: 14, fontWeight: 'bold', backgroundColor: 'transparent' }
+// 第一层：渠道类型
+itemStyle: { 
+borderColor: '#fff', 
+borderWidth: 4, 
+gapWidth: 4 
+},
+upperLabel: { 
+show: true, 
+height: 30, 
+color: '#fff', 
+fontSize: 14, 
+fontWeight: 'bold',
+padding: [5, 8],
+backgroundColor: 'inherit'
+}
 },
 {
-itemStyle: { borderColor: '#fff', borderWidth: 1, gapWidth: 1 },
-colorSaturation: [0.3, 0.6]
+// 第二层：渠道标签 - 自适应标签
+itemStyle: { 
+borderColor: 'rgba(255,255,255,0.5)', 
+borderWidth: 1, 
+gapWidth: 1 
+},
+colorSaturation: [0.35, 0.6],
+label: {
+show: true,
+formatter: function(params) {
+// 根据面积计算合适的显示方式
+var area = params.data.value;
+var name = params.name;
+var total = 8743;
+var pct = (area / total * 100);
+                        
+if (pct >= 5) {
+// 大面积：完整显示名称+数值
+return name + '\n' + area.toLocaleString();
+} else if (pct >= 1) {
+// 中等面积：缩短名称
+var shortName = name.length > 15 ? name.substring(0, 12) + '...' : name;
+return shortName + '\n' + area;
+} else if (pct >= 0.3) {
+// 小面积：只显示数值
+return area;
+} else {
+// 极小面积：不显示
+return '';
+}
+},
+fontSize: 11,
+color: '#fff',
+textBorderColor: 'rgba(0,0,0,0.3)',
+textBorderWidth: 2,
+overflow: 'truncate',
+ellipsis: '...'
+}
 }
 ],
 label: {
 show: true,
-formatter: function(params) {
-if (params.data.children) return '';
-return params.name + '\n' + params.value;
-},
-fontSize: 11,
+position: 'inside',
 color: '#fff'
 },
 itemStyle: { borderColor: '#fff' },
-colorMappingBy: 'index',
-visualMin: 0,
-visualMax: 5501
+colorMappingBy: 'index'
 }],
 color: ['#4285f4', '#9c27b0', '#e91e63', '#ff9800', '#4caf50', '#f44336', '#ffc107', '#00bcd4']
 };
 
 treemapChart.setOption(option);
 window.addEventListener('resize', function() { treemapChart.resize(); });
+
+// 下载图表功能
+function downloadTreemap() {
+var url = treemapChart.getDataURL({
+type: 'png',
+pixelRatio: 2,  // 2倍清晰度
+backgroundColor: '#fff'
+});
+    
+var link = document.createElement('a');
+link.download = 'Global渠道来源交叉分析_' + new Date().toISOString().slice(0,10) + '.png';
+link.href = url;
+document.body.appendChild(link);
+link.click();
+document.body.removeChild(link);
+}
 </script>
 </body>
 </html>
