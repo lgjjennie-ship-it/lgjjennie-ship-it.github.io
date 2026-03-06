@@ -21,13 +21,9 @@ body { font-family: 'Microsoft YaHei', Arial, sans-serif; background: #f5f7fa; m
 .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
 .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102,126,234,0.4); }
 .btn-secondary { background: #95a5a6; color: white; }
-.btn-secondary:hover { background: #7f8c8d; }
 .btn-success { background: #27ae60; color: white; }
-.btn-success:hover { background: #219a52; }
 .actions { margin-top: 15px; display: flex; flex-wrap: wrap; gap: 10px; }
-.preview-panel { min-height: 600px; }
 #treemapCanvas { width: 100%; background: white; border-radius: 5px; display: block; }
-.format-help { background: #f8f9fa; padding: 12px; border-radius: 5px; margin-top: 15px; font-size: 12px; color: #666; }
 .status { margin-top: 10px; padding: 10px; border-radius: 5px; font-size: 13px; }
 .status.success { background: #d4edda; color: #155724; }
 .status.error { background: #f8d7da; color: #721c24; }
@@ -46,12 +42,12 @@ body { font-family: 'Microsoft YaHei', Arial, sans-serif; background: #f5f7fa; m
 <div class="panel">
 <h3>📝 数据输入</h3>
 <div class="input-group">
-<label>粘贴数据 (格式: 渠道类型,渠道标签,数值)</label>
+<label>格式: 渠道类型,渠道标签,数值</label>
 <textarea id="dataInput"></textarea>
 </div>
 <div class="actions">
 <button class="btn btn-primary" onclick="generateTreemap()">🎨 生成图表</button>
-<button class="btn btn-secondary" onclick="loadSampleData()">📋 示例数据</button>
+<button class="btn btn-secondary" onclick="loadSampleData()">📋 示例</button>
 <button class="btn btn-success" onclick="downloadPNG()">💾 下载PNG</button>
 </div>
 <div id="status"></div>
@@ -59,12 +55,8 @@ body { font-family: 'Microsoft YaHei', Arial, sans-serif; background: #f5f7fa; m
 <label>宽度: <input type="number" id="canvasWidth" value="1200"></label>
 <label>高度: <input type="number" id="canvasHeight" value="900"></label>
 </div>
-<div class="format-help">
-<strong>格式：</strong>每行 <code>渠道类型,渠道标签,数值</code><br>
-支持Excel直接复制（Tab分隔）
 </div>
-</div>
-<div class="panel preview-panel">
+<div class="panel">
 <h3>👁️ 预览</h3>
 <canvas id="treemapCanvas"></canvas>
 </div>
@@ -72,7 +64,6 @@ body { font-family: 'Microsoft YaHei', Arial, sans-serif; background: #f5f7fa; m
 </div>
 
 <script>
-// 颜色方案
 const colorScheme = {
 'NATURAL_SELF': '#5B9CFF',
 'NATURAL_OTHER': '#CE93D8', 
@@ -86,6 +77,7 @@ const colorScheme = {
 const defaultColors = ['#64B5F6','#BA68C8','#F06292','#FFB74D','#81C784','#FF8A65','#FFD54F','#4DD0E1'];
 
 let currentData = null;
+const HEADER_HEIGHT = 22; // 渠道类型标题栏高度
 
 function parseData(text) {
 const lines = text.trim().split('\n').filter(l => l.trim());
@@ -169,66 +161,71 @@ const W = canvas.width, H = canvas.height;
 ctx.fillStyle = '#fff';
 ctx.fillRect(0, 0, W, H);
 
-const pad = 2;
+const pad = 3;
 const level1 = squarify(data, { x: pad, y: pad, width: W - pad * 2, height: H - pad * 2 });
-
-// 存储所有要绘制的类型名称，最后统一绘制（确保在最上层）
-const typeLabels = [];
 
 level1.forEach((item, idx) => {
 const r = item.rect;
 const baseColor = getColor(item.name, idx);
 
-// 整个区域背景
+// 1. 绘制整个区域背景（包含标题栏）
+ctx.fillStyle = darken(baseColor, 0.15); // 标题栏颜色更深
+ctx.fillRect(r.x, r.y, r.width, HEADER_HEIGHT);
+
+// 2. 绘制标题栏文字：渠道类型 + 总数
+ctx.fillStyle = '#fff';
+ctx.font = 'bold 12px Microsoft YaHei';
+ctx.textAlign = 'left';
+ctx.textBaseline = 'middle';
+const titleText = item.name;
+ctx.fillText(titleText, r.x + 6, r.y + HEADER_HEIGHT / 2);
+
+// 3. 子块区域
+const contentRect = {
+x: r.x,
+y: r.y + HEADER_HEIGHT,
+width: r.width,
+height: r.height - HEADER_HEIGHT
+};
+
+// 绘制内容区背景
 ctx.fillStyle = baseColor;
-ctx.fillRect(r.x, r.y, r.width, r.height);
+ctx.fillRect(contentRect.x, contentRect.y, contentRect.width, contentRect.height);
 
-// 外边框
-ctx.strokeStyle = '#fff';
-ctx.lineWidth = 3;
-ctx.strokeRect(r.x, r.y, r.width, r.height);
+// 4. 绘制子块
+if (item.children?.length && contentRect.width > 15 && contentRect.height > 15) {
+const level2 = squarify(item.children, {
+x: contentRect.x + 1,
+y: contentRect.y + 1,
+width: contentRect.width - 2,
+height: contentRect.height - 2
+});
 
-// 子块
-const ip = 2;
-const inner = { x: r.x + ip, y: r.y + ip, width: r.width - ip * 2, height: r.height - ip * 2 };
-
-if (item.children?.length && inner.width > 20 && inner.height > 20) {
-const level2 = squarify(item.children, inner);
 level2.forEach((child, ci) => {
 const cr = child.rect;
-ctx.fillStyle = darken(baseColor, 0.03 + (ci % 4) * 0.06);
+// 子块颜色渐变
+ctx.fillStyle = darken(baseColor, -0.05 + (ci % 4) * 0.08);
 ctx.fillRect(cr.x, cr.y, cr.width, cr.height);
-ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+// 子块边框
+ctx.strokeStyle = 'rgba(255,255,255,0.4)';
 ctx.lineWidth = 1;
 ctx.strokeRect(cr.x, cr.y, cr.width, cr.height);
+// 标签
 drawLabel(ctx, child.name, child.value, cr);
 });
 }
 
-// 记录类型名称位置
-typeLabels.push({ name: item.name, x: r.x, y: r.y });
+// 5. 绘制整体边框（粗边框）
+ctx.strokeStyle = '#fff';
+ctx.lineWidth = 4;
+ctx.strokeRect(r.x, r.y, r.width, r.height);
 });
-
-// 最后绘制所有渠道类型名称（确保在最上层）
-ctx.fillStyle = 'rgba(255,255,255,0.95)';
-ctx.font = 'bold 11px Microsoft YaHei';
-ctx.textAlign = 'left';
-ctx.textBaseline = 'top';
-ctx.shadowColor = 'rgba(0,0,0,0.3)';
-ctx.shadowBlur = 2;
-ctx.shadowOffsetX = 1;
-ctx.shadowOffsetY = 1;
-typeLabels.forEach(t => {
-ctx.fillText(t.name, t.x + 4, t.y + 3);
-});
-ctx.shadowColor = 'transparent';
-ctx.shadowBlur = 0;
 }
 
 function drawLabel(ctx, name, value, r) {
 const area = r.width * r.height;
-// 更严格的显示条件，避免拥挤
-if (area < 1000 || r.width < 30 || r.height < 25) return;
+const minW = 25, minH = 18;
+if (r.width < minW || r.height < minH) return;
 
 ctx.fillStyle = '#fff';
 ctx.textAlign = 'center';
@@ -236,26 +233,26 @@ ctx.textBaseline = 'middle';
 const cx = r.x + r.width / 2;
 const cy = r.y + r.height / 2;
 
-if (area > 30000 && r.width > 130 && r.height > 65) {
-// 大块
-ctx.font = '13px Microsoft YaHei';
-const dn = name.length > 22 ? name.slice(0, 20) + '...' : name;
-ctx.fillText(dn, cx, cy - 10);
-ctx.font = 'bold 15px Microsoft YaHei';
-ctx.fillText(value.toLocaleString(), cx, cy + 12);
-} else if (area > 10000 && r.width > 75 && r.height > 50) {
+// 根据面积和尺寸决定显示方式
+if (area > 20000 && r.width > 100 && r.height > 50) {
+// 大块：完整显示
+ctx.font = '12px Microsoft YaHei';
+const dn = name.length > 20 ? name.slice(0, 18) + '...' : name;
+ctx.fillText(dn, cx, cy - 9);
+ctx.font = 'bold 14px Microsoft YaHei';
+ctx.fillText(value.toLocaleString(), cx, cy + 10);
+} else if (area > 6000 && r.width > 55 && r.height > 35) {
 // 中块
 ctx.font = '10px Microsoft YaHei';
 const sn = name.length > 12 ? name.slice(0, 10) + '...' : name;
-ctx.fillText(sn, cx, cy - 8);
-ctx.font = 'bold 12px Microsoft YaHei';
-ctx.fillText(value.toLocaleString(), cx, cy + 9);
-} else if (area > 2500 && r.width > 40 && r.height > 30) {
-// 小块 - 只显示数值
+ctx.fillText(sn, cx, cy - 7);
+ctx.font = 'bold 11px Microsoft YaHei';
+ctx.fillText(value.toLocaleString(), cx, cy + 8);
+} else if (area > 1200 && r.width > 30 && r.height > 20) {
+// 小块：只显示数值
 ctx.font = 'bold 10px Microsoft YaHei';
 ctx.fillText(value, cx, cy);
 }
-// 更小的不显示
 }
 
 function generateTreemap() {
