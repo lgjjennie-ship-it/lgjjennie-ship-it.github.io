@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Global 渠道来源交叉分析</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+body { font-family: 'Microsoft YaHei', Arial, sans-serif; padding: 20px; background: #f5f7fa; }
+.container { max-width: 1400px; margin: 0 auto; }
+.header { text-align: center; margin-bottom: 30px; }
+.header h1 { color: #2c3e50; margin-bottom: 10px; }
+.header p { color: #7f8c8d; font-size: 14px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 30px; }
+.stat-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
+.stat-card .number { font-size: 28px; font-weight: bold; color: #3498db; margin-bottom: 5px; }
+.stat-card .label { color: #7f8c8d; font-size: 12px; }
+.chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+.chart-box { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.chart-box h3 { margin: 0 0 20px 0; color: #2c3e50; font-size: 18px; }
+.full-width { grid-column: 1 / -1; }
+canvas { max-height: 400px; }
+.detail-section { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-top: 20px; }
+.detail-section h3 { margin: 0 0 15px 0; color: #2c3e50; }
+.channel-block { margin-bottom: 25px; padding: 15px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #3498db; }
+.channel-block h4 { margin: 0 0 10px 0; color: #2c3e50; }
+.channel-block .count { color: #7f8c8d; font-size: 14px; margin-bottom: 10px; }
+.tag-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag-item { background: white; padding: 5px 10px; border-radius: 4px; font-size: 13px; border: 1px solid #e0e0e0; }
+.tag-item .pct { color: #3498db; font-weight: bold; margin-left: 5px; }
+@media (max-width: 768px) { .chart-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>🌍 Global 渠道来源交叉分析</h1>
+<p>数据周期：2025年1月 - 2026年2月 | 总样本：8,743人</p>
+</div>
+
+<div class="stats">
+<div class="stat-card"><div class="number">5,501</div><div class="label">natural_self</div></div>
+<div class="stat-card"><div class="number">875</div><div class="label">natural_other</div></div>
+<div class="stat-card"><div class="number">761</div><div class="label">abnormal_data</div></div>
+<div class="stat-card"><div class="number">634</div><div class="label">natural_search</div></div>
+<div class="stat-card"><div class="number">331</div><div class="label">natural_direct</div></div>
+<div class="stat-card"><div class="number">318</div><div class="label">invitation_code</div></div>
+<div class="stat-card"><div class="number">226</div><div class="label">ytag_search</div></div>
+<div class="stat-card"><div class="number">97</div><div class="label">ytag_other</div></div>
+</div>
+
+<div class="chart-grid">
+<div class="chart-box">
+<h3>📊 渠道类型分布</h3>
+<canvas id="typeChart"></canvas>
+</div>
+<div class="chart-box">
+<h3>🔍 natural_self 标签分布</h3>
+<canvas id="selfChart"></canvas>
+</div>
+<div class="chart-box">
+<h3>🌐 natural_other 标签分布</h3>
+<canvas id="otherChart"></canvas>
+</div>
+<div class="chart-box">
+<h3>⚠️ abnormal_data 标签分布</h3>
+<canvas id="abnormalChart"></canvas>
+</div>
+<div class="chart-box">
+<h3>🔎 natural_search 标签分布</h3>
+<canvas id="searchChart"></canvas>
+</div>
+<div class="chart-box">
+<h3>🎫 invitation_code 标签分布</h3>
+<canvas id="inviteChart"></canvas>
+</div>
+<div class="chart-box">
+<h3>💰 ytag_search 标签分布</h3>
+<canvas id="ytagSearchChart"></canvas>
+</div>
+<div class="chart-box">
+<h3>📢 ytag_other 标签分布</h3>
+<canvas id="ytagOtherChart"></canvas>
+</div>
+</div>
+
+<div class="chart-box full-width">
+<h3>📈 渠道类型 × 标签数量 对比</h3>
+<canvas id="crossChart"></canvas>
+</div>
+
+<div class="detail-section">
+<h3>📋 完整交叉分析数据</h3>
+
+<div class="channel-block" style="border-left-color: #3498db;">
+<h4>1. natural_self</h4>
+<div class="count">总计: 5,501人 (62.9%)</div>
+<div class="tag-list">
+<div class="tag-item">passport.ucloud-global.com<span class="pct">67.4%</span></div>
+<div class="tag-item">console.ucloud-global.com<span class="pct">25.5%</span></div>
+<div class="tag-item">www.ucloud-global.com<span class="pct">5.6%</span></div>
+<div class="tag-item">ucloud-global.com<span class="pct">1.4%</span></div>
+</div>
+</div>
+
+<div class="channel-block" style="border-left-color: #2ecc71;">
+<h4>2. natural_other</h4>
+<div class="count">总计: 875人 (10.0%)</div>
+<div class="tag-list">
+<div class="tag-item">www.ucloud.cn<span class="pct">57.5%</span></div>
+<div class="tag-item">link.zhihu.com<span class="pct">15.3%</span></div>
+<div class="tag-item">linux.do<span class="pct">12.6%</span></div>
+<div class="tag-item">internxt.com<span class="pct">1.3%</span></div>
+<div class="tag-item">chatgpt.com<span class="pct">1.1%</span></div>
+</div>
+</div>
+
+<div class="channel-block" style="border-left-color: #e74c3c;">
+<h4>3. abnormal_data</h4>
+<div class="count">总计: 761人 (8.7%)</div>
+<div class="tag-list">
+<div class="tag-item">accounts.google.com<span class="pct">89.2%</span></div>
+<div class="tag-item">10minemail.com<span class="pct">2.1%</span></div>
+<div class="tag-item">com.google.android.gm<span class="pct">1.6%</span></div>
+<div class="tag-item">e.mail.ru<span class="pct">1.1%</span></div>
+<div class="tag-item">temp-mail.org<span class="pct">0.8%</span></div>
+</div>
+</div>
+
+<div class="channel-block" style="border-left-color: #f39c12;">
+<h4>4. natural_search</h4>
+<div class="count">总计: 634人 (7.3%)</div>
+<div class="tag-list">
+<div class="tag-item">Google<span class="pct">77.6%</span></div>
+<div class="tag-item">com.google.android.gm<span class="pct">7.7%</span></div>
+<div class="tag-item">Bing<span class="pct">6.9%</span></div>
+<div class="tag-item">Yandex<span class="pct">2.1%</span></div>
+<div class="tag-item">DuckDuckGo<span class="pct">0.8%</span></div>
+</div>
+</div>
+
+<div class="channel-block" style="border-left-color: #9b59b6;">
+<h4>5. natural_direct</h4>
+<div class="count">总计: 331人 (3.8%)</div>
+<div class="tag-list">
+<div class="tag-item">(空) - 无渠道标签<span class="pct">100%</span></div>
+</div>
+</div>
+
+<div class="channel-block" style="border-left-color: #1abc9c;">
+<h4>6. invitation_code</h4>
+<div class="count">总计: 318人 (3.6%) | 72个邀请码</div>
+<div class="tag-list">
+<div class="tag-item">C1x6DB2B0779164<span class="pct">15.7%</span></div>
+<div class="tag-item">C1x37345EF50453<span class="pct">12.9%</span></div>
+<div class="tag-item">C1x513082CD5EC0<span class="pct">10.7%</span></div>
+<div class="tag-item">C1xCBCCB7AED6FD<span class="pct">10.4%</span></div>
+<div class="tag-item">其他68个邀请码<span class="pct">50.3%</span></div>
+</div>
+</div>
+
+<div class="channel-block" style="border-left-color: #34495e;">
+<h4>7. ytag_search</h4>
+<div class="count">总计: 226人 (2.6%)</div>
+<div class="tag-list">
+<div class="tag-item">22271935341<span class="pct">28.8%</span></div>
+<div class="tag-item">A04<span class="pct">24.3%</span></div>
+<div class="tag-item">A03<span class="pct">17.3%</span></div>
+<div class="tag-item">A05<span class="pct">8.8%</span></div>
+<div class="tag-item">A01<span class="pct">4.4%</span></div>
+</div>
+</div>
+
+<div class="channel-block" style="border-left-color: #95a5a6;">
+<h4>8. ytag_other</h4>
+<div class="count">总计: 97人 (1.1%)</div>
+<div class="tag-list">
+<div class="tag-item">nodeseek<span class="pct">26.8%</span></div>
+<div class="tag-item">gwvpsceping<span class="pct">13.4%</span></div>
+<div class="tag-item">p1-1<span class="pct">13.4%</span></div>
+<div class="tag-item">edm0320<span class="pct">11.3%</span></div>
+<div class="tag-item">seo<span class="pct">9.3%</span></div>
+</div>
+</div>
+
+</div>
+</div>
+
+<script>
+const colors = ['#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6', '#1abc9c', '#34495e', '#95a5a6'];
+
+// 渠道类型饼图
+new Chart(document.getElementById('typeChart'), {
+type: 'doughnut',
+data: {
+labels: ['natural_self (62.9%)', 'natural_other (10.0%)', 'abnormal_data (8.7%)', 'natural_search (7.3%)', 'natural_direct (3.8%)', 'invitation_code (3.6%)', 'ytag_search (2.6%)', 'ytag_other (1.1%)'],
+datasets: [{
+data: [5501, 875, 761, 634, 331, 318, 226, 97],
+backgroundColor: colors
+}]
+},
+options: { responsive: true, plugins: { legend: { position: 'right', labels: { font: { size: 11 } } } } }
+});
+
+// natural_self
+new Chart(document.getElementById('selfChart'), {
+type: 'pie',
+data: {
+labels: ['passport.ucloud-global.com', 'console.ucloud-global.com', 'www.ucloud-global.com', '其他'],
+datasets: [{ data: [3705, 1405, 307, 84], backgroundColor: ['#3498db', '#5dade2', '#85c1e9', '#d6eaf8'] }]
+},
+options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } } }
+});
+
+// natural_other
+new Chart(document.getElementById('otherChart'), {
+type: 'pie',
+data: {
+labels: ['www.ucloud.cn', 'link.zhihu.com', 'linux.do', '其他'],
+datasets: [{ data: [503, 134, 110, 128], backgroundColor: ['#2ecc71', '#58d68d', '#82e0aa', '#d5f5e3'] }]
+},
+options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } } }
+});
+
+// abnormal_data
+new Chart(document.getElementById('abnormalChart'), {
+type: 'pie',
+data: {
+labels: ['accounts.google.com', '临时邮箱类', '其他'],
+datasets: [{ data: [679, 42, 40], backgroundColor: ['#e74c3c', '#f1948a', '#fadbd8'] }]
+},
+options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } } }
+});
+
+// natural_search
+new Chart(document.getElementById('searchChart'), {
+type: 'pie',
+data: {
+labels: ['Google', 'com.google.android.gm', 'Bing', 'Yandex', '其他'],
+datasets: [{ data: [492, 49, 44, 25, 24], backgroundColor: ['#f39c12', '#f5b041', '#f7c566', '#f9d89a', '#fef9e7'] }]
+},
+options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } } }
+});
+
+// invitation_code
+new Chart(document.getElementById('inviteChart'), {
+type: 'pie',
+data: {
+labels: ['C1x6DB2B0779164', 'C1x37345EF50453', 'C1x513082CD5EC0', 'C1xCBCCB7AED6FD', '其他68个'],
+datasets: [{ data: [50, 41, 34, 33, 160], backgroundColor: ['#1abc9c', '#48c9b0', '#76d7c4', '#a3e4d7', '#d1f2eb'] }]
+},
+options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } } }
+});
+
+// ytag_search
+new Chart(document.getElementById('ytagSearchChart'), {
+type: 'pie',
+data: {
+labels: ['22271935341', 'A04', 'A03', 'A05', '其他'],
+datasets: [{ data: [65, 55, 39, 20, 47], backgroundColor: ['#34495e', '#5d6d7e', '#85929e', '#aeb6bf', '#d5d8dc'] }]
+},
+options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } } }
+});
+
+// ytag_other
+new Chart(document.getElementById('ytagOtherChart'), {
+type: 'pie',
+data: {
+labels: ['nodeseek', 'gwvpsceping', 'p1-1', 'edm0320', '其他'],
+datasets: [{ data: [26, 13, 13, 11, 34], backgroundColor: ['#95a5a6', '#aab7b8', '#bfc9ca', '#d5dbdb', '#eaeded'] }]
+},
+options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } } }
+});
+
+// 交叉对比柱状图
+new Chart(document.getElementById('crossChart'), {
+type: 'bar',
+data: {
+labels: ['natural_self', 'natural_other', 'abnormal_data', 'natural_search', 'natural_direct', 'invitation_code', 'ytag_search', 'ytag_other'],
+datasets: [
+{ label: '客户总数', data: [5501, 875, 761, 634, 331, 318, 226, 97], backgroundColor: colors },
+]
+},
+options: {
+responsive: true,
+plugins: { legend: { display: false } },
+scales: { y: { beginAtZero: true, title: { display: true, text: '客户数' } } }
+}
+});
+</script>
+</body>
+</html>
