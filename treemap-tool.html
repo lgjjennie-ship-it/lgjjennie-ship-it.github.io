@@ -10,41 +10,108 @@ body { font-family: 'Microsoft YaHei', Arial, sans-serif; background: #f5f7fa; m
 .header { text-align: center; padding: 20px; margin-bottom: 20px; }
 .header h1 { color: #2c3e50; font-size: 24px; }
 .header p { color: #7f8c8d; margin-top: 8px; font-size: 14px; }
-.main { display: grid; grid-template-columns: 400px 1fr; gap: 20px; }
+.main { display: grid; grid-template-columns: 420px 1fr; gap: 20px; }
 .panel { background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 20px; }
 .panel h3 { color: #2c3e50; margin-bottom: 15px; font-size: 16px; border-bottom: 2px solid #667eea; padding-bottom: 8px; }
 .input-group { margin-bottom: 15px; }
 .input-group label { display: block; margin-bottom: 5px; color: #555; font-size: 13px; font-weight: bold; }
-.input-group textarea { width: 100%; height: 260px; border: 1px solid #ddd; border-radius: 5px; padding: 10px; font-family: monospace; font-size: 12px; resize: vertical; }
+.input-group textarea { width: 100%; height: 200px; border: 1px solid #ddd; border-radius: 5px; padding: 10px; font-family: monospace; font-size: 12px; resize: vertical; }
 .input-group textarea:focus { outline: none; border-color: #667eea; }
+
+/* 文件上传区域 */
+.upload-zone { 
+border: 2px dashed #667eea; 
+border-radius: 8px; 
+padding: 20px; 
+text-align: center; 
+background: #f8f9ff; 
+cursor: pointer; 
+transition: all 0.2s;
+margin-bottom: 15px;
+}
+.upload-zone:hover { background: #eef1ff; border-color: #5568d8; }
+.upload-zone.dragover { background: #e0e5ff; border-color: #4455c7; }
+.upload-zone input { display: none; }
+.upload-zone .icon { font-size: 32px; margin-bottom: 8px; }
+.upload-zone .text { color: #667eea; font-size: 14px; font-weight: bold; }
+.upload-zone .hint { color: #999; font-size: 12px; margin-top: 5px; }
+
+/* 列选择器 */
+.column-selector { 
+background: #f8f9fa; 
+border-radius: 8px; 
+padding: 15px; 
+margin-bottom: 15px; 
+display: none;
+}
+.column-selector.show { display: block; }
+.column-selector h4 { color: #333; margin-bottom: 10px; font-size: 13px; }
+.column-row { display: flex; gap: 10px; margin-bottom: 8px; align-items: center; }
+.column-row label { width: 60px; font-size: 12px; color: #666; }
+.column-row select { flex: 1; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; }
+
 .btn { padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; transition: all 0.2s; }
 .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
 .btn-secondary { background: #95a5a6; color: white; }
 .btn-success { background: #27ae60; color: white; }
+.btn:hover { transform: translateY(-1px); }
 .actions { margin-top: 15px; display: flex; flex-wrap: wrap; gap: 10px; }
 #treemapCanvas { width: 100%; background: white; border-radius: 5px; display: block; }
 .status { margin-top: 10px; padding: 10px; border-radius: 5px; font-size: 13px; }
 .status.success { background: #d4edda; color: #155724; }
 .status.error { background: #f8d7da; color: #721c24; }
+.status.info { background: #cce5ff; color: #004085; }
 .size-controls { display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap; }
 .size-controls label { font-size: 13px; color: #555; }
 .size-controls input { width: 80px; padding: 5px; border: 1px solid #ddd; border-radius: 4px; }
 .help-box { background: #f8f9fa; border-radius: 8px; padding: 15px; margin-top: 15px; font-size: 12px; color: #555; }
-.help-box h4 { color: #333; margin-bottom: 10px; font-size: 13px; }
-.help-box code { background: #e9ecef; padding: 2px 6px; border-radius: 3px; font-family: monospace; }
-.help-box ul { margin-left: 15px; margin-top: 8px; }
-.help-box li { margin-bottom: 5px; }
+.help-box h4 { color: #333; margin-bottom: 8px; font-size: 13px; }
+.help-box ul { margin-left: 15px; }
+.help-box li { margin-bottom: 4px; }
+.divider { text-align: center; color: #999; font-size: 12px; margin: 15px 0; position: relative; }
+.divider::before, .divider::after { content: ''; position: absolute; top: 50%; width: 40%; height: 1px; background: #ddd; }
+.divider::before { left: 0; }
+.divider::after { right: 0; }
 </style>
 </head>
 <body>
 <div class="container">
 <div class="header">
 <h1>📊 Treemap 可视化工具</h1>
-<p>通用矩形树图生成器 - 支持两层层级数据可视化</p>
+<p>通用矩形树图生成器 - 支持文件上传或粘贴数据</p>
 </div>
 <div class="main">
 <div class="panel">
-<h3>📝 数据输入</h3>
+<h3>📁 数据输入</h3>
+
+<!-- 文件上传区域 -->
+<div class="upload-zone" id="uploadZone">
+<input type="file" id="fileInput" accept=".csv,.xlsx,.xls,.txt">
+<div class="icon">📤</div>
+<div class="text">点击上传或拖拽文件到此处</div>
+<div class="hint">支持 Excel (.xlsx/.xls)、CSV、TXT 文件</div>
+</div>
+
+<!-- 列选择器 -->
+<div class="column-selector" id="columnSelector">
+<h4>🔧 选择数据列</h4>
+<div class="column-row">
+<label>分类列：</label>
+<select id="categoryCol"></select>
+</div>
+<div class="column-row">
+<label>子项列：</label>
+<select id="itemCol"></select>
+</div>
+<div class="column-row">
+<label>数值列：</label>
+<select id="valueCol"></select>
+</div>
+<button class="btn btn-primary" onclick="applyColumnSelection()" style="margin-top:10px;padding:8px 16px;font-size:12px;">确认选择</button>
+</div>
+
+<div class="divider">或手动输入</div>
+
 <div class="input-group">
 <label>数据格式：分类, 子项, 数值</label>
 <textarea id="dataInput" placeholder="每行一条数据，格式：
@@ -53,13 +120,13 @@ body { font-family: 'Microsoft YaHei', Arial, sans-serif; background: #f5f7fa; m
 示例：
 水果, 苹果, 500
 水果, 香蕉, 300
-蔬菜, 西红柿, 200
-蔬菜, 黄瓜, 150"></textarea>
+蔬菜, 西红柿, 200"></textarea>
 </div>
+
 <div class="actions">
 <button class="btn btn-primary" onclick="generateTreemap()">🎨 生成图表</button>
-<button class="btn btn-secondary" onclick="loadSampleData()">📋 示例数据</button>
-<button class="btn btn-success" onclick="downloadPNG()">💾 下载PNG</button>
+<button class="btn btn-secondary" onclick="loadSampleData()">📋 示例</button>
+<button class="btn btn-success" onclick="downloadPNG()">💾 下载</button>
 </div>
 <div id="status"></div>
 <div class="size-controls">
@@ -68,19 +135,12 @@ body { font-family: 'Microsoft YaHei', Arial, sans-serif; background: #f5f7fa; m
 </div>
 
 <div class="help-box">
-<h4>📖 使用说明</h4>
-<ul>
-<li><strong>数据格式：</strong><code>分类, 子项, 数值</code></li>
-<li><strong>分隔符：</strong>逗号或Tab（支持Excel直接粘贴）</li>
-<li><strong>层级结构：</strong>相同分类的数据会自动归组</li>
-</ul>
-<h4 style="margin-top: 12px;">💡 适用场景</h4>
+<h4>💡 适用场景</h4>
 <ul>
 <li>渠道来源分析（渠道类型 → 渠道标签）</li>
 <li>销售数据（产品分类 → 具体产品）</li>
 <li>费用结构（部门 → 费用项目）</li>
 <li>用户画像（用户群 → 特征标签）</li>
-<li>库存分析（仓库 → 商品SKU）</li>
 </ul>
 </div>
 </div>
@@ -91,8 +151,10 @@ body { font-family: 'Microsoft YaHei', Arial, sans-serif; background: #f5f7fa; m
 </div>
 </div>
 
+<!-- SheetJS for Excel parsing -->
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+
 <script>
-// 默认调色板
 const colorPalette = [
 '#5B9CFF', '#CE93D8', '#F48FB1', '#FFB74D', 
 '#A5D6A7', '#FFAB91', '#FFE082', '#80DEEA',
@@ -101,18 +163,157 @@ const colorPalette = [
 ];
 
 let currentData = null;
+let uploadedData = null; // 存储上传的原始数据
+let uploadedHeaders = null; // 存储表头
 const HEADER_HEIGHT = 26;
 
+// ===== 文件上传处理 =====
+const uploadZone = document.getElementById('uploadZone');
+const fileInput = document.getElementById('fileInput');
+
+uploadZone.addEventListener('click', () => fileInput.click());
+
+uploadZone.addEventListener('dragover', (e) => {
+e.preventDefault();
+uploadZone.classList.add('dragover');
+});
+
+uploadZone.addEventListener('dragleave', () => {
+uploadZone.classList.remove('dragover');
+});
+
+uploadZone.addEventListener('drop', (e) => {
+e.preventDefault();
+uploadZone.classList.remove('dragover');
+const file = e.dataTransfer.files[0];
+if (file) handleFile(file);
+});
+
+fileInput.addEventListener('change', (e) => {
+const file = e.target.files[0];
+if (file) handleFile(file);
+});
+
+function handleFile(file) {
+const ext = file.name.split('.').pop().toLowerCase();
+showStatus(`正在解析文件: ${file.name}...`, 'info');
+
+if (ext === 'csv' || ext === 'txt') {
+const reader = new FileReader();
+reader.onload = (e) => parseCSV(e.target.result);
+reader.readAsText(file);
+} else if (ext === 'xlsx' || ext === 'xls') {
+const reader = new FileReader();
+reader.onload = (e) => parseExcel(e.target.result);
+reader.readAsArrayBuffer(file);
+} else {
+showStatus('不支持的文件格式', 'error');
+}
+}
+
+function parseCSV(text) {
+const lines = text.trim().split('\n');
+if (lines.length < 2) {
+showStatus('文件数据不足', 'error');
+return;
+}
+
+// 检测分隔符
+const firstLine = lines[0];
+const separator = firstLine.includes('\t') ? '\t' : ',';
+
+const headers = lines[0].split(separator).map(h => h.trim().replace(/"/g, ''));
+const data = lines.slice(1).map(line => {
+return line.split(separator).map(cell => cell.trim().replace(/"/g, ''));
+});
+
+showColumnSelector(headers, data);
+}
+
+function parseExcel(buffer) {
+try {
+const workbook = XLSX.read(buffer, { type: 'array' });
+const sheetName = workbook.SheetNames[0];
+const sheet = workbook.Sheets[sheetName];
+const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+if (jsonData.length < 2) {
+showStatus('Excel文件数据不足', 'error');
+return;
+}
+
+const headers = jsonData[0].map(h => String(h || '').trim());
+const data = jsonData.slice(1).map(row => row.map(cell => String(cell || '').trim()));
+
+showColumnSelector(headers, data);
+} catch (e) {
+showStatus('Excel解析失败: ' + e.message, 'error');
+}
+}
+
+function showColumnSelector(headers, data) {
+uploadedHeaders = headers;
+uploadedData = data;
+
+const categoryCol = document.getElementById('categoryCol');
+const itemCol = document.getElementById('itemCol');
+const valueCol = document.getElementById('valueCol');
+
+// 清空并填充选项
+[categoryCol, itemCol, valueCol].forEach(select => {
+select.innerHTML = '';
+headers.forEach((h, i) => {
+const opt = document.createElement('option');
+opt.value = i;
+opt.textContent = `${String.fromCharCode(65 + i)}: ${h || '(空)'}`;
+select.appendChild(opt);
+});
+});
+
+// 智能预选（如果有3列，默认选1,2,3）
+if (headers.length >= 3) {
+categoryCol.value = 0;
+itemCol.value = 1;
+valueCol.value = 2;
+}
+
+document.getElementById('columnSelector').classList.add('show');
+showStatus(`已加载 ${data.length} 行数据，请选择对应的列`, 'info');
+}
+
+function applyColumnSelection() {
+const catIdx = parseInt(document.getElementById('categoryCol').value);
+const itemIdx = parseInt(document.getElementById('itemCol').value);
+const valIdx = parseInt(document.getElementById('valueCol').value);
+
+// 转换为文本格式
+const lines = uploadedData
+.filter(row => row[catIdx] && row[valIdx]) // 过滤空行
+.map(row => {
+const cat = row[catIdx] || '';
+const item = row[itemIdx] || '';
+const val = row[valIdx] || '0';
+return `${cat},${item},${val}`;
+});
+
+document.getElementById('dataInput').value = lines.join('\n');
+document.getElementById('columnSelector').classList.remove('show');
+showStatus(`已转换 ${lines.length} 条数据`, 'success');
+
+// 自动生成图表
+generateTreemap();
+}
+
+// ===== Treemap 核心逻辑 =====
 function parseData(text) {
 const lines = text.trim().split('\n').filter(l => l.trim());
 const data = {};
 lines.forEach(line => {
-// 支持逗号或Tab分隔
 const parts = line.includes('\t') ? line.split('\t') : line.split(',');
 if (parts.length >= 3) {
 const category = parts[0].trim();
 const item = parts[1].trim();
-const value = parseInt(parts[2].trim().replace(/,/g, '')) || 0;
+const value = parseInt(String(parts[2]).trim().replace(/,/g, '')) || 0;
 if (!data[category]) data[category] = { name: category, value: 0, children: [] };
 data[category].children.push({ name: item, value: value });
 data[category].value += value;
@@ -193,18 +394,15 @@ level1.forEach((item, idx) => {
 const r = item.rect;
 const baseColor = getColor(idx);
 
-// 1. 标题栏
 ctx.fillStyle = darken(baseColor, 0.25);
 ctx.fillRect(r.x, r.y, r.width, HEADER_HEIGHT);
 
-// 2. 分类名称 + 总计
 ctx.fillStyle = '#fff';
 ctx.font = 'bold 14px "Arial Black", Arial, sans-serif';
 ctx.textAlign = 'left';
 ctx.textBaseline = 'middle';
 ctx.fillText(`${item.name} (${item.value.toLocaleString()})`, r.x + 8, r.y + HEADER_HEIGHT / 2);
 
-// 3. 内容区
 const contentRect = {
 x: r.x + 1,
 y: r.y + HEADER_HEIGHT + 1,
@@ -215,7 +413,6 @@ height: r.height - HEADER_HEIGHT - 2
 ctx.fillStyle = baseColor;
 ctx.fillRect(contentRect.x, contentRect.y, contentRect.width, contentRect.height);
 
-// 4. 子项
 if (item.children?.length && contentRect.width > 10 && contentRect.height > 10) {
 const level2 = squarify(item.children, contentRect);
 
@@ -230,7 +427,6 @@ drawLabel(ctx, child.name, child.value, cr);
 });
 }
 
-// 5. 外边框
 ctx.strokeStyle = '#fff';
 ctx.lineWidth = 5;
 ctx.strokeRect(r.x, r.y, r.width, r.height);
@@ -335,16 +531,16 @@ if (ctx.measureText(valueStr).width <= availW) ctx.fillText(valueStr, cx, cy);
 
 function generateTreemap() {
 const input = document.getElementById('dataInput').value;
-if (!input.trim()) { showStatus('请输入数据', 'error'); return; }
+if (!input.trim()) { showStatus('请输入或上传数据', 'error'); return; }
 try {
 currentData = parseData(input);
-if (!currentData.length) { showStatus('未解析到有效数据，请检查格式', 'error'); return; }
+if (!currentData.length) { showStatus('未解析到有效数据', 'error'); return; }
 const canvas = document.getElementById('treemapCanvas');
 canvas.width = parseInt(document.getElementById('canvasWidth').value) || 1200;
 canvas.height = parseInt(document.getElementById('canvasHeight').value) || 900;
 drawTreemap(currentData, canvas);
 const totalItems = currentData.reduce((sum, cat) => sum + cat.children.length, 0);
-showStatus(`成功！${currentData.length} 个分类，${totalItems} 个子项`, 'success');
+showStatus(`✅ ${currentData.length} 个分类，${totalItems} 个子项`, 'success');
 } catch (e) { showStatus('出错: ' + e.message, 'error'); }
 }
 
@@ -353,23 +549,18 @@ document.getElementById('dataInput').value = `电子产品,手机,5200
 电子产品,笔记本电脑,3800
 电子产品,平板,1500
 电子产品,耳机,800
-电子产品,智能手表,600
 服装,男装,2800
 服装,女装,3500
 服装,童装,1200
-服装,运动服,900
 食品,零食,1800
 食品,饮料,1500
 食品,生鲜,2200
-食品,调味品,400
 家居,家具,2500
 家居,床上用品,1100
-家居,厨具,800
-家居,装饰品,450
 美妆,护肤品,2100
-美妆,彩妆,1600
-美妆,香水,500`;
-showStatus('已加载示例数据', 'success');
+美妆,彩妆,1600`;
+showStatus('已加载示例', 'success');
+generateTreemap();
 }
 
 function downloadPNG() {
@@ -387,9 +578,8 @@ el.className = 'status ' + type;
 el.textContent = msg;
 }
 
-// 页面加载后自动加载示例
+// 初始化
 loadSampleData();
-generateTreemap();
 </script>
 </body>
 </html>
