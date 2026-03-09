@@ -16,10 +16,8 @@ body { font-family: 'Microsoft YaHei', Arial, sans-serif; background: #f5f7fa; m
 .input-group { margin-bottom: 15px; }
 .input-group label { display: block; margin-bottom: 5px; color: #555; font-size: 13px; font-weight: bold; }
 .input-group textarea { width: 100%; height: 280px; border: 1px solid #ddd; border-radius: 5px; padding: 10px; font-family: monospace; font-size: 12px; resize: vertical; }
-.input-group textarea:focus { outline: none; border-color: #667eea; }
 .btn { padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; transition: all 0.2s; }
 .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102,126,234,0.4); }
 .btn-secondary { background: #95a5a6; color: white; }
 .btn-success { background: #27ae60; color: white; }
 .actions { margin-top: 15px; display: flex; flex-wrap: wrap; gap: 10px; }
@@ -27,7 +25,7 @@ body { font-family: 'Microsoft YaHei', Arial, sans-serif; background: #f5f7fa; m
 .status { margin-top: 10px; padding: 10px; border-radius: 5px; font-size: 13px; }
 .status.success { background: #d4edda; color: #155724; }
 .status.error { background: #f8d7da; color: #721c24; }
-.size-controls { display: flex; gap: 15px; margin-top: 15px; align-items: center; flex-wrap: wrap; }
+.size-controls { display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap; }
 .size-controls label { font-size: 13px; color: #555; }
 .size-controls input { width: 80px; padding: 5px; border: 1px solid #ddd; border-radius: 4px; }
 </style>
@@ -168,62 +166,59 @@ level1.forEach((item, idx) => {
 const r = item.rect;
 const baseColor = getColor(item.name, idx);
 
-// 1. 标题栏背景（深色）
+// 1. 标题栏
 ctx.fillStyle = darken(baseColor, 0.25);
 ctx.fillRect(r.x, r.y, r.width, HEADER_HEIGHT);
 
-// 2. 【渠道类型】大号、粗体、Arial、全大写、带总数
+// 2. 渠道类型文字
 ctx.fillStyle = '#fff';
 ctx.font = 'bold 14px "Arial Black", Arial, sans-serif';
 ctx.textAlign = 'left';
 ctx.textBaseline = 'middle';
-// 显示：类型名称 (总数)
 const titleText = `${item.name} (${item.value.toLocaleString()})`;
 ctx.fillText(titleText, r.x + 8, r.y + HEADER_HEIGHT / 2);
 
-// 3. 内容区域
+// 3. 内容区
 const contentRect = {
-x: r.x,
-y: r.y + HEADER_HEIGHT,
-width: r.width,
-height: r.height - HEADER_HEIGHT
+x: r.x + 1,
+y: r.y + HEADER_HEIGHT + 1,
+width: r.width - 2,
+height: r.height - HEADER_HEIGHT - 2
 };
 
 ctx.fillStyle = baseColor;
 ctx.fillRect(contentRect.x, contentRect.y, contentRect.width, contentRect.height);
 
-// 4. 绘制子块
-if (item.children?.length && contentRect.width > 15 && contentRect.height > 15) {
-const level2 = squarify(item.children, {
-x: contentRect.x + 2,
-y: contentRect.y + 2,
-width: contentRect.width - 4,
-height: contentRect.height - 4
-});
+// 4. 子块
+if (item.children?.length && contentRect.width > 10 && contentRect.height > 10) {
+const level2 = squarify(item.children, contentRect);
 
 level2.forEach((child, ci) => {
 const cr = child.rect;
-ctx.fillStyle = darken(baseColor, -0.03 + (ci % 4) * 0.07);
+ctx.fillStyle = darken(baseColor, -0.02 + (ci % 5) * 0.06);
 ctx.fillRect(cr.x, cr.y, cr.width, cr.height);
-ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+ctx.strokeStyle = 'rgba(255,255,255,0.6)';
 ctx.lineWidth = 1;
 ctx.strokeRect(cr.x, cr.y, cr.width, cr.height);
-// 【渠道标签】小号、细体、中文字体、斜体名称
 drawLabel(ctx, child.name, child.value, cr);
 });
 }
 
-// 5. 粗边框
+// 5. 外边框
 ctx.strokeStyle = '#fff';
 ctx.lineWidth = 5;
 ctx.strokeRect(r.x, r.y, r.width, r.height);
 });
 }
 
+// 智能绘制标签 - 确保尽可能显示所有内容
 function drawLabel(ctx, name, value, r) {
-const area = r.width * r.height;
-const minW = 25, minH = 18;
-if (r.width < minW || r.height < minH) return;
+// 可用区域（留边距）
+const padding = 3;
+const availW = r.width - padding * 2;
+const availH = r.height - padding * 2;
+
+if (availW < 15 || availH < 12) return; // 太小完全不显示
 
 ctx.fillStyle = '#fff';
 ctx.textAlign = 'center';
@@ -231,25 +226,44 @@ ctx.textBaseline = 'middle';
 const cx = r.x + r.width / 2;
 const cy = r.y + r.height / 2;
 
-// 【渠道标签样式】斜体名称 + 粗体数值，中文字体
-if (area > 20000 && r.width > 100 && r.height > 50) {
-// 大块
-ctx.font = 'italic 11px "Microsoft YaHei", "PingFang SC", sans-serif';
-const dn = name.length > 20 ? name.slice(0, 18) + '...' : name;
-ctx.fillText(dn, cx, cy - 10);
-ctx.font = 'bold 18px "Microsoft YaHei", sans-serif';
-ctx.fillText(value.toLocaleString(), cx, cy + 14);
-} else if (area > 6000 && r.width > 55 && r.height > 35) {
-// 中块
-ctx.font = 'italic 9px "Microsoft YaHei", sans-serif';
-const sn = name.length > 12 ? name.slice(0, 10) + '...' : name;
-ctx.fillText(sn, cx, cy - 7);
-ctx.font = 'bold 13px "Microsoft YaHei", sans-serif';
-ctx.fillText(value.toLocaleString(), cx, cy + 10);
-} else if (area > 1200 && r.width > 30 && r.height > 20) {
-// 小块
-ctx.font = 'bold 10px "Microsoft YaHei", sans-serif';
-ctx.fillText(value, cx, cy);
+const valueStr = value.toLocaleString();
+
+// 根据可用空间决定显示策略
+if (availH >= 35 && availW >= 50) {
+// 足够高：名称 + 数值 两行显示
+const nameFontSize = Math.min(12, Math.max(8, availW / 10));
+const valueFontSize = Math.min(16, Math.max(10, availW / 8));
+
+// 名称（斜体）
+ctx.font = `italic ${nameFontSize}px "Microsoft YaHei", sans-serif`;
+let displayName = name;
+// 截断名称以适应宽度
+while (ctx.measureText(displayName).width > availW && displayName.length > 3) {
+displayName = displayName.slice(0, -2) + '...';
+}
+ctx.fillText(displayName, cx, cy - availH / 5);
+
+// 数值（粗体）
+ctx.font = `bold ${valueFontSize}px "Microsoft YaHei", sans-serif`;
+ctx.fillText(valueStr, cx, cy + availH / 5);
+
+} else if (availH >= 18 && availW >= 30) {
+// 中等高度：只显示名称和数值在一行，或只显示数值
+const fontSize = Math.min(11, Math.max(8, Math.min(availW / 6, availH / 1.5)));
+ctx.font = `bold ${fontSize}px "Microsoft YaHei", sans-serif`;
+
+// 优先显示数值
+if (ctx.measureText(valueStr).width <= availW) {
+ctx.fillText(valueStr, cx, cy);
+}
+
+} else if (availW >= 20 && availH >= 12) {
+// 很小：只显示数值，用更小字体
+const fontSize = Math.min(9, Math.max(7, Math.min(availW / 4, availH)));
+ctx.font = `bold ${fontSize}px Arial, sans-serif`;
+if (ctx.measureText(valueStr).width <= availW) {
+ctx.fillText(valueStr, cx, cy);
+}
 }
 }
 
