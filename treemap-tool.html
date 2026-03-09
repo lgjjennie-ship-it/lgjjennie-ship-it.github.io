@@ -77,7 +77,7 @@ const colorScheme = {
 const defaultColors = ['#64B5F6','#BA68C8','#F06292','#FFB74D','#81C784','#FF8A65','#FFD54F','#4DD0E1'];
 
 let currentData = null;
-const HEADER_HEIGHT = 24;
+const HEADER_HEIGHT = 26;
 
 function parseData(text) {
 const lines = text.trim().split('\n').filter(l => l.trim());
@@ -168,21 +168,20 @@ level1.forEach((item, idx) => {
 const r = item.rect;
 const baseColor = getColor(item.name, idx);
 
-// 1. 绘制标题栏背景（深色）
-ctx.fillStyle = darken(baseColor, 0.2);
+// 1. 标题栏背景（深色）
+ctx.fillStyle = darken(baseColor, 0.25);
 ctx.fillRect(r.x, r.y, r.width, HEADER_HEIGHT);
 
-// 2. 绘制标题栏文字：渠道类型名称 + 总数
-// 【差异化样式】渠道类型：大号、粗体、Arial字体、全大写
+// 2. 【渠道类型】大号、粗体、Arial、全大写、带总数
 ctx.fillStyle = '#fff';
-ctx.font = 'bold 13px Arial, sans-serif';
+ctx.font = 'bold 14px "Arial Black", Arial, sans-serif';
 ctx.textAlign = 'left';
 ctx.textBaseline = 'middle';
-ctx.letterSpacing = '1px';
-const titleText = `${item.name}`;
+// 显示：类型名称 (总数)
+const titleText = `${item.name} (${item.value.toLocaleString()})`;
 ctx.fillText(titleText, r.x + 8, r.y + HEADER_HEIGHT / 2);
 
-// 3. 子块内容区域
+// 3. 内容区域
 const contentRect = {
 x: r.x,
 y: r.y + HEADER_HEIGHT,
@@ -206,17 +205,17 @@ level2.forEach((child, ci) => {
 const cr = child.rect;
 ctx.fillStyle = darken(baseColor, -0.03 + (ci % 4) * 0.07);
 ctx.fillRect(cr.x, cr.y, cr.width, cr.height);
-ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+ctx.strokeStyle = 'rgba(255,255,255,0.5)';
 ctx.lineWidth = 1;
 ctx.strokeRect(cr.x, cr.y, cr.width, cr.height);
-// 【差异化样式】渠道标签：正常字重、Microsoft YaHei字体
+// 【渠道标签】小号、细体、中文字体、斜体名称
 drawLabel(ctx, child.name, child.value, cr);
 });
 }
 
-// 5. 绘制整体边框（粗边框）
+// 5. 粗边框
 ctx.strokeStyle = '#fff';
-ctx.lineWidth = 4;
+ctx.lineWidth = 5;
 ctx.strokeRect(r.x, r.y, r.width, r.height);
 });
 }
@@ -232,23 +231,23 @@ ctx.textBaseline = 'middle';
 const cx = r.x + r.width / 2;
 const cy = r.y + r.height / 2;
 
-// 【渠道标签样式】正常字重、中文字体、较小字号
+// 【渠道标签样式】斜体名称 + 粗体数值，中文字体
 if (area > 20000 && r.width > 100 && r.height > 50) {
-// 大块：名称 + 数值
-ctx.font = '12px "Microsoft YaHei", sans-serif';
+// 大块
+ctx.font = 'italic 11px "Microsoft YaHei", "PingFang SC", sans-serif';
 const dn = name.length > 20 ? name.slice(0, 18) + '...' : name;
 ctx.fillText(dn, cx, cy - 10);
-ctx.font = 'bold 16px "Microsoft YaHei", sans-serif';
-ctx.fillText(value.toLocaleString(), cx, cy + 12);
+ctx.font = 'bold 18px "Microsoft YaHei", sans-serif';
+ctx.fillText(value.toLocaleString(), cx, cy + 14);
 } else if (area > 6000 && r.width > 55 && r.height > 35) {
 // 中块
-ctx.font = '10px "Microsoft YaHei", sans-serif';
+ctx.font = 'italic 9px "Microsoft YaHei", sans-serif';
 const sn = name.length > 12 ? name.slice(0, 10) + '...' : name;
 ctx.fillText(sn, cx, cy - 7);
-ctx.font = 'bold 12px "Microsoft YaHei", sans-serif';
-ctx.fillText(value.toLocaleString(), cx, cy + 9);
+ctx.font = 'bold 13px "Microsoft YaHei", sans-serif';
+ctx.fillText(value.toLocaleString(), cx, cy + 10);
 } else if (area > 1200 && r.width > 30 && r.height > 20) {
-// 小块：只显示数值
+// 小块
 ctx.font = 'bold 10px "Microsoft YaHei", sans-serif';
 ctx.fillText(value, cx, cy);
 }
