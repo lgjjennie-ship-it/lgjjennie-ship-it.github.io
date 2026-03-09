@@ -9,7 +9,6 @@ body { font-family: 'Microsoft YaHei', Arial, sans-serif; background: #f5f7fa; m
 .container { max-width: 1600px; margin: 0 auto; padding: 20px; }
 .header { text-align: center; padding: 20px; margin-bottom: 20px; }
 .header h1 { color: #2c3e50; font-size: 24px; }
-.header p { color: #7f8c8d; margin-top: 8px; }
 .main { display: grid; grid-template-columns: 380px 1fr; gap: 20px; }
 .panel { background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 20px; }
 .panel h3 { color: #2c3e50; margin-bottom: 15px; font-size: 16px; border-bottom: 2px solid #667eea; padding-bottom: 8px; }
@@ -34,7 +33,6 @@ body { font-family: 'Microsoft YaHei', Arial, sans-serif; background: #f5f7fa; m
 <div class="container">
 <div class="header">
 <h1>📊 Treemap 绘制工具</h1>
-<p>粘贴数据，一键生成矩形树图</p>
 </div>
 <div class="main">
 <div class="panel">
@@ -44,9 +42,9 @@ body { font-family: 'Microsoft YaHei', Arial, sans-serif; background: #f5f7fa; m
 <textarea id="dataInput"></textarea>
 </div>
 <div class="actions">
-<button class="btn btn-primary" onclick="generateTreemap()">🎨 生成图表</button>
+<button class="btn btn-primary" onclick="generateTreemap()">🎨 生成</button>
 <button class="btn btn-secondary" onclick="loadSampleData()">📋 示例</button>
-<button class="btn btn-success" onclick="downloadPNG()">💾 下载PNG</button>
+<button class="btn btn-success" onclick="downloadPNG()">💾 下载</button>
 </div>
 <div id="status"></div>
 <div class="size-controls">
@@ -170,13 +168,12 @@ const baseColor = getColor(item.name, idx);
 ctx.fillStyle = darken(baseColor, 0.25);
 ctx.fillRect(r.x, r.y, r.width, HEADER_HEIGHT);
 
-// 2. 渠道类型文字
+// 2. 渠道类型
 ctx.fillStyle = '#fff';
 ctx.font = 'bold 14px "Arial Black", Arial, sans-serif';
 ctx.textAlign = 'left';
 ctx.textBaseline = 'middle';
-const titleText = `${item.name} (${item.value.toLocaleString()})`;
-ctx.fillText(titleText, r.x + 8, r.y + HEADER_HEIGHT / 2);
+ctx.fillText(`${item.name} (${item.value.toLocaleString()})`, r.x + 8, r.y + HEADER_HEIGHT / 2);
 
 // 3. 内容区
 const contentRect = {
@@ -211,56 +208,124 @@ ctx.strokeRect(r.x, r.y, r.width, r.height);
 });
 }
 
-// 智能绘制标签 - 确保尽可能显示所有内容
+// 自动换行绘制文本
+function wrapText(ctx, text, maxWidth, fontSize) {
+const lines = [];
+let currentLine = '';
+
+for (let i = 0; i < text.length; i++) {
+const testLine = currentLine + text[i];
+if (ctx.measureText(testLine).width > maxWidth && currentLine.length > 0) {
+lines.push(currentLine);
+currentLine = text[i];
+} else {
+currentLine = testLine;
+}
+}
+if (currentLine) lines.push(currentLine);
+return lines;
+}
+
+// 计算能容纳完整文本的最大字体大小
+function fitFontSize(ctx, text, maxWidth, maxFontSize, minFontSize) {
+for (let size = maxFontSize; size >= minFontSize; size--) {
+ctx.font = `${size}px "Microsoft YaHei", sans-serif`;
+if (ctx.measureText(text).width <= maxWidth) {
+return size;
+}
+}
+return minFontSize;
+}
+
 function drawLabel(ctx, name, value, r) {
-// 可用区域（留边距）
-const padding = 3;
+const padding = 4;
 const availW = r.width - padding * 2;
 const availH = r.height - padding * 2;
 
-if (availW < 15 || availH < 12) return; // 太小完全不显示
+if (availW < 20 || availH < 15) return;
 
 ctx.fillStyle = '#fff';
 ctx.textAlign = 'center';
 ctx.textBaseline = 'middle';
 const cx = r.x + r.width / 2;
 const cy = r.y + r.height / 2;
-
 const valueStr = value.toLocaleString();
 
-// 根据可用空间决定显示策略
-if (availH >= 35 && availW >= 50) {
-// 足够高：名称 + 数值 两行显示
-const nameFontSize = Math.min(12, Math.max(8, availW / 10));
-const valueFontSize = Math.min(16, Math.max(10, availW / 8));
-
-// 名称（斜体）
+// 策略：尽可能完整显示标签名称
+if (availH >= 45 && availW >= 60) {
+// 大块：名称可能需要换行 + 数值
+const nameFontSize = fitFontSize(ctx, name, availW, 12, 8);
 ctx.font = `italic ${nameFontSize}px "Microsoft YaHei", sans-serif`;
-let displayName = name;
-// 截断名称以适应宽度
-while (ctx.measureText(displayName).width > availW && displayName.length > 3) {
-displayName = displayName.slice(0, -2) + '...';
-}
-ctx.fillText(displayName, cx, cy - availH / 5);
+const nameLines = wrapText(ctx, name, availW, nameFontSize);
 
-// 数值（粗体）
+// 计算总高度
+const lineHeight = nameFontSize + 2;
+const valueFontSize = Math.min(16, Math.max(11, availW / 7));
+const totalHeight = nameLines.length * lineHeight + valueFontSize + 4;
+
+if (totalHeight <= availH) {
+// 可以完整显示
+let startY = cy - totalHeight / 2 + lineHeight / 2;
+nameLines.forEach((line, i) => {
+ctx.font = `italic ${nameFontSize}px "Microsoft YaHei", sans-serif`;
+ctx.fillText(line, cx, startY + i * lineHeight);
+});
 ctx.font = `bold ${valueFontSize}px "Microsoft YaHei", sans-serif`;
-ctx.fillText(valueStr, cx, cy + availH / 5);
+ctx.fillText(valueStr, cx, startY + nameLines.length * lineHeight + valueFontSize / 2);
+} else {
+// 空间不够，缩小显示
+drawCompact(ctx, name, valueStr, cx, cy, availW, availH);
+}
 
-} else if (availH >= 18 && availW >= 30) {
-// 中等高度：只显示名称和数值在一行，或只显示数值
-const fontSize = Math.min(11, Math.max(8, Math.min(availW / 6, availH / 1.5)));
-ctx.font = `bold ${fontSize}px "Microsoft YaHei", sans-serif`;
+} else if (availH >= 30 && availW >= 40) {
+// 中块：尝试完整显示，如果太长则换行
+drawCompact(ctx, name, valueStr, cx, cy, availW, availH);
 
-// 优先显示数值
-if (ctx.measureText(valueStr).width <= availW) {
+} else if (availH >= 18 && availW >= 25) {
+// 小块：名称 + 数值 一行或只数值
+const fontSize = Math.min(10, Math.max(7, availH / 2));
+ctx.font = `bold ${fontSize}px Arial, sans-serif`;
+
+// 尝试 "名称 数值" 一行
+const combined = `${name} ${valueStr}`;
+if (ctx.measureText(combined).width <= availW) {
+ctx.fillText(combined, cx, cy);
+} else if (ctx.measureText(valueStr).width <= availW) {
 ctx.fillText(valueStr, cx, cy);
 }
 
-} else if (availW >= 20 && availH >= 12) {
-// 很小：只显示数值，用更小字体
-const fontSize = Math.min(9, Math.max(7, Math.min(availW / 4, availH)));
+} else if (availW >= 18 && availH >= 12) {
+// 极小块：只显示数值
+const fontSize = Math.min(9, Math.max(6, Math.min(availW / 3, availH)));
 ctx.font = `bold ${fontSize}px Arial, sans-serif`;
+if (ctx.measureText(valueStr).width <= availW) {
+ctx.fillText(valueStr, cx, cy);
+}
+}
+}
+
+// 紧凑模式显示
+function drawCompact(ctx, name, valueStr, cx, cy, availW, availH) {
+// 尝试找到合适的字体大小来完整显示名称
+const nameFontSize = fitFontSize(ctx, name, availW, 10, 6);
+ctx.font = `italic ${nameFontSize}px "Microsoft YaHei", sans-serif`;
+const nameLines = wrapText(ctx, name, availW, nameFontSize);
+
+const lineHeight = nameFontSize + 1;
+const valueFontSize = Math.min(12, Math.max(9, availW / 6));
+const totalHeight = nameLines.length * lineHeight + valueFontSize + 2;
+
+if (totalHeight <= availH) {
+let startY = cy - totalHeight / 2 + lineHeight / 2;
+nameLines.forEach((line, i) => {
+ctx.font = `italic ${nameFontSize}px "Microsoft YaHei", sans-serif`;
+ctx.fillText(line, cx, startY + i * lineHeight);
+});
+ctx.font = `bold ${valueFontSize}px "Microsoft YaHei", sans-serif`;
+ctx.fillText(valueStr, cx, startY + nameLines.length * lineHeight + valueFontSize / 2);
+} else {
+// 实在放不下，只显示数值
+ctx.font = `bold ${Math.min(11, availH / 1.5)}px "Microsoft YaHei", sans-serif`;
 if (ctx.measureText(valueStr).width <= availW) {
 ctx.fillText(valueStr, cx, cy);
 }
