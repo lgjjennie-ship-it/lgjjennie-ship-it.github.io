@@ -77,7 +77,7 @@ const colorScheme = {
 const defaultColors = ['#64B5F6','#BA68C8','#F06292','#FFB74D','#81C784','#FF8A65','#FFD54F','#4DD0E1'];
 
 let currentData = null;
-const HEADER_HEIGHT = 22; // 渠道类型标题栏高度
+const HEADER_HEIGHT = 24;
 
 function parseData(text) {
 const lines = text.trim().split('\n').filter(l => l.trim());
@@ -168,19 +168,21 @@ level1.forEach((item, idx) => {
 const r = item.rect;
 const baseColor = getColor(item.name, idx);
 
-// 1. 绘制整个区域背景（包含标题栏）
-ctx.fillStyle = darken(baseColor, 0.15); // 标题栏颜色更深
+// 1. 绘制标题栏背景（深色）
+ctx.fillStyle = darken(baseColor, 0.2);
 ctx.fillRect(r.x, r.y, r.width, HEADER_HEIGHT);
 
-// 2. 绘制标题栏文字：渠道类型 + 总数
+// 2. 绘制标题栏文字：渠道类型名称 + 总数
+// 【差异化样式】渠道类型：大号、粗体、Arial字体、全大写
 ctx.fillStyle = '#fff';
-ctx.font = 'bold 12px Microsoft YaHei';
+ctx.font = 'bold 13px Arial, sans-serif';
 ctx.textAlign = 'left';
 ctx.textBaseline = 'middle';
-const titleText = item.name;
-ctx.fillText(titleText, r.x + 6, r.y + HEADER_HEIGHT / 2);
+ctx.letterSpacing = '1px';
+const titleText = `${item.name}`;
+ctx.fillText(titleText, r.x + 8, r.y + HEADER_HEIGHT / 2);
 
-// 3. 子块区域
+// 3. 子块内容区域
 const contentRect = {
 x: r.x,
 y: r.y + HEADER_HEIGHT,
@@ -188,29 +190,26 @@ width: r.width,
 height: r.height - HEADER_HEIGHT
 };
 
-// 绘制内容区背景
 ctx.fillStyle = baseColor;
 ctx.fillRect(contentRect.x, contentRect.y, contentRect.width, contentRect.height);
 
 // 4. 绘制子块
 if (item.children?.length && contentRect.width > 15 && contentRect.height > 15) {
 const level2 = squarify(item.children, {
-x: contentRect.x + 1,
-y: contentRect.y + 1,
-width: contentRect.width - 2,
-height: contentRect.height - 2
+x: contentRect.x + 2,
+y: contentRect.y + 2,
+width: contentRect.width - 4,
+height: contentRect.height - 4
 });
 
 level2.forEach((child, ci) => {
 const cr = child.rect;
-// 子块颜色渐变
-ctx.fillStyle = darken(baseColor, -0.05 + (ci % 4) * 0.08);
+ctx.fillStyle = darken(baseColor, -0.03 + (ci % 4) * 0.07);
 ctx.fillRect(cr.x, cr.y, cr.width, cr.height);
-// 子块边框
 ctx.strokeStyle = 'rgba(255,255,255,0.4)';
 ctx.lineWidth = 1;
 ctx.strokeRect(cr.x, cr.y, cr.width, cr.height);
-// 标签
+// 【差异化样式】渠道标签：正常字重、Microsoft YaHei字体
 drawLabel(ctx, child.name, child.value, cr);
 });
 }
@@ -233,24 +232,24 @@ ctx.textBaseline = 'middle';
 const cx = r.x + r.width / 2;
 const cy = r.y + r.height / 2;
 
-// 根据面积和尺寸决定显示方式
+// 【渠道标签样式】正常字重、中文字体、较小字号
 if (area > 20000 && r.width > 100 && r.height > 50) {
-// 大块：完整显示
-ctx.font = '12px Microsoft YaHei';
+// 大块：名称 + 数值
+ctx.font = '12px "Microsoft YaHei", sans-serif';
 const dn = name.length > 20 ? name.slice(0, 18) + '...' : name;
-ctx.fillText(dn, cx, cy - 9);
-ctx.font = 'bold 14px Microsoft YaHei';
-ctx.fillText(value.toLocaleString(), cx, cy + 10);
+ctx.fillText(dn, cx, cy - 10);
+ctx.font = 'bold 16px "Microsoft YaHei", sans-serif';
+ctx.fillText(value.toLocaleString(), cx, cy + 12);
 } else if (area > 6000 && r.width > 55 && r.height > 35) {
 // 中块
-ctx.font = '10px Microsoft YaHei';
+ctx.font = '10px "Microsoft YaHei", sans-serif';
 const sn = name.length > 12 ? name.slice(0, 10) + '...' : name;
 ctx.fillText(sn, cx, cy - 7);
-ctx.font = 'bold 11px Microsoft YaHei';
-ctx.fillText(value.toLocaleString(), cx, cy + 8);
+ctx.font = 'bold 12px "Microsoft YaHei", sans-serif';
+ctx.fillText(value.toLocaleString(), cx, cy + 9);
 } else if (area > 1200 && r.width > 30 && r.height > 20) {
 // 小块：只显示数值
-ctx.font = 'bold 10px Microsoft YaHei';
+ctx.font = 'bold 10px "Microsoft YaHei", sans-serif';
 ctx.fillText(value, cx, cy);
 }
 }
