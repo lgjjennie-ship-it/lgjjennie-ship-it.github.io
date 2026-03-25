@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>SurferCloud 存量客户分析</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body { font-family: 'Microsoft YaHei', sans-serif; background: #f5f7fa; padding: 20px; }
+.container { max-width: 1200px; margin: 0 auto; }
+h1 { text-align: center; color: #2c3e50; }
+.chart-container { background: white; border-radius: 10px; padding: 20px; margin: 20px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+.chart-title { font-size: 18px; font-weight: bold; color: #333; margin-bottom: 15px; }
+canvas { max-height: 400px; }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
+.stat-card { background: white; border-radius: 10px; padding: 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+.stat-value { font-size: 28px; font-weight: bold; color: #667eea; }
+.stat-label { font-size: 14px; color: #666; margin-top: 5px; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>📊 SurferCloud 存量客户分析</h1>
+<p style="text-align:center;color:#666;">数据截止：2026年3月</p>
+
+<div class="stats">
+<div class="stat-card">
+<div class="stat-value">115,592</div>
+<div class="stat-label">总注册用户</div>
+</div>
+<div class="stat-card">
+<div class="stat-value">14,273</div>
+<div class="stat-label">充值用户</div>
+</div>
+<div class="stat-card">
+<div class="stat-value">12.3%</div>
+<div class="stat-label">整体充值率</div>
+</div>
+<div class="stat-card">
+<div class="stat-value">$1,558,061</div>
+<div class="stat-label">累计充值额</div>
+</div>
+</div>
+
+<div class="chart-container">
+<div class="chart-title">📈 每月注册用户量 & 充值用户量</div>
+<canvas id="monthlyChart"></canvas>
+</div>
+
+<div class="chart-container">
+<div class="chart-title">📊 每月充值率变化趋势</div>
+<canvas id="rateChart"></canvas>
+</div>
+
+</div>
+
+<script>
+const months = [
+'2023-08','2023-09','2023-10','2023-11',
+'2024-01','2024-02','2024-03','2024-04','2024-05','2024-06','2024-07','2024-08','2024-09','2024-10','2024-11','2024-12',
+'2025-01','2025-02','2025-03','2025-04','2025-05','2025-06','2025-07','2025-08','2025-09','2025-10','2025-11','2025-12',
+'2026-01','2026-02','2026-03'
+];
+
+const registrations = [1,4,2,1,10,144,213,235,978,691,1473,5269,15258,7319,8682,8978,8243,6536,9654,3482,3310,4369,4558,2612,2789,3165,3649,4139,3666,3292,2870];
+const rechargedUsers = [1,0,1,0,2,16,16,12,311,85,82,530,934,951,1379,1351,846,855,900,589,957,688,443,188,341,369,430,533,506,492,465];
+const rechargeRates = registrations.map((r, i) => r > 0 ? (rechargedUsers[i] / r * 100).toFixed(1) : 0);
+
+// 图表1：注册量 & 充值用户量
+new Chart(document.getElementById('monthlyChart'), {
+type: 'bar',
+data: {
+labels: months,
+datasets: [
+{
+label: '注册用户量',
+data: registrations,
+backgroundColor: 'rgba(102, 126, 234, 0.7)',
+borderColor: 'rgba(102, 126, 234, 1)',
+borderWidth: 1,
+order: 2
+},
+{
+label: '充值用户量',
+data: rechargedUsers,
+backgroundColor: 'rgba(246, 114, 128, 0.8)',
+borderColor: 'rgba(246, 114, 128, 1)',
+borderWidth: 1,
+order: 1
+}
+]
+},
+options: {
+responsive: true,
+plugins: {
+legend: { position: 'top' }
+},
+scales: {
+x: { 
+ticks: { maxRotation: 45, minRotation: 45 }
+},
+y: { 
+beginAtZero: true,
+title: { display: true, text: '用户数' }
+}
+}
+}
+});
+
+// 图表2：充值率趋势
+new Chart(document.getElementById('rateChart'), {
+type: 'line',
+data: {
+labels: months,
+datasets: [{
+label: '充值率 (%)',
+data: rechargeRates,
+borderColor: 'rgba(75, 192, 192, 1)',
+backgroundColor: 'rgba(75, 192, 192, 0.2)',
+fill: true,
+tension: 0.3,
+pointRadius: 4,
+pointBackgroundColor: 'rgba(75, 192, 192, 1)'
+}]
+},
+options: {
+responsive: true,
+plugins: {
+legend: { position: 'top' }
+},
+scales: {
+x: { 
+ticks: { maxRotation: 45, minRotation: 45 }
+},
+y: { 
+beginAtZero: true,
+max: 110,
+title: { display: true, text: '充值率 (%)' }
+}
+}
+}
+});
+</script>
+</body>
+</html>
