@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Global & SurferCloud 高净值客户分析</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+<style>
+body { font-family: 'Microsoft YaHei', sans-serif; background: #f5f7fa; padding: 20px; }
+.container { max-width: 1200px; margin: 0 auto; }
+h1 { text-align: center; color: #2c3e50; }
+.subtitle { text-align: center; color: #666; margin-bottom: 20px; }
+.chart-section { background: white; border-radius: 10px; padding: 20px; margin: 20px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+.chart-title { font-size: 18px; font-weight: bold; color: #333; margin-bottom: 15px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; margin-bottom: 20px; }
+.stat-card { background: white; border-radius: 10px; padding: 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+.stat-card.global { border-top: 4px solid #667eea; }
+.stat-card.surfer { border-top: 4px solid #f6728080; }
+.stat-value { font-size: 24px; font-weight: bold; color: #333; }
+.stat-label { font-size: 12px; color: #666; margin-top: 5px; }
+.platform-label { font-size: 11px; font-weight: bold; margin-bottom: 5px; }
+.platform-label.global { color: #667eea; }
+.platform-label.surfer { color: #f67280; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 15px; }
+th, td { padding: 10px 8px; text-align: left; border-bottom: 1px solid #eee; }
+th { background: #f8fafc; font-weight: bold; color: #4a5568; }
+tr:hover { background: #f8fafc; }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+.tag.high { background: #c6f6d5; color: #22543d; }
+.tag.mid { background: #fefcbf; color: #744210; }
+.tag.low { background: #fed7d7; color: #822727; }
+.insight-box { background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%); border-left: 4px solid #667eea; padding: 15px 20px; border-radius: 0 8px 8px 0; margin-top: 20px; font-size: 14px; line-height: 1.8; }
+.insight-box h4 { color: #667eea; margin-bottom: 10px; }
+.chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 800px) { .chart-row { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>📊 Global & SurferCloud 高净值客户分析</h1>
+<p class="subtitle">高净值定义：近6个月任意1个月消费>$100 ｜ 数据周期：2025.01 - 2026.02</p>
+
+<div class="stats">
+<div class="stat-card global">
+<div class="platform-label global">Global</div>
+<div class="stat-value">15</div>
+<div class="stat-label">高净值客户数</div>
+</div>
+<div class="stat-card global">
+<div class="platform-label global">Global</div>
+<div class="stat-value">$164,971</div>
+<div class="stat-label">总充值额</div>
+</div>
+<div class="stat-card global">
+<div class="platform-label global">Global</div>
+<div class="stat-value">$10,998</div>
+<div class="stat-label">人均充值</div>
+</div>
+<div class="stat-card surfer">
+<div class="platform-label surfer">SurferCloud</div>
+<div class="stat-value">228</div>
+<div class="stat-label">高净值客户数</div>
+</div>
+<div class="stat-card surfer">
+<div class="platform-label surfer">SurferCloud</div>
+<div class="stat-value">$675,722</div>
+<div class="stat-label">总充值额</div>
+</div>
+<div class="stat-card surfer">
+<div class="platform-label surfer">SurferCloud</div>
+<div class="stat-value">$2,964</div>
+<div class="stat-label">人均充值</div>
+</div>
+</div>
+
+<!-- 图表1：月度充值趋势对比 -->
+<div class="chart-section">
+<div class="chart-title">📈 两平台高净值客户月度充值趋势对比</div>
+<canvas id="trendChart" height="80"></canvas>
+<div class="insight-box">
+<h4>📋 趋势解读</h4>
+<ul>
+<li><b>Global</b>：2025年下半年充值显著增长，12月达峰值$22,302，头部客户贡献明显</li>
+<li><b>SurferCloud</b>：充值稳定在$4-7万/月，11月达峰值$71,473，客户基数支撑稳定收入</li>
+<li>两平台2025年7月后均呈上升趋势，Q4表现最佳</li>
+</ul>
+</div>
+</div>
+
+<!-- 图表2：消费稳定性分布 -->
+<div class="chart-section">
+<div class="chart-title">📊 高净值客户消费稳定性分布</div>
+<div class="chart-row">
+<canvas id="stabilityGlobal"></canvas>
+<canvas id="stabilitySurfer"></canvas>
+</div>
+<div class="insight-box">
+<h4>📋 稳定性解读</h4>
+<ul>
+<li><b>稳定性指标</b>：使用变异系数(CV)衡量，CV≤0.3为高稳定，0.3-0.5为中稳定，>0.5为低稳定</li>
+<li><b>Global</b>：46.7%客户为低稳定，波动较大，主要因客户基数小、头部集中</li>
+<li><b>SurferCloud</b>：37.3%客户为高稳定，整体分布更均衡，收入可预测性更强</li>
+</ul>
+</div>
+</div>
+
+<!-- 图表3：活跃月份分布 -->
+<div class="chart-section">
+<div class="chart-title">📊 高净值客户活跃月份分布</div>
+<div class="chart-row">
+<canvas id="activeGlobal"></canvas>
+<canvas id="activeSurfer"></canvas>
+</div>
+<div class="insight-box">
+<h4>📋 活跃度解读</h4>
+<ul>
+<li><b>Global</b>：33%客户仅活跃1-2个月，长期活跃客户(11-14月)仅2人，客户留存待加强</li>
+<li><b>SurferCloud</b>：39%客户活跃3-6个月，10.5%客户持续活跃11-14个月，留存结构更健康</li>
+</ul>
+</div>
+</div>
+
+<!-- 数据表：消费稳定性详情 -->
+<div class="chart-section">
+<div class="chart-title">📋 高净值客户消费稳定性详情（按总充值排序 Top 15）</div>
+
+<h4 style="color:#667eea;margin:15px 0 10px;">Global (channel_id=126)</h4>
+<table>
+<tr><th>CID</th><th>注册时间</th><th>总充值</th><th>活跃月数</th><th>月均消费</th><th>CV值</th><th>稳定性</th></tr>
+<tr><td>66440889</td><td>2024-12-25</td><td>$95,847</td><td>12</td><td>$7,987</td><td>0.44</td><td><span class="tag mid">中稳定</span></td></tr>
+<tr><td>66481071</td><td>2025-02-21</td><td>$38,193</td><td>12</td><td>$3,183</td><td>0.49</td><td><span class="tag mid">中稳定</span></td></tr>
+<tr><td>66578047</td><td>2025-08-07</td><td>$7,002</td><td>7</td><td>$1,000</td><td>0.58</td><td><span class="tag low">低稳定</span></td></tr>
+<tr><td>66609138</td><td>2025-08-18</td><td>$5,232</td><td>6</td><td>$872</td><td>0.00</td><td><span class="tag high">高稳定</span></td></tr>
+<tr><td>66581218</td><td>2025-08-26</td><td>$4,990</td><td>1</td><td>$4,990</td><td>0.00</td><td><span class="tag high">高稳定</span></td></tr>
+<tr><td>66531483</td><td>2025-05-30</td><td>$4,411</td><td>9</td><td>$490</td><td>0.53</td><td><span class="tag low">低稳定</span></td></tr>
+<tr><td>66464765</td><td>2025-04-16</td><td>$3,411</td><td>10</td><td>$341</td><td>0.32</td><td><span class="tag mid">中稳定</span></td></tr>
+<tr><td>66744335</td><td>2026-01-07</td><td>$1,250</td><td>2</td><td>$625</td><td>0.66</td><td><span class="tag low">低稳定</span></td></tr>
+<tr><td>66556568</td><td>2025-09-17</td><td>$1,131</td><td>6</td><td>$189</td><td>0.59</td><td><span class="tag low">低稳定</span></td></tr>
+<tr><td>66534901</td><td>2025-06-11</td><td>$1,043</td><td>9</td><td>$116</td><td>0.67</td><td><span class="tag low">低稳定</span></td></tr>
+</table>
+
+<h4 style="color:#f67280;margin:25px 0 10px;">SurferCloud (channel_id=128)</h4>
+<table>
+<tr><th>CID</th><th>注册时间</th><th>总充值</th><th>活跃月数</th><th>月均消费</th><th>CV值</th><th>稳定性</th></tr>
+<tr><td>66396318</td><td>2024-10-04</td><td>$78,391</td><td>14</td><td>$5,599</td><td>0.29</td><td><span class="tag high">高稳定</span></td></tr>
+<tr><td>66209581</td><td>2024-04-08</td><td>$46,110</td><td>7</td><td>$6,587</td><td>0.39</td><td><span class="tag mid">中稳定</span></td></tr>
+<tr><td>66169223</td><td>2024-06-11</td><td>$31,946</td><td>13</td><td>$2,457</td><td>0.32</td><td><span class="tag mid">中稳定</span></td></tr>
+<tr><td>66431319</td><td>2024-11-05</td><td>$31,911</td><td>11</td><td>$2,901</td><td>0.67</td><td><span class="tag low">低稳定</span></td></tr>
+<tr><td>66186838</td><td>2024-05-22</td><td>$29,411</td><td>4</td><td>$7,353</td><td>0.35</td><td><span class="tag mid">中稳定</span></td></tr>
+<tr><td>66529310</td><td>2025-05-18</td><td>$22,598</td><td>8</td><td>$2,825</td><td>0.21</td><td><span class="tag high">高稳定</span></td></tr>
+<tr><td>66166607</td><td>2024-05-07</td><td>$19,692</td><td>11</td><td>$1,790</td><td>0.75</td><td><span class="tag low">低稳定</span></td></tr>
+<tr><td>66186628</td><td>2024-05-20</td><td>$16,000</td><td>11</td><td>$1,455</td><td>0.37</td><td><span class="tag mid">中稳定</span></td></tr>
+<tr><td>66580398</td><td>2025-08-21</td><td>$13,709</td><td>3</td><td>$4,570</td><td>0.43</td><td><span class="tag mid">中稳定</span></td></tr>
+<tr><td>66427617</td><td>2024-10-11</td><td>$12,876</td><td>6</td><td>$2,146</td><td>0.66</td><td><span class="tag low">低稳定</span></td></tr>
+<tr><td>66506853</td><td>2025-02-05</td><td>$12,503</td><td>10</td><td>$1,250</td><td>0.45</td><td><span class="tag mid">中稳定</span></td></tr>
+<tr><td>66360496</td><td>2024-09-07</td><td>$10,844</td><td>14</td><td>$775</td><td>0.40</td><td><span class="tag mid">中稳定</span></td></tr>
+<tr><td>66213690</td><td>2024-05-29</td><td>$10,210</td><td>10</td><td>$1,021</td><td>0.67</td><td><span class="tag low">低稳定</span></td></tr>
+<tr><td>66212985</td><td>2024-05-21</td><td>$9,500</td><td>6</td><td>$1,583</td><td>0.38</td><td><span class="tag mid">中稳定</span></td></tr>
+<tr><td>66505661</td><td>2025-01-24</td><td>$9,105</td><td>11</td><td>$828</td><td>0.11</td><td><span class="tag high">高稳定</span></td></tr>
+</table>
+</div>
+
+</div>
+
+<script>
+Chart.register(ChartDataLabels);
+
+const months = ['2025-01','2025-02','2025-03','2025-04','2025-05','2025-06','2025-07','2025-08','2025-09','2025-10','2025-11','2025-12','2026-01','2026-02'];
+
+// Global月度充值
+const globalMonthly = [2000,5000,7400,9659.1,6876.66,1971.91,16402.29,10193.24,18805.83,14675.53,14793.69,22302.01,19288.56,15601.76];
+// SurferCloud月度充值
+const surferMonthly = [26367.93,25556.47,46143.69,37618.97,43941.22,45465.73,62192.1,52920.46,56655.73,50434.29,71472.87,48431.19,60323.93,48197.68];
+
+// 图表1：月度充值趋势
+new Chart(document.getElementById('trendChart'), {
+type: 'line',
+data: {
+labels: months,
+datasets: [
+{ label: 'Global', data: globalMonthly, borderColor: '#667eea', backgroundColor: 'rgba(102,126,234,0.1)', fill: true, tension: 0.3, pointRadius: 4 },
+{ label: 'SurferCloud', data: surferMonthly, borderColor: '#f67280', backgroundColor: 'rgba(246,114,128,0.1)', fill: true, tension: 0.3, pointRadius: 4 }
+]
+},
+options: {
+responsive: true,
+plugins: {
+legend: { position: 'top' },
+datalabels: {
+display: ctx => ctx.dataIndex % 2 === 0,
+anchor: 'end', align: 'top', offset: 4,
+font: { size: 9, weight: 'bold' },
+color: ctx => ctx.datasetIndex === 0 ? '#667eea' : '#f67280',
+formatter: v => '$' + (v/1000).toFixed(1) + 'k'
+}
+},
+scales: {
+y: { beginAtZero: true, title: { display: true, text: '充值金额 ($)' } }
+}
+}
+});
+
+// 图表2：稳定性分布 - Global
+new Chart(document.getElementById('stabilityGlobal'), {
+type: 'doughnut',
+data: {
+labels: ['高稳定', '中稳定', '低稳定'],
+datasets: [{ data: [4, 4, 7], backgroundColor: ['#48bb78', '#ecc94b', '#f56565'] }]
+},
+options: {
+responsive: true,
+plugins: {
+title: { display: true, text: 'Global 稳定性分布', font: { size: 14 } },
+datalabels: {
+color: '#fff', font: { size: 12, weight: 'bold' },
+formatter: (v, ctx) => v + '人\n(' + (v/15*100).toFixed(0) + '%)'
+}
+}
+}
+});
+
+// 图表2：稳定性分布 - SurferCloud
+new Chart(document.getElementById('stabilitySurfer'), {
+type: 'doughnut',
+data: {
+labels: ['高稳定', '中稳定', '低稳定'],
+datasets: [{ data: [85, 61, 82], backgroundColor: ['#48bb78', '#ecc94b', '#f56565'] }]
+},
+options: {
+responsive: true,
+plugins: {
+title: { display: true, text: 'SurferCloud 稳定性分布', font: { size: 14 } },
+datalabels: {
+color: '#fff', font: { size: 12, weight: 'bold' },
+formatter: (v, ctx) => v + '人\n(' + (v/228*100).toFixed(0) + '%)'
+}
+}
+}
+});
+
+// 图表3：活跃月份 - Global
+new Chart(document.getElementById('activeGlobal'), {
+type: 'bar',
+data: {
+labels: ['1-2个月', '3-6个月', '7-10个月', '11-14个月'],
+datasets: [{ label: 'Global', data: [5, 4, 4, 2], backgroundColor: '#667eea' }]
+},
+options: {
+responsive: true,
+plugins: {
+title: { display: true, text: 'Global 活跃月份分布', font: { size: 14 } },
+legend: { display: false },
+datalabels: { anchor: 'end', align: 'top', font: { size: 11, weight: 'bold' }, color: '#333' }
+},
+scales: { y: { beginAtZero: true, title: { display: true, text: '客户数' } } }
+}
+});
+
+// 图表3：活跃月份 - SurferCloud
+new Chart(document.getElementById('activeSurfer'), {
+type: 'bar',
+data: {
+labels: ['1-2个月', '3-6个月', '7-10个月', '11-14个月'],
+datasets: [{ label: 'SurferCloud', data: [73, 89, 42, 24], backgroundColor: '#f67280' }]
+},
+options: {
+responsive: true,
+plugins: {
+title: { display: true, text: 'SurferCloud 活跃月份分布', font: { size: 14 } },
+legend: { display: false },
+datalabels: { anchor: 'end', align: 'top', font: { size: 11, weight: 'bold' }, color: '#333' }
+},
+scales: { y: { beginAtZero: true, title: { display: true, text: '客户数' } } }
+}
+});
+</script>
+</body>
+</html>
