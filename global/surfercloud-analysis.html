@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>SurferCloud 存量客户分析</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+<style>
+body { font-family: 'Microsoft YaHei', sans-serif; background: #f5f7fa; padding: 20px; }
+.container { max-width: 1200px; margin: 0 auto; }
+h1 { text-align: center; color: #2c3e50; }
+.subtitle { text-align: center; color: #666; margin-bottom: 20px; }
+.subtitle a { color: #667eea; text-decoration: none; }
+.chart-section { background: white; border-radius: 10px; padding: 20px; margin: 20px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+.chart-title { font-size: 18px; font-weight: bold; color: #333; margin-bottom: 15px; }
+.insight-box { background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%); border-left: 4px solid #667eea; padding: 15px 20px; border-radius: 0 8px 8px 0; margin-top: 20px; font-size: 14px; line-height: 1.9; }
+.insight-box h4 { color: #667eea; margin-bottom: 12px; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+.insight-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+.insight-item { background: white; padding: 12px 15px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+.insight-item .label { font-size: 12px; color: #888; margin-bottom: 4px; }
+.insight-item .value { font-size: 15px; color: #333; font-weight: 500; }
+.insight-item .value .highlight { color: #e53e3e; font-weight: bold; }
+.insight-item .value .positive { color: #38a169; font-weight: bold; }
+.insight-item .value .neutral { color: #667eea; font-weight: bold; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-bottom: 20px; }
+.stat-card { background: white; border-radius: 10px; padding: 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+.stat-value { font-size: 26px; font-weight: bold; color: #667eea; }
+.stat-label { font-size: 13px; color: #666; margin-top: 5px; }
+.business-tip { background: #fffbeb; border: 1px solid #fbbf24; border-radius: 6px; padding: 10px 15px; margin-top: 12px; font-size: 13px; color: #92400e; }
+.business-tip::before { content: '💡 '; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>📊 SurferCloud 存量客户分析</h1>
+<p class="subtitle">海外云服务平台 <a href="https://www.surfercloud.com/" target="_blank">www.surfercloud.com</a> ｜ 数据截止：2026年3月</p>
+
+<div class="stats">
+<div class="stat-card">
+<div class="stat-value">115,592</div>
+<div class="stat-label">总注册用户</div>
+</div>
+<div class="stat-card">
+<div class="stat-value">14,143</div>
+<div class="stat-label">充值用户</div>
+</div>
+<div class="stat-card">
+<div class="stat-value">12.2%</div>
+<div class="stat-label">整体充值率</div>
+</div>
+<div class="stat-card">
+<div class="stat-value">$1,558,061</div>
+<div class="stat-label">累计充值额</div>
+</div>
+</div>
+
+<!-- 图表1：注册量 & 充值用户量 -->
+<div class="chart-section">
+<div class="chart-title">📈 每月注册用户量 & 充值用户量</div>
+<canvas id="monthlyChart" height="100"></canvas>
+<div class="insight-box">
+<h4>📋 数据解读</h4>
+<div class="insight-grid">
+<div class="insight-item">
+<div class="label">注册高峰期</div>
+<div class="value">2024年9月达 <span class="highlight">15,258人</span>，与Google Ads投放力度相关</div>
+</div>
+<div class="insight-item">
+<div class="label">当前获客节奏</div>
+<div class="value">2025年后稳定在 <span class="neutral">3,000-4,500人/月</span>，获客成本可控</div>
+</div>
+<div class="insight-item">
+<div class="label">付费转化</div>
+<div class="value">月均 <span class="positive">500-900人</span> 完成首次充值，转化链路稳定</div>
+</div>
+<div class="insight-item">
+<div class="label">用户质量趋势</div>
+<div class="value">注册量下降但充值用户稳定，<span class="positive">用户质量在提升</span></div>
+</div>
+</div>
+<div class="business-tip">建议：关注2024年9月大量注册用户的后续激活情况，可针对性做召回运营</div>
+</div>
+</div>
+
+<!-- 图表2：充值转化率 -->
+<div class="chart-section">
+<div class="chart-title">📊 各月注册用户的充值转化率</div>
+<canvas id="rateChart" height="70"></canvas>
+<div class="insight-box">
+<h4>📋 数据解读</h4>
+<div class="insight-grid">
+<div class="insight-item">
+<div class="label">整体转化水平</div>
+<div class="value">平均 <span class="neutral">12.2%</span>，符合海外云服务行业标准（10-15%）</div>
+</div>
+<div class="insight-item">
+<div class="label">高转化月份</div>
+<div class="value">2024年5月 <span class="positive">31.3%</span>、2025年5月 <span class="positive">28.9%</span>，5月投放效果最佳</div>
+</div>
+<div class="insight-item">
+<div class="label">低转化警示</div>
+<div class="value">2024年7-9月转化仅 <span class="highlight">5-6%</span>，大量低质量流量涌入</div>
+</div>
+<div class="insight-item">
+<div class="label">近期改善</div>
+<div class="value">2026年Q1转化率 <span class="positive">13.8%→16.2%</span>，投放质量持续优化</div>
+</div>
+</div>
+<div class="business-tip">建议：复盘5月高转化原因（促销活动/投放策略），2024年7-9月注册用户可做专项激活</div>
+</div>
+</div>
+
+<!-- 图表3：充值金额分布 -->
+<div class="chart-section">
+<div class="chart-title">💰 充值金额分布（各区间用户数及占比）</div>
+<canvas id="amountBarChart" height="70"></canvas>
+<div class="insight-box">
+<h4>📋 数据解读</h4>
+<div class="insight-grid">
+<div class="insight-item">
+<div class="label">小额试用用户</div>
+<div class="value"><span class="highlight">67.3%</span> 用户充值≤$10，多为试用云主机的个人开发者</div>
+</div>
+<div class="insight-item">
+<div class="label">轻度付费用户</div>
+<div class="value"><span class="neutral">19.4%</span> 用户充值$10-50，可能是轻量应用/测试环境需求</div>
+</div>
+<div class="insight-item">
+<div class="label">中度付费用户</div>
+<div class="value"><span class="neutral">10.9%</span> 用户充值$50-500，有持续业务需求的SMB客户</div>
+</div>
+<div class="insight-item">
+<div class="label">高价值客户</div>
+<div class="value"><span class="positive">335人</span> 充值>$500，贡献主要收入，需重点维护</div>
+</div>
+</div>
+<div class="business-tip">建议：针对$0-10用户设计"新手成长计划"，引导升级到$50+档位；$500+客户配备专属客户经理</div>
+</div>
+</div>
+
+<!-- 图表4：各月充值金额分布 -->
+<div class="chart-section">
+<div class="chart-title">📈 各月注册用户充值金额分布（堆叠图）</div>
+<canvas id="amountStackChart" height="90"></canvas>
+<div class="insight-box">
+<h4>📋 数据解读</h4>
+<div class="insight-grid">
+<div class="insight-item">
+<div class="label">用户结构稳定</div>
+<div class="value">各月充值分布结构一致，<span class="neutral">蓝色（$0-10）始终占主体</span></div>
+</div>
+<div class="insight-item">
+<div class="label">大客户分布</div>
+<div class="value">$1000+用户（粉色）每月 <span class="positive">3-14人</span>，2024年10月最多</div>
+</div>
+<div class="insight-item">
+<div class="label">2024年10月亮点</div>
+<div class="value">高价值用户明显增加，可能与 <span class="positive">企业客户专项推广</span> 相关</div>
+</div>
+<div class="insight-item">
+<div class="label">季节性规律</div>
+<div class="value">Q4（10-12月）大客户转化较好，与企业年底预算周期吻合</div>
+</div>
+</div>
+<div class="business-tip">建议：Q4加大企业客户定向投放，配合年底促销活动；持续优化小额用户向中高额的转化路径</div>
+</div>
+</div>
+
+</div>
+
+<script>
+Chart.register(ChartDataLabels);
+
+const months = ["2023-08","2023-09","2023-10","2023-11","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03"];
+
+const registrations = [1,4,2,1,10,144,213,235,978,691,1473,5269,15258,7319,8682,8978,8243,6536,9654,3482,3310,4369,4558,2612,2789,3165,3649,4139,3666,3292,2870];
+const rechargedUsers = [1,0,1,0,2,16,16,12,306,81,82,527,925,930,1350,1317,832,855,892,586,955,688,441,187,341,367,429,533,506,492,465];
+const rechargeRates = registrations.map((r, i) => r > 0 ? (rechargedUsers[i] / r * 100).toFixed(1) : 0);
+
+const amountDist = {
+'$0-10': [0,0,1,0,2,0,6,5,162,40,37,419,668,681,905,958,589,665,689,396,739,498,254,55,149,155,206,320,291,320,306],
+'$10-50': [0,0,0,0,0,1,3,1,117,22,19,59,174,111,281,177,143,128,106,108,133,97,91,64,120,119,148,142,146,114,121],
+'$50-100': [0,0,0,0,0,1,1,1,6,5,10,20,45,54,75,66,42,22,39,47,35,47,46,27,29,33,31,33,27,27,22],
+'$100-500': [1,0,0,0,0,5,3,2,11,7,12,21,26,49,62,90,42,24,37,28,32,37,34,17,32,45,32,29,32,24,14],
+'$500-1K': [0,0,0,0,0,1,0,0,2,3,1,3,4,22,16,19,5,4,7,3,6,5,8,13,5,2,7,6,5,4,2],
+'$1000+': [0,0,0,0,0,8,3,3,8,4,3,5,8,13,11,7,11,12,14,4,10,4,8,11,6,13,5,3,5,3,0]
+};
+
+const pieLabels = ['$0-10', '$10-50', '$50-100', '$100-500', '$500-1K', '$1000+'];
+const pieData = [9524, 2745, 791, 748, 153, 182];
+const totalRecharge = 14143;
+const pieColors = ['#60a5fa', '#34d399', '#fbbf24', '#f87171', '#a78bfa', '#f472b6'];
+
+// 图表1
+new Chart(document.getElementById('monthlyChart'), {
+type: 'bar',
+data: {
+labels: months,
+datasets: [
+{ label: '注册用户量', data: registrations, backgroundColor: 'rgba(102, 126, 234, 0.7)', borderColor: 'rgba(102, 126, 234, 1)', borderWidth: 1, order: 2 },
+{ label: '充值用户量', data: rechargedUsers, backgroundColor: 'rgba(246, 114, 128, 0.8)', borderColor: 'rgba(246, 114, 128, 1)', borderWidth: 1, order: 1 }
+]
+},
+options: {
+responsive: true,
+plugins: {
+legend: { position: 'top' },
+datalabels: {
+display: ctx => ctx.dataset.data[ctx.dataIndex] > 100,
+anchor: 'end', align: 'top', offset: 2,
+font: { size: 9, weight: 'bold' },
+color: ctx => ctx.datasetIndex === 0 ? '#4a5568' : '#c53030',
+formatter: v => v >= 1000 ? (v/1000).toFixed(1) + 'k' : v
+}
+},
+scales: {
+x: { ticks: { maxRotation: 45, minRotation: 45, font: { size: 10 } } },
+y: { beginAtZero: true, title: { display: true, text: '用户数' } }
+}
+}
+});
+
+// 图表2
+new Chart(document.getElementById('rateChart'), {
+type: 'line',
+data: {
+labels: months,
+datasets: [{ label: '充值转化率 (%)', data: rechargeRates, borderColor: 'rgba(75, 192, 192, 1)', backgroundColor: 'rgba(75, 192, 192, 0.2)', fill: true, tension: 0.3, pointRadius: 4, pointBackgroundColor: 'rgba(75, 192, 192, 1)' }]
+},
+options: {
+responsive: true,
+plugins: {
+legend: { position: 'top' },
+datalabels: { display: true, anchor: 'end', align: 'top', offset: 4, font: { size: 9, weight: 'bold' }, color: '#0d9488', formatter: v => v + '%' }
+},
+scales: {
+x: { ticks: { maxRotation: 45, minRotation: 45, font: { size: 10 } } },
+y: { beginAtZero: true, max: 120, title: { display: true, text: '充值转化率 (%)' } }
+}
+}
+});
+
+// 图表3
+new Chart(document.getElementById('amountBarChart'), {
+type: 'bar',
+data: { labels: pieLabels, datasets: [{ label: '用户数', data: pieData, backgroundColor: pieColors, borderWidth: 1 }] },
+options: {
+responsive: true,
+indexAxis: 'y',
+plugins: {
+legend: { display: false },
+datalabels: { anchor: 'end', align: 'end', font: { size: 12, weight: 'bold' }, color: '#333', formatter: (v) => v.toLocaleString() + ' (' + (v / totalRecharge * 100).toFixed(1) + '%)' }
+},
+scales: { x: { beginAtZero: true, title: { display: true, text: '用户数' } } }
+}
+});
+
+// 图表4
+const stackColors = { '$0-10': '#60a5fa', '$10-50': '#34d399', '$50-100': '#fbbf24', '$100-500': '#f87171', '$500-1K': '#a78bfa', '$1000+': '#f472b6' };
+const stackDatasets = pieLabels.map(label => ({ label, data: amountDist[label], backgroundColor: stackColors[label], borderWidth: 0 }));
+
+new Chart(document.getElementById('amountStackChart'), {
+type: 'bar',
+data: { labels: months, datasets: stackDatasets },
+options: {
+responsive: true,
+plugins: {
+legend: { position: 'top' },
+datalabels: { display: ctx => ctx.dataset.data[ctx.dataIndex] > 30, anchor: 'center', align: 'center', font: { size: 8, weight: 'bold' }, color: '#fff', formatter: v => v > 30 ? v : '' }
+},
+scales: {
+x: { stacked: true, ticks: { maxRotation: 45, minRotation: 45, font: { size: 10 } } },
+y: { stacked: true, beginAtZero: true, title: { display: true, text: '充值用户数' } }
+}
+}
+});
+</script>
+</body>
+</html>
