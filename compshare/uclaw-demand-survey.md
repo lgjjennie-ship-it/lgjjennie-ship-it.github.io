@@ -68,7 +68,7 @@ Q3. 你目前在用哪些 Agent 工具/平台？（多选）
    □ OpenClaw
    □ OpenClaw 变种（NanoClaw / ZeroClaw / CowAgent 等）
    □ Hermes Agent
-   □ 编程 Agent（Claude Code / Codex / OpenCode / Trea 等）
+   □ 编程 Agent（Claude Code / Codex / Cursor / OpenCode / Trea 等）
    □ Coze / 扣子（字节）
    □ Dify
    □ n8n
