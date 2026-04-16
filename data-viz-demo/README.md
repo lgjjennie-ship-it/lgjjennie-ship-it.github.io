@@ -29,7 +29,3 @@
 - `test_viz_bcg.py`
 - `test_viz_economist.py`
 - `test_viz_mckinsey.py`
-
-## Skill 来源
-
-[data-visualization](https://github.com/huangzhenhao90/data-visualization)
