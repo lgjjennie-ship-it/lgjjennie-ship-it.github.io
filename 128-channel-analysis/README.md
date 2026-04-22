@@ -23,21 +23,18 @@
 
 ![ytag来源分布](output/01_ytag_source_distribution.png)
 
-### 1.2 ggsem用户中各投放类型占比
+### 1.2 ggsem用户中Search vs PMax占比
 
 | 投放类型 | 用户数 | 占ggsem比例 | 充值人数 | 充值转化率 | 总收入 |
 |---------|--------|------------|---------|-----------|--------|
-| **Search** | **32,144** | **63.5%** | 2,372 | 7.4% | $175,895 |
+| **Search** | **32,441** | **64.1%** | 2,375 | 7.3% | $175,915 |
 | **PMax** | **18,201** | **35.9%** | 1,778 | 9.8% | $78,935 |
-| Display | 272 | 0.5% | 1 | 0.4% | $4 |
-| PDemand | 25 | 0.05% | 2 | 8.0% | $16 |
 
-> 分类逻辑：按综合ytag中"ggsem_"后的后缀判定投放类型（search/pmax/display/pdemand）
+> 分类逻辑：综合ytag中"ggsem_"后缀以pmax开头（含pmaxZH/pmaxEN）→ PMax；其余 → Search
 
 **核心发现：**
-- Search贡献了ggsem的63.5%用户量和69%收入，是主力获客引擎
-- PMax用户量少于Search，但**充值转化率更高**（9.8% vs 7.4%）
-- Display几乎无效：272注册仅1人充值，$4收入
+- Search贡献了ggsem的64.1%用户量和69%收入，是主力获客引擎
+- PMax用户量少于Search，但**充值转化率更高**（9.8% vs 7.3%）
 
 ![ggsem投放类型](output/02_ggsem_campaign_type.png)
 
